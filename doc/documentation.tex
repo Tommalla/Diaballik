@@ -1,0 +1,68 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage{polski}
+\usepackage[vmargin=2cm]{geometry}
+\usepackage{amsmath}
+
+%opening
+\title{Diaballik - dokumentacja projektu}
+\author{Tomasz Zakrzewski, numer indeksu: 336079}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\section{Wstęp}
+Skrótowo o tym dokumencie
+\section{Planowana funkcjonalność}
+Przeklejka z módla + to co bym chciał potem
+\section{Założenia}
+Podział na 3 projekty
+\section{Klasy i odpowiedzialności}
+\subsection{DiaballikEngine}
+\subsection{DiaballikBot, GTP-E}
+\subsubsection{NullAI}
+\subsubsection{MCTSAI}
+\subsection{Diaballik}
+\section{Zapis gry i ustawienia}
+\end{abstract}
+
+\setcounter{section}{0}
+
+\section{Wstęp}
+Niniejsza dokumentacja podzielona jest na kilka głównych części - krótki wstęp (obecnie czytany fragment), krótki opis planowanej funkcjonalności 
+(dosyć mocno pokrywający się z opisem z moodle'a + kilka moich pomysłów) i założenia projektowe, w których niejako tłumaczę się z kolejnej sekcji -
+opisu klas i podziału odpowiedzialności. Na deser kilka mniej ważnych technikaliów jak format zapisu plików ze stanem gry oraz prawdopodobne pliki
+konfiguracyjne
+
+\section{Planowana funkcjonalność}
+Moodle:
+\begin{itemize}
+\item program umożliwiający grę w Diaballika w opcjach człowiek vs człowiek, komputer vs człowiek i komputer vs komputer
+\item wygodne ui umożliwiające sensowne podawanie ruchów i dosyć wygodną oraz intuicyjną obsługę
+\item ``nietrywialna'' inteligencja komputera - główny moduł SI oparty o MCTS
+\item możliwość uzyskania podpowiedzi od komputera
+\item swobone cofanie i przewijanie do przodu po historii ruchów
+\item edytor stanu gry pozwalający kompletnie (zgodnie z zasadami) zmienić stan gry włącznie z aktywnym graczem
+\item możliwość zapisu/wczytania gry
+\end{itemize}
+Pomysły własne:
+\begin{itemize}
+\item zamiast posiadać na trwałe wrzuconą w projekt sztuczną inteligencję, chcę aby mój program pozwalał na podpinanie dowolnego bota napisanego
+zgodnie z rozszerzonym protokołem GTP (z wydziałowego konkursu na bota), który skrótowo opiszę w sekcji 3.
+\item chciałbym (prawodpodobnie dopiero podczas jakichś własnych prób rozwijania projektu po terminie oddania w wolnym czasie) udostępnić możliwość
+gry po sieci. Nie planuję tej funkcjonalności w wersji, którą oddam na czerwcowy termin, ale nadmieniam to aby usprawiedliwić pewne dalsze decyzje 
+projektowe.
+\item z podobnego powodu i w podobnym kontekście podaję intencję posiadania zamiast pionków jakichś bardziej skomplikowanych animacji ``ludzików'' na
+planszy oraz podań piłki między ludzikami
+\end{itemize}
+
+\section{Założenia}
+Brałem udział w wydziałowym konkursie na SI do Diaballika. Wiedząc jednak że nie mogę mieć pewności, iż na owym konkursie ugram sobie ocenę/bonusa,
+chciałem bota napisać w jak najbardziej przenoszalny sposób. Stąd pomysł na podział całości na 3 niezależne projekty: DiaballikEngine, DiaballikBot
+oraz Diaballik. Kolejno są to: silnik do gry - obsługuje całą logikę gry, zawiera wszystkie klasy potrzebne do przeprowadzenia rozgrywki całkowicie
+niezależnej od UI - z punktu widzenia silnika może on być nawet używany jako serwer do gier i nic nie stoi temu na przeszkodzie. DiaballikBot, to jak
+nazwa wskazuje, bot do grania w Diaballika. Mam przygotowane 2 wersje bazujące na silniku (jako 2 gałęzi drzewa git, obie korzystają z silnika jako
+sumbodułu).
+\end{document}
