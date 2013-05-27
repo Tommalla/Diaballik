@@ -1,13 +1,24 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8x]{inputenc}
 \usepackage{polski}
-\usepackage[vmargin=2cm]{geometry}
+%\usepackage[vmargin=2cm]{geometry}
 \usepackage{amsmath}
 \usepackage{textcomp}
+\usepackage{hyperref}
 
 %opening
 \title{Diaballik - dokumentacja projektu}
 \author{Tomasz Zakrzewski, numer indeksu: 336079}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1} % Line spacing
 
 \begin{document}
 
@@ -16,19 +27,6 @@
 \setcounter{tocdepth}{2}
 
 \tableofcontents
-% \section{Wstęp}
-% Skrótowo o tym dokumencie
-% \section{Planowana funkcjonalność}
-% Przeklejka z módla + to co bym chciał potem
-% \section{Założenia}
-% Podział na 3 projekty
-% \section{Klasy i odpowiedzialności}
-% \subsection{DiaballikEngine}
-% \subsection{DiaballikBot, GTP-E}
-% \subsubsection{NullAI}
-% \subsubsection{MCTSAI}
-% \subsection{Diaballik}
-% \section{Zapis gry i ustawienia}
 
 \setcounter{section}{0}
 \pagebreak
@@ -81,100 +79,117 @@ obsługiwać boty (i prawdopodobnie posiadać wbudowaną okrojoną wersję 
 \subsection{DiaballikEngine}
 Projekt zawiera następujące klasy z następującym podziałem obowiązków:
 \begin{itemize}
- \item Point - prosta klasa na punkt 2D, przydatny w wielu przypadkach,
- \item Move - prosta klasa, właściwie mogłaby być zastąpiona std::pair. Jako para punktów pełni rolę wygodnej struktury do przekazywania informacji
+ \item \verb|Point| - prosta klasa na punkt 2D, przydatny w wielu przypadkach,
+ \item \verb|Move| - prosta klasa, właściwie mogłaby być zastąpiona std::pair. Jako para punktów pełni rolę wygodnej struktury do przekazywania informacji
  o ruchu - skąd dokąd.
- \item BitContainer - zaimplementowana na vector$<uint8\_t>$ klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
+ \item \verb|BitContainer| - zaimplementowana na \verb|vector<uint8_t>| klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
  Używana do efektywnego pamięciowo przechowywania planszy.
- \item Board - klasa służąca jako opakowanie wokół BitContainera - logicznie reprezentuje planszę i udostępnia wiele operacji na planszy - 
- przesuwanie pionka po współrzędnych, szukanie różnego rodzaju własności ustawień na planszy itd. BitContainer działa jak tablica jednowymiarowa, więc
+ \item \verb|Board| - klasa służąca jako opakowanie wokół \verb|BitContainera| - logicznie reprezentuje planszę i udostępnia wiele operacji na planszy - 
+ przesuwanie pionka po współrzędnych, szukanie różnego rodzaju własności ustawień na planszy itd. \verb|BitContainer| działa jak tablica jednowymiarowa, więc
  Board tłumaczy punkty na jednowymiarowe współrzędne i odwrotnie.
- \item Game - nadrzędna klasa, której programista powinien końcowo używać. Zawiera obiekt Board do przechowywania planszy, podczas wykonywania
- operacji na planszy sprawdza ich zgodność z zasadami gry, ustala zwycięzców, większość możliwych do wykrycia remisów itd. Posiada wiele funkcji
+ \item \verb|Game| - nadrzędna klasa, której programista powinien końcowo używać. Zawiera obiekt \verb|Board| do przechowywania planszy, podczas 
+ wykonywania operacji na planszy sprawdza ich zgodność z zasadami gry, ustala zwycięzców, większość możliwych do wykrycia remisów itd. Posiada wiele funkcji
  zwracających informacje o ustawieniach pionków na planszy.
 \end{itemize}
 Cały projekt zaimplementowany jest z myślą o przenośności i optymalnym zarządzaniu głównie pamięcią, zaraz potem czasem. Podyktowane to było jego
 planowanym użyciem do pisania bota, mającego działać w mocno kontrolowanym środowisku ze skończonymi zasobami.
-Pionki na planszy oraz gracze i typy ruchów są reprezentowane przez enumy (kolejno: FieldType, GamePlayer, MoveType).
-Projekt posiada własny system budowania na CMake i jest kompilowany do statycznej biblioteki.
+Pionki na planszy oraz gracze i typy ruchów są reprezentowane przez enumy (kolejno: \verb|FieldType|, \verb|GamePlayer|, \verb|MoveType|).
+Projekt posiada własny system budowania na \verb|CMake| i jest kompilowany do statycznej biblioteki.
 
 \subsection{DiaballikBot, GTP-E}
 Bot był zbudowany na silniku, więc dużo nie trzeba było dopisywać:
 \begin{itemize}
- \item CommunicationHandler - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji związanych z 
+ \item \verb|Singleton<T>| - generyczna klasa \verb|Singletonu| parametryzowana klasą, która w efekcie ma być \verb|Singletonem|. Po tej klasie 
+ dziedziczą wszystkie \verb|Singletony|.
+ \item \verb|CommunicationHandler| - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji związanych z 
  wejściem/wyjściem
- \item GTPParser - Singleton służący do parsowania komunikatów do SI w protkole GTP. Uwaga, docelowo boty obsługiwane przez grę będą musiały
- obsługiwać rozszerzony protokół, co zostanie w parserze uwzględnione. Parser pamięta wskaźnik na obiekt AI.
- \item AI - abstrakcyjna klasa zapewniająca częściową implementację metod play i gen\_move odpowiadających takim samym poleceniom w GTP. Implementacja
- zawarta w AI zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie game (obiekcie klasy Game z silnika) oraz rozróżnianiem, który gracz to AI.
- \item MCTSAI, NullAI - klasy dziedziczące po AI. Każda klasa implementuje swój własny model sztucznej inteligencji. Widać, że bardzo łatwo można
- dopisać nowe strategie tworząc jedynie klasę dziedziczącą po AI i przedefiniowywując część metod.
+ \item \verb|GTPParser| - \verb|Singleton| służący do parsowania komunikatów do SI w protkole GTP. Uwaga, docelowo boty obsługiwane przez grę 
+ będą musiały obsługiwać rozszerzony protokół, co zostanie w parserze uwzględnione. Parser pamięta wskaźnik na obiekt \verb|AI|.
+ \item \verb|AI| - abstrakcyjna klasa zapewniająca częściową implementację metod \verb|play| i \verb|gen_move| odpowiadających takim samym 
+ poleceniom w GTP. Implementacja zawarta w \verb|AI| zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie game (obiekcie klasy 
+ \verb|Game| z silnika) oraz rozróżnianiem, którym graczem jest \verb|AI| (białym/czarnym) na podstawie pierwszego ruchu.
+ \item \verb|MCTSAI|, \verb|NullAI| - klasy dziedziczące po \verb|AI|. Każda klasa implementuje swój własny model sztucznej inteligencji. 
+ Widać, że bardzo łatwo można dopisać nowe strategie tworząc jedynie klasę dziedziczącą po \verb|AI| i przedefiniowywując część metod.
 \end{itemize}
-Aby móc obsługiwać cofanie gry oraz edycję planszy, boty w komunikacji muszą implementować rozszerzoną wersję protokołu GTP z turnieju. Idea jest
-taka, że każdy bot miałby plik konfiguracyjny w swoim katalogu czytany przez grę, zawierający m.in. flagę informującą czy bot umie używać rozszerzonego
-protokołu. Jeśli tak - gra pozwalałaby cofać ruchy i edytować planszę. Jeśli nie, dostępna byłaby tylko standardowa gra.
+Aby móc obsługiwać cofanie gry oraz edycję planszy, boty w komunikacji muszą implementować rozszerzoną wersję protokołu \verb|GTP| z turnieju. 
+Idea jest taka, że każdy bot miałby plik konfiguracyjny w swoim katalogu czytany przez grę, zawierający m.in. flagę informującą czy bot umie 
+używać rozszerzonego protokołu. Jeśli tak - gra pozwalałaby cofać ruchy i edytować planszę. Jeśli nie, dostępna byłaby tylko standardowa gra.
 
 Samo rozszerzenie protokołu zawiera 2 nowe polecenia:
-\[undo\_move ~ <g>\]
-Wysyłane do obydwu graczy, mówiące że ostatni ruch gracza o kolorze pionka $<g>$ (opis zgodny ze stroną turnieju - $<g>$ to opis koloru gracza, w 
-praktyce 'b' lub 'w' od 'black' oraz 'white'), ma zostać cofnięty.
-\[new\_game ~ <p> ~ <b>  ~ <g>\]
-Gdzie $<p>$ to opis pól zajętych przez pionki kolejno gracza czarnego i białego podany w formacie zgodnym z $<r>$ z oryginalnego protokołu (ciąg
-nieoddzielonych białymi znakami wspórzędnych pól postaci [a-g][1-7]). W tym samym formacie jest $<b>$ - wskazuje zawsze 2 pola na których jest kolejno
-piłka gracza czarnego i białego. $<g>$ informuje, który gracz ma teraz wykonać ruch. Np. ustawienie takie jak na początku gry (gracze ustawieni w
-liniach po przeciwnych stronach planszy, czarny na górze, zaczyna biały) byłoby wywoływane poleceniem:
-\[new\_game ~ a7b7c7e7f7g7a1b1c1e1f1g1 ~ d7d1 ~ w\]
-Zmieniony protokół otrzymał autorską, roboczą nazwę GTP-E (GTP-Extended).
+\begin{verbatim}undo_move <g>\end{verbatim}
+Wysyłane do obydwu graczy, mówiące że ostatni ruch gracza o kolorze pionka \verb|<g>| (opis zgodny ze stroną turnieju - \verb|<g>| to opis koloru
+gracza, w praktyce 'b' lub 'w' od 'black' oraz 'white'), ma zostać cofnięty.
+\begin{verbatim}new_game <p> <b> <g>\end{verbatim}
+Gdzie \verb|<p>| to opis pól zajętych przez pionki kolejno gracza czarnego i białego podany w formacie zgodnym z \verb|<r>| z oryginalnego 
+protokołu (ciąg nieoddzielonych białymi znakami wspórzędnych pól postaci \verb|[a-g][1-7]|). W tym samym formacie jest \verb|<b>| - wskazuje
+zawsze 2 pola na których jest kolejno piłka gracza czarnego i białego. \verb|<g>| informuje, który gracz ma teraz wykonać ruch. Np. ustawienie
+takie jak na początku gry (gracze ustawieni w liniach po przeciwnych stronach planszy, czarny na górze, zaczyna biały) byłoby wywoływane 
+poleceniem:
+\begin{verbatim}new_game a7b7c7e7f7g7a1b1c1e1f1g1 d7d1 w\end{verbatim}
+Zmieniony protokół otrzymał autorską, roboczą nazwę \verb|GTP-E| (GTP-Extended).
 
 \subsection{Diaballik}
 W tej, najważniejszej w tym dokumencie, części projektu chcę trzymać się bardzo ważnego moim zdaniem założenia o rozdzieleniu Qt od reszty aplikacji.
 Z tego powodu wprowadzam dosyć wyraźny podział między klasami korzystającymi/dziedziczącymi po czymś z Qt i tymi całkiem niezależnymi. Podział ten
 naturalnie wyznacza mi biblioteka DiaballikEngine - używam jej jako silnika gry kompletnie niezwiązanego z warstwą GUI. Pozostałe klasy:
 \begin{itemize}
- \item Main Window - dziedziczące po QMainWindow główne okno aplikacji. Zajmuje się konstrukcją siebie i widocznych komponentów, podpięciem 
- najważniejszych sygnałów itp. Wszystko co związane z GUI i częściowo z jego zachowaniem. Widgetem służącym do wyświetlania gry będzie QGraphicsView.
- \item GraphicsScene - klasa dziedzicząca po QGraphicsScene z przedefiniowanymi metodami do obsługi inputu. Będzie podawana do QGraphicsView jako
- aktywna scena. 
- \item GraphicsBackgroundTile - klasa dziedziczącą po jednym z QGraphicsItem (prawdopodobnie QGraphicsPixmapItem, ale poważnie zastanawiam się nad
- QGraphicsSVGItem). Reprezentuje pojedynczy klocek z tła planszy (klocków jest razem 49). Istnienie tej klasy argumentuję wygodną możliwością 
- wyłapywania i obsługiwania kliknięć na puste pola (np. rysowania jakichś rzeczy na planszy, podświetlenia pól itd.).
- \item GraphicsPlayerTile - analogiczna do GraphicsBackgroundTile klasa reprezentująca pionek gracza (z piłką lub bez).
- \item GameHandler (Singleton i/lub QObject) - serce aplikacji. Jej odpowiedzialnością będzie zajmowanie się całą logiką aplikacji (nie mylić z 
- logiką gry!). Będzie zawierać jako prywatny atrybut obiekt klasy Game, na podstawie którego będzie w stanie walidować i wykonywać ruchy 
- otrzymywane od graczy oraz ustawiać nową grę i realizować od strony logiki wszystkie funkcjonalności założone w projekcie.
- \item Player - abstrakcyjna klasa reprezentująca gracza. Jako, że potrzebne będzie wiele rodzajów graczy, komunikujących się z aplikacją na zupełnie
- różne sposoby, GameHandler będzie posiadać 2 wskaźniki typu Player, pod które mogą być podpięte dowolne obiekty klas dziedziczących, implementujących
- odpowiednie metody z klasy Player. Na chwilę obecną, zarys jest następujący: klasa player ma zadeklarowane (pure virtual) metody $bool ~ isMoveReady()$
- oraz $Move getMove()$ i $void setMove()$. Planuję korzystając z mechanizmu wątków uruchamiać playerów w osobnych wątkach i pozwalać im na swoje
- sposoby realizować komunikację (np. HumanPlayer miałby sloty do których podłączone byłyby sygnały od GraphicsScene oraz itemów, klasa odpowiedzialna
- za sztuczną inteligencję miałaby metody służące do komunikacji przez stdin/stdout z botem itd.). Playerzy byliby w QTimerze odpytywani o istnienie
- nowych ruchów i ruchy te przekazywane byłyby do GameHandlera, odpowiedzialnego za ich wykonanie.
- \item HumanPlayer - wcześniej wspomniana planowana dziedzicząca po Player klasa reprezentująca człowieka grającego w grę. Dotychczasowym pomysłem jest,
- jako że gracz posiada stałą liczbę pionków, będących przez całą grę tymi samymi obiektami klasy GraphicsPlayerTile, aby podpinać eventy kliknięć
- na pionki gracza, pod gracza (na starcie gry). Jeśli chodzi o pola puste to najlepszą w tej chwili koncepcją jest podpiąć je pod GameHandlera i
- pozwolić mu na stwierdzenie do którego gracza odnosi się kliknięcie na pole LUB zaimplementowanie GraphicsBackgroundTile tak, aby odpytywał o tę
- informację GameHandlera i sam przekazywał ją HumanPlayerom.
- \item AIPlayer - klasa dziedzicząca po Player odpowiedzialna za komunikację z AI po stdin/stdout
- \item(Bonus, do zrealizowania pewnie po terminie projektu) NetworkPlayer - gracz sieciowy zaimplementowany za pomocą socketów TCP/IP.
- \item możliwe jest jeszcze dodanie klasy AIHintPlayer, lub czegoś podobnego, służącej do generowania podpowiedzi dla gracza - nie udało mi się
- jednoznacznie rozstrzygnąć czy taka klasa będzie potrzebna
+ \item \verb|MainWindow| - dziedziczące po \verb|QMainWindow| główne okno aplikacji. Zajmuje się konstrukcją siebie i widocznych komponentów, 
+ podpięciem najważniejszych sygnałów itp. Wszystko co związane z GUI i częściowo z jego zachowaniem. Widgetem służącym do wyświetlania gry będzie
+ \verb|QGraphicsView|.
+ \item \verb|GraphicsScene| - klasa dziedzicząca po \verb|QGraphicsScene| z przedefiniowanymi metodami do obsługi inputu. Będzie podawana do 
+ \verb|QGraphicsView| jako aktywna scena. 
+ \item \verb|GraphicsBackgroundTile| - klasa dziedziczącą po jednym z \verb|QGraphicsItem| (prawdopodobnie \verb|QGraphicsPixmapItem|, ale 
+ poważnie zastanawiam się nad \verb|QGraphicsSVGItem|). Reprezentuje pojedynczy klocek z tła planszy (klocków jest razem 49). Istnienie tej klasy
+ argumentuję wygodną możliwością wyłapywania i obsługiwania kliknięć na puste pola (np. rysowania jakichś rzeczy na planszy, podświetlenia pól
+ itd.).
+ \item \verb|GraphicsPlayerTile| - analogiczna do \verb|GraphicsBackgroundTile| klasa reprezentująca pionek gracza (z piłką lub bez).
+ \item \verb|GameHandler| (\verb|Singleton| i/lub \verb|QObject|) - serce aplikacji. Jej odpowiedzialnością będzie zajmowanie się całą logiką
+ aplikacji (nie mylić z logiką gry!). Będzie zawierać jako prywatny atrybut obiekt klasy \verb|Game|, na podstawie którego będzie w stanie 
+ walidować i wykonywać ruchy otrzymywane od graczy oraz ustawiać nową grę i realizować od strony logiki wszystkie funkcjonalności założone
+ w projekcie.
+ \item \verb|Player| - abstrakcyjna klasa reprezentująca gracza. Jako, że potrzebne będzie wiele rodzajów graczy, komunikujących się z 
+ aplikacją na zupełnie różne sposoby, \verb|GameHandler| będzie posiadać 2 wskaźniki typu \verb|Player|, pod które mogą być podpięte dowolne
+ obiekty klas dziedziczących po oraz implementujących odpowiednie metody z klasy \verb|Player|. Na chwilę obecną, zarys jest następujący: klasa
+ \verb|Player| ma zadeklarowane (\verb|virtual|) metody \verb|bool isMoveReady()| oraz \verb|Move getMove()| i \verb|void setMove()|. 
+ Planuję korzystając z mechanizmu wątków uruchamiać playerów w osobnych wątkach i pozwalać im na swoje sposoby realizować komunikację 
+ (np. \verb|HumanPlayer| miałby sloty do których podłączone byłyby sygnały od \verb|GraphicsScene| oraz itemów, klasa odpowiedzialna za sztuczną
+ inteligencję miałaby metody służące do komunikacji przez \verb|stdin/stdout| z botem itd.). Playerzy byliby w \verb|QTimerze| odpytywani o 
+ istnienie nowych ruchów i ruchy te przekazywane byłyby do \verb|GameHandlera|, odpowiedzialnego za ich wykonanie.
+ \item \verb|HumanPlayer| - wcześniej wspomniana planowana dziedzicząca po \verb|Player| klasa reprezentująca człowieka grającego w grę. 
+ Dotychczasowym pomysłem jest, jako że gracz posiada stałą liczbę pionków, będących przez całą grę tymi samymi obiektami klasy 
+ \verb|GraphicsPlayerTile|, aby podpinać eventy kliknięć na pionki gracza pod odpowiedni obiekt \verb|HumanPlayer| reprezentujący gracza 
+ (na starcie gry). Jeśli chodzi o pola puste to najlepszą w tej chwili koncepcją jest podpiąć je pod \verb|GameHandlera| i pozwolić mu na 
+ stwierdzenie do którego gracza odnosi się kliknięcie na pole LUB zaimplementowanie \verb|GraphicsBackgroundTile| tak, aby odpytywał o tę
+ informację \verb|GameHandlera| i sam przekazywał ją \verb|HumanPlayerom|. 
+ \item \verb|AIPlayer| - klasa dziedzicząca po \verb|Player| odpowiedzialna za komunikację z botem po \verb|stdin/stdout|. Reprezentuje komputer
+ grający jakimś algorytmem sztucznej inteligencji.
+ \item(Bonus, do zrealizowania pewnie po terminie projektu) \verb|NetworkPlayer| - gracz sieciowy zaimplementowany za pomocą socketów 
+ \verb|TCP/IP|.
+ \item możliwe jest jeszcze dodanie klasy \verb|AIHintPlayer|, lub czegoś podobnego, służącej do generowania podpowiedzi dla gracza - 
+ nie udało mi się jednoznacznie rozstrzygnąć czy taka klasa będzie potrzebna. Jednak, jeśli osobna klasa do tego miałaby powstać - dziedziczyłaby
+ po \verb|Playerze| i komunikacja z nią odbywałaby się podobnie.
 \end{itemize}
-Jak widać, jedynym połączeniem między warstwą aplikacji/GUI a czystą logiką gry jest istnienie atrybutu typu Game w GameHandlerze. Jako że Game
-dostarcza pewną wartwę abstrakcji od leżących niżej mocno technicznych rozwiązań związanych z planszą, grą itd., widać że osiągnięty będzie dosyć
-sensowny rozdział poszczególnych fragmentów programu, co było jednym z głównych założeń po doświadczeniach autora z ``Przesuwanką''.
+Jak widać, jedynym połączeniem między warstwą aplikacji/GUI a czystą logiką gry jest istnienie atrybutu typu \verb|Game| w \verb|GameHandlerze|. 
+Jako że Game dostarcza pewną wartwę abstrakcji od leżących niżej mocno technicznych rozwiązań związanych z planszą, grą itd., widać że osiągnięty 
+będzie dosyć sensowny rozdział poszczególnych fragmentów programu, co było jednym z głównych założeń po doświadczeniach autora z ``Przesuwanką''.
 
-Z rzeczy niewymienionych wyżej, w aplikacji, do obsługi stanów mam zamiar skorzystać z mechanizmu grafu stanów z Qt (QState, QStateMachine). 
+Z rzeczy niewymienionych wyżej, w aplikacji, do obsługi stanów mam zamiar skorzystać z mechanizmu grafu stanów z Qt (
+\href{http://qt-project.org/doc/qt-4.8/qstate.html}{QState}, \href{http://qt-project.org/doc/qt-4.8/qstatemachine.html}{QStateMachine}). 
 \section{Zapis gry i ustawienia}
-Wszystkie dane gry tworzone na maszynie, na której aplikacja jest uruchamiana, będą trzymane w $\sim$/.diaballik. W tej chwili w tym katalogu
-planowane są: plik config.ini z ustawieniami aplikacji (wszystko co przyjdzie do głowy programiście podczas pisania, co możnaby regulować 
-ustawieniami) oraz folder saves zawierający pliki *.sav - pliki zapisu stanu gry.
+Wszystkie dane gry tworzone na maszynie, na której aplikacja jest uruchamiana, będą trzymane w $\sim$\verb|/.diaballik|. W tej chwili w tym
+katalogu planowane są: plik \verb|config.ini| z ustawieniami aplikacji (wszystko co przyjdzie do głowy programiście podczas pisania, co możnaby
+regulować ustawieniami), folder \verb|bots|, zawierający osobne foldery dla każdego bota (zawierające binarkę i wspomniany plik konfiguracyjny, 
+ale też dowolne pliki wykorzystywane przez bota) oraz folder \verb|saves| zawierający pliki \verb|*.sav| - pliki zapisu stanu gry.
 
-Format poprawnego pliku *.sav jest następujący: 
-\[DIABSAVE<p><b><g><h>\]
-Gdzie: $<p><b><g>$ to kolejno informacje takie jak w komendzie new\_game z GTP-E, tylko zapisane binarnie i bez spacji; współrzędne przetłumaczone z [a-g][1-7]
-do [0-6][0-6], 3 bity na każdą wspołrzędną. $<g>$ zapisywane bedzie za pomocą 1 bitu - 0 oznaczać będzie gracza białego, a 1 czarnego.
+Format poprawnego pliku \verb|*.sav| jest następujący: 
+\begin{verbatim}
+ DIABSAVE<p><b><g><h>
+\end{verbatim}
+Gdzie: \verb|<p><b><g>| to kolejno informacje takie jak w komendzie new\_game z GTP-E, tylko zapisane binarnie i bez spacji; współrzędne przetłumaczone
+z \verb|[a-g][1-7]| do \verb|[0-6][0-6]|, 3 bity na każdą wspołrzędną. \verb|<g>| zapisywane bedzie za pomocą 1 bitu - 0 oznaczać będzie gracza
+białego, a 1 czarnego.
 
-$<h>$ to historia ruchów. Jako, że ruch jest sciśle zależny od gracza, a aktualnego gracza znamy już poprzednich danych, informacji o aktywnym 
+\verb|<h>| to historia ruchów. Jako, że ruch jest sciśle zależny od gracza, a aktualnego gracza znamy już poprzednich danych, informacji o aktywnym 
 w danym momencie gry graczu nie będzie w historii ruchów. Ruch jest parą punktów - skąd dokąd (rozróżnieniem typu ruchu zajmuje się logika gry).
 Punkty będą zapisywane w taki sam sposób jak powyżej (binarnie) bez odstępów. Aby oddzielić koniec kolejki jednego gracza od początku kolejki 
 kolejnego, wstawiane będą 3 zapalone bity, jako że wartość 7 nie jest poprawną współrzędną. Ruchy będą w kolejności od początku gry do stanu 
@@ -183,5 +198,11 @@ obecnego.
 Przy przyjętym tutaj modelu nic nie stoi na przeszkodzie, żeby zapisywać niedokończony (niezaakceptowany jeszcze przez gracza) ruch, jako że można
 założyć wymaganie iż ruch jest skończony, jeśli stoi za nim sekwencja 3 zapalonych bitów (co z przyjętych założeń i tak jest spełnione dla wszystkich
 ruchów poza ostatnim więc dodanie 3 bitów na końcu pliku jest bardzo małym kosztem za dużą dodatkową funkcjonalność).
+
+\section{Odnośniki}
+Wszystkie 3 projekty w aktualnej wersji można obejrzeć (i forkować, komentować itd.) na moich repozytoriach na githubie:\linebreak
+\url{https://github.com/Tommalla/DiaballikEngine}\linebreak 
+\url{https://github.com/Tommalla/DiaballikBot}\linebreak
+\url{https://github.com/Tommalla/Diaballik}
 
 \end{document}
