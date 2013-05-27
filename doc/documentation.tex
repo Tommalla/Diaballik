@@ -61,8 +61,52 @@ planszy oraz podań piłki między ludzikami
 \section{Założenia}
 Brałem udział w wydziałowym konkursie na SI do Diaballika. Wiedząc jednak że nie mogę mieć pewności, iż na owym konkursie ugram sobie ocenę/bonusa,
 chciałem bota napisać w jak najbardziej przenoszalny sposób. Stąd pomysł na podział całości na 3 niezależne projekty: DiaballikEngine, DiaballikBot
-oraz Diaballik. Kolejno są to: silnik do gry - obsługuje całą logikę gry, zawiera wszystkie klasy potrzebne do przeprowadzenia rozgrywki całkowicie
-niezależnej od UI - z punktu widzenia silnika może on być nawet używany jako serwer do gier i nic nie stoi temu na przeszkodzie. DiaballikBot, to jak
-nazwa wskazuje, bot do grania w Diaballika. Mam przygotowane 2 wersje bazujące na silniku (jako 2 gałęzi drzewa git, obie korzystają z silnika jako
-sumbodułu).
+oraz Diaballik. 
+
+Kolejno są to: silnik do gry - obsługuje całą logikę gry, zawiera wszystkie klasy potrzebne do przeprowadzenia rozgrywki całkowicie
+niezależnej od UI - z punktu widzenia silnika może on być nawet używany jako serwer do gier i nic nie stoi temu na przeszkodzie. 
+
+DiaballikBot, to jak nazwa wskazuje, bot do grania w Diaballika. Mam przygotowane 2 wersje bazujące na silniku (jako 2 gałęzi drzewa git, obie 
+korzystają z silnika jako sumbodułu). Pierwsza wersja (v0.1 aka NullAI) była de facto testem sprawności silnika grającym kompletnie losowo. 
+Druga wersja (obecnie v0.2.4 aka MCTSAI) to sztuczna inteligencja oparta o MCTS z losowymi rozgrywkami z pewnymi heurystycznymi usprawnieniami 
+wydajności oraz jakości partii.
+
+Diaballik to gra z GUI wymagana jako końcowy projekt. Będzie korzystała z silnika do realizacji mechaniki gry, z Qt do GUI (i nie tylko) oraz będzie
+obsługiwać boty (i prawdopodobnie posiadać wbudowaną okrojoną wersję jakiegoś bota do podawania hintów).
+
+\section{Klasy i podział obowiązków}
+\subsection*{DiaballikEngine}
+Projekt zawiera następujące klasy z następującym podziałem obowiązków:
+\begin{itemize}
+ \item Point - prosta klasa na punkt 2D, przydatny w wielu przypadkach,
+ \item Move - prosta klasa, właściwie mogłaby być zastąpiona std::pair. Jako para punktów pełni rolę wygodnej struktury do przekazywania informacji
+ o ruchu - skąd dokąd.
+ \item BitContainer - zaimplementowana na vector<uchar8_t> klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
+ Używana do efektywnego pamięciowo przechowywania planszy.
+ \item Board - klasa służąca jako opakowanie wokół BitContainera - logicznie reprezentuje planszę i udostępnia wiele operacji na planszy - 
+ przesuwanie pionka po współrzędnych, szukanie różnego rodzaju własności ustawień na planszy itd. BitContainer działa jak tablica jednowymiarowa, więc
+ Board tłumaczy punkty na jednowymiarowe współrzędne i odwrotnie.
+ \item Game - nadrzędna klasa, której programista powinien końcowo używać. Zawiera obiekt Board do przechowywania planszy, podczas wykonywania
+ operacji na planszy sprawdza ich zgodność z zasadami gry, ustala zwycięzców, większość możliwych do wykrycia remisów itd. Posiada wiele funkcji
+ zwracających informacje o ustawieniach pionków na planszy.
+\end{itemize}
+Cały projekt zaimplementowany jest z myślą o przenośności i optymalnym zarządzaniu głównie pamięcią, zaraz potem czasem. Podyktowane to było jego
+planowanym użyciem do pisania bota, mającego działać w mocno kontrolowanym środowisku ze skończonymi zasobami.
+Pionki na planszy oraz gracze i typy ruchów są reprezentowane przez enumy (kolejno: FieldType, GamePlayer, MoveType).
+
+\subsection*{DiaballikBot}
+Bot był zbudowany na silniku, więc dużo nie trzeba było dopisywać:
+\begin{itemize}
+ \item CommunicationHandler - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji z wejściem/wyjściem
+ związanych
+ \item GTPParser - Singleton służący do parsowania komunikatów do SI w protkole GTP. Uwaga, docelowo boty obsługiwane przez grę będą musiały
+ obsługiwać rozszerzony protokół, co zostanie w parserze uwzględnione. Parser pamięta wskaźnik na obiekt AI.
+ \item AI - abstrakcyjna klasa zapewniająca częściową implementację metod play i gen_move odpowiadających takim samym poleceniom w GTP. Implementacja
+ zawarta w AI zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie Game game oraz rozróżnianiem, który gracz to AI.
+ \item MCTSAI, NullAI - klasy dziedziczące po AI. Każda klasa implementuje swój własny model sztucznej inteligencji. Widać, że bardzo łatwo można
+ dopisać nowe strategie tworząc jedynie klasę dziedziczącą po AI i przedefiniowywując część metod.
+\end{itemize}
+
+\subsection*{}
+
 \end{document}
