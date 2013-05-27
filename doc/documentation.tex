@@ -3,6 +3,7 @@
 \usepackage{polski}
 \usepackage[vmargin=2cm]{geometry}
 \usepackage{amsmath}
+\usepackage{textcomp}
 
 %opening
 \title{Diaballik - dokumentacja projektu}
@@ -12,46 +13,48 @@
 
 \maketitle
 
-\begin{abstract}
-\section{Wstęp}
-Skrótowo o tym dokumencie
-\section{Planowana funkcjonalność}
-Przeklejka z módla + to co bym chciał potem
-\section{Założenia}
-Podział na 3 projekty
-\section{Klasy i odpowiedzialności}
-\subsection{DiaballikEngine}
-\subsection{DiaballikBot, GTP-E}
-\subsubsection{NullAI}
-\subsubsection{MCTSAI}
-\subsection{Diaballik}
-\section{Zapis gry i ustawienia}
-\end{abstract}
+\setcounter{tocdepth}{2}
+
+\tableofcontents
+% \section{Wstęp}
+% Skrótowo o tym dokumencie
+% \section{Planowana funkcjonalność}
+% Przeklejka z módla + to co bym chciał potem
+% \section{Założenia}
+% Podział na 3 projekty
+% \section{Klasy i odpowiedzialności}
+% \subsection{DiaballikEngine}
+% \subsection{DiaballikBot, GTP-E}
+% \subsubsection{NullAI}
+% \subsubsection{MCTSAI}
+% \subsection{Diaballik}
+% \section{Zapis gry i ustawienia}
 
 \setcounter{section}{0}
+\pagebreak
 
 \section{Wstęp}
 Niniejsza dokumentacja podzielona jest na kilka głównych części - krótki wstęp (obecnie czytany fragment), krótki opis planowanej funkcjonalności 
 (dosyć mocno pokrywający się z opisem z moodle'a + kilka moich pomysłów) i założenia projektowe, w których niejako tłumaczę się z kolejnej sekcji -
 opisu klas i podziału odpowiedzialności. Na deser kilka mniej ważnych technikaliów jak format zapisu plików ze stanem gry oraz prawdopodobne pliki
-konfiguracyjne
+konfiguracyjne.
 
 \section{Planowana funkcjonalność}
 Moodle:
 \begin{itemize}
 \item program umożliwiający grę w Diaballika w opcjach człowiek vs człowiek, komputer vs człowiek i komputer vs komputer
-\item wygodne ui umożliwiające sensowne podawanie ruchów i dosyć wygodną oraz intuicyjną obsługę
+\item wygodne UI umożliwiające sensowne podawanie ruchów i dosyć wygodną oraz intuicyjną obsługę
 \item ``nietrywialna'' inteligencja komputera - główny moduł SI oparty o MCTS
 \item możliwość uzyskania podpowiedzi od komputera
 \item swobone cofanie i przewijanie do przodu po historii ruchów
-\item edytor stanu gry pozwalający kompletnie (zgodnie z zasadami) zmienić stan gry włącznie z aktywnym graczem
+\item edytor stanu gry pozwalający kompletnie (jednak zgodnie z zasadami) zmienić stan gry włącznie z aktywnym graczem
 \item możliwość zapisu/wczytania gry
 \end{itemize}
 Pomysły własne:
 \begin{itemize}
 \item zamiast posiadać na trwałe wrzuconą w projekt sztuczną inteligencję, chcę aby mój program pozwalał na podpinanie dowolnego bota napisanego
 zgodnie z rozszerzonym protokołem GTP (z wydziałowego konkursu na bota), który skrótowo opiszę w sekcji 3.
-\item chciałbym (prawodpodobnie dopiero podczas jakichś własnych prób rozwijania projektu po terminie oddania w wolnym czasie) udostępnić możliwość
+\item chciałbym (prawodpodobnie dopiero podczas jakichś własnych prób rozwijania projektu  w wolnym czasie, po terminie oddania) udostępnić możliwość
 gry po sieci. Nie planuję tej funkcjonalności w wersji, którą oddam na czerwcowy termin, ale nadmieniam to aby usprawiedliwić pewne dalsze decyzje 
 projektowe.
 \item z podobnego powodu i w podobnym kontekście podaję intencję posiadania zamiast pionków jakichś bardziej skomplikowanych animacji ``ludzików'' na
@@ -69,19 +72,19 @@ niezależnej od UI - z punktu widzenia silnika może on być nawet używany jak
 DiaballikBot, to jak nazwa wskazuje, bot do grania w Diaballika. Mam przygotowane 2 wersje bazujące na silniku (jako 2 gałęzi drzewa git, obie 
 korzystają z silnika jako sumbodułu). Pierwsza wersja (v0.1 aka NullAI) była de facto testem sprawności silnika grającym kompletnie losowo. 
 Druga wersja (obecnie v0.2.4 aka MCTSAI) to sztuczna inteligencja oparta o MCTS z losowymi rozgrywkami z pewnymi heurystycznymi usprawnieniami 
-wydajności oraz jakości partii.
+wydajności oraz jakości partii. Obie wersje będą dostępne jako przeciwnicy w grze.
 
 Diaballik to gra z GUI wymagana jako końcowy projekt. Będzie korzystała z silnika do realizacji mechaniki gry, z Qt do GUI (i nie tylko) oraz będzie
 obsługiwać boty (i prawdopodobnie posiadać wbudowaną okrojoną wersję jakiegoś bota do podawania hintów).
 
 \section{Klasy i podział obowiązków}
-\subsection*{DiaballikEngine}
+\subsection{DiaballikEngine}
 Projekt zawiera następujące klasy z następującym podziałem obowiązków:
 \begin{itemize}
  \item Point - prosta klasa na punkt 2D, przydatny w wielu przypadkach,
  \item Move - prosta klasa, właściwie mogłaby być zastąpiona std::pair. Jako para punktów pełni rolę wygodnej struktury do przekazywania informacji
  o ruchu - skąd dokąd.
- \item BitContainer - zaimplementowana na vector$<uchar8\_t>$ klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
+ \item BitContainer - zaimplementowana na vector$<uint8\_t>$ klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
  Używana do efektywnego pamięciowo przechowywania planszy.
  \item Board - klasa służąca jako opakowanie wokół BitContainera - logicznie reprezentuje planszę i udostępnia wiele operacji na planszy - 
  przesuwanie pionka po współrzędnych, szukanie różnego rodzaju własności ustawień na planszy itd. BitContainer działa jak tablica jednowymiarowa, więc
@@ -93,8 +96,9 @@ Projekt zawiera następujące klasy z następującym podziałem obowiązków:
 Cały projekt zaimplementowany jest z myślą o przenośności i optymalnym zarządzaniu głównie pamięcią, zaraz potem czasem. Podyktowane to było jego
 planowanym użyciem do pisania bota, mającego działać w mocno kontrolowanym środowisku ze skończonymi zasobami.
 Pionki na planszy oraz gracze i typy ruchów są reprezentowane przez enumy (kolejno: FieldType, GamePlayer, MoveType).
+Projekt posiada własny system budowania na CMake i jest kompilowany do statycznej biblioteki.
 
-\subsection*{DiaballikBot, GTP-E}
+\subsection{DiaballikBot, GTP-E}
 Bot był zbudowany na silniku, więc dużo nie trzeba było dopisywać:
 \begin{itemize}
  \item CommunicationHandler - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji związanych z 
@@ -102,7 +106,7 @@ Bot był zbudowany na silniku, więc dużo nie trzeba było dopisywać:
  \item GTPParser - Singleton służący do parsowania komunikatów do SI w protkole GTP. Uwaga, docelowo boty obsługiwane przez grę będą musiały
  obsługiwać rozszerzony protokół, co zostanie w parserze uwzględnione. Parser pamięta wskaźnik na obiekt AI.
  \item AI - abstrakcyjna klasa zapewniająca częściową implementację metod play i gen\_move odpowiadających takim samym poleceniom w GTP. Implementacja
- zawarta w AI zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie Game game oraz rozróżnianiem, który gracz to AI.
+ zawarta w AI zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie game (obiekcie klasy Game z silnika) oraz rozróżnianiem, który gracz to AI.
  \item MCTSAI, NullAI - klasy dziedziczące po AI. Każda klasa implementuje swój własny model sztucznej inteligencji. Widać, że bardzo łatwo można
  dopisać nowe strategie tworząc jedynie klasę dziedziczącą po AI i przedefiniowywując część metod.
 \end{itemize}
@@ -113,14 +117,71 @@ protokołu. Jeśli tak - gra pozwalałaby cofać ruchy i edytować planszę. Je�
 Samo rozszerzenie protokołu zawiera 2 nowe polecenia:
 \[undo\_move ~ <g>\]
 Wysyłane do obydwu graczy, mówiące że ostatni ruch gracza o kolorze pionka $<g>$ (opis zgodny ze stroną turnieju - $<g>$ to opis koloru gracza, w 
-praktyce 'b' lub 'w'), ma zostać cofnięty.
+praktyce 'b' lub 'w' od 'black' oraz 'white'), ma zostać cofnięty.
 \[new\_game ~ <p> ~ <b>  ~ <g>\]
 Gdzie $<p>$ to opis pól zajętych przez pionki kolejno gracza czarnego i białego podany w formacie zgodnym z $<r>$ z oryginalnego protokołu (ciąg
 nieoddzielonych białymi znakami wspórzędnych pól postaci [a-g][1-7]). W tym samym formacie jest $<b>$ - wskazuje zawsze 2 pola na których jest kolejno
 piłka gracza czarnego i białego. $<g>$ informuje, który gracz ma teraz wykonać ruch. Np. ustawienie takie jak na początku gry (gracze ustawieni w
-liniach po dwóch stronach planszy, czarny na górze, zaczyna biały) byłoby wywoływane poleceniem:
+liniach po przeciwnych stronach planszy, czarny na górze, zaczyna biały) byłoby wywoływane poleceniem:
 \[new\_game ~ a7b7c7e7f7g7a1b1c1e1f1g1 ~ d7d1 ~ w\]
 Zmieniony protokół otrzymał autorską, roboczą nazwę GTP-E (GTP-Extended).
-\subsection*{}
+
+\subsection{Diaballik}
+W tej, najważniejszej w tym dokumencie, części projektu chcę trzymać się bardzo ważnego moim zdaniem założenia o rozdzieleniu Qt od reszty aplikacji.
+Z tego powodu wprowadzam dosyć wyraźny podział między klasami korzystającymi/dziedziczącymi po czymś z Qt i tymi całkiem niezależnymi. Podział ten
+naturalnie wyznacza mi biblioteka DiaballikEngine - używam jej jako silnika gry kompletnie niezwiązanego z warstwą GUI. Pozostałe klasy:
+\begin{itemize}
+ \item Main Window - dziedziczące po QMainWindow główne okno aplikacji. Zajmuje się konstrukcją siebie i widocznych komponentów, podpięciem 
+ najważniejszych sygnałów itp. Wszystko co związane z GUI i częściowo z jego zachowaniem. Widgetem służącym do wyświetlania gry będzie QGraphicsView.
+ \item GraphicsScene - klasa dziedzicząca po QGraphicsScene z przedefiniowanymi metodami do obsługi inputu. Będzie podawana do QGraphicsView jako
+ aktywna scena. 
+ \item GraphicsBackgroundTile - klasa dziedziczącą po jednym z QGraphicsItem (prawdopodobnie QGraphicsPixmapItem, ale poważnie zastanawiam się nad
+ QGraphicsSVGItem). Reprezentuje pojedynczy klocek z tła planszy (klocków jest razem 49). Istnienie tej klasy argumentuję wygodną możliwością 
+ wyłapywania i obsługiwania kliknięć na puste pola (np. rysowania jakichś rzeczy na planszy, podświetlenia pól itd.).
+ \item GraphicsPlayerTile - analogiczna do GraphicsBackgroundTile klasa reprezentująca pionek gracza (z piłką lub bez).
+ \item GameHandler (Singleton i/lub QObject) - serce aplikacji. Jej odpowiedzialnością będzie zajmowanie się całą logiką aplikacji (nie mylić z 
+ logiką gry!). Będzie zawierać jako prywatny atrybut obiekt klasy Game, na podstawie którego będzie w stanie walidować i wykonywać ruchy 
+ otrzymywane od graczy oraz ustawiać nową grę i realizować od strony logiki wszystkie funkcjonalności założone w projekcie.
+ \item Player - abstrakcyjna klasa reprezentująca gracza. Jako, że potrzebne będzie wiele rodzajów graczy, komunikujących się z aplikacją na zupełnie
+ różne sposoby, GameHandler będzie posiadać 2 wskaźniki typu Player, pod które mogą być podpięte dowolne obiekty klas dziedziczących, implementujących
+ odpowiednie metody z klasy Player. Na chwilę obecną, zarys jest następujący: klasa player ma zadeklarowane (pure virtual) metody $bool ~ isMoveReady()$
+ oraz $Move getMove()$ i $void setMove()$. Planuję korzystając z mechanizmu wątków uruchamiać playerów w osobnych wątkach i pozwalać im na swoje
+ sposoby realizować komunikację (np. HumanPlayer miałby sloty do których podłączone byłyby sygnały od GraphicsScene oraz itemów, klasa odpowiedzialna
+ za sztuczną inteligencję miałaby metody służące do komunikacji przez stdin/stdout z botem itd.). Playerzy byliby w QTimerze odpytywani o istnienie
+ nowych ruchów i ruchy te przekazywane byłyby do GameHandlera, odpowiedzialnego za ich wykonanie.
+ \item HumanPlayer - wcześniej wspomniana planowana dziedzicząca po Player klasa reprezentująca człowieka grającego w grę. Dotychczasowym pomysłem jest,
+ jako że gracz posiada stałą liczbę pionków, będących przez całą grę tymi samymi obiektami klasy GraphicsPlayerTile, aby podpinać eventy kliknięć
+ na pionki gracza, pod gracza (na starcie gry). Jeśli chodzi o pola puste to najlepszą w tej chwili koncepcją jest podpiąć je pod GameHandlera i
+ pozwolić mu na stwierdzenie do którego gracza odnosi się kliknięcie na pole LUB zaimplementowanie GraphicsBackgroundTile tak, aby odpytywał o tę
+ informację GameHandlera i sam przekazywał ją HumanPlayerom.
+ \item AIPlayer - klasa dziedzicząca po Player odpowiedzialna za komunikację z AI po stdin/stdout
+ \item(Bonus, do zrealizowania pewnie po terminie projektu) NetworkPlayer - gracz sieciowy zaimplementowany za pomocą socketów TCP/IP.
+ \item możliwe jest jeszcze dodanie klasy AIHintPlayer, lub czegoś podobnego, służącej do generowania podpowiedzi dla gracza - nie udało mi się
+ jednoznacznie rozstrzygnąć czy taka klasa będzie potrzebna
+\end{itemize}
+Jak widać, jedynym połączeniem między warstwą aplikacji/GUI a czystą logiką gry jest istnienie atrybutu typu Game w GameHandlerze. Jako że Game
+dostarcza pewną wartwę abstrakcji od leżących niżej mocno technicznych rozwiązań związanych z planszą, grą itd., widać że osiągnięty będzie dosyć
+sensowny rozdział poszczególnych fragmentów programu, co było jednym z głównych założeń po doświadczeniach autora z ``Przesuwanką''.
+
+Z rzeczy niewymienionych wyżej, w aplikacji, do obsługi stanów mam zamiar skorzystać z mechanizmu grafu stanów z Qt (QState, QStateMachine). 
+\section{Zapis gry i ustawienia}
+Wszystkie dane gry tworzone na maszynie, na której aplikacja jest uruchamiana, będą trzymane w $\sim$/.diaballik. W tej chwili w tym katalogu
+planowane są: plik config.ini z ustawieniami aplikacji (wszystko co przyjdzie do głowy programiście podczas pisania, co możnaby regulować 
+ustawieniami) oraz folder saves zawierający pliki *.sav - pliki zapisu stanu gry.
+
+Format poprawnego pliku *.sav jest następujący: 
+\[DIABSAVE<p><b><g><h>\]
+Gdzie: $<p><b><g>$ to kolejno informacje takie jak w komendzie new\_game z GTP-E, tylko zapisane binarnie i bez spacji; współrzędne przetłumaczone z [a-g][1-7]
+do [0-6][0-6], 3 bity na każdą wspołrzędną. $<g>$ zapisywane bedzie za pomocą 1 bitu - 0 oznaczać będzie gracza białego, a 1 czarnego.
+
+$<h>$ to historia ruchów. Jako, że ruch jest sciśle zależny od gracza, a aktualnego gracza znamy już poprzednich danych, informacji o aktywnym 
+w danym momencie gry graczu nie będzie w historii ruchów. Ruch jest parą punktów - skąd dokąd (rozróżnieniem typu ruchu zajmuje się logika gry).
+Punkty będą zapisywane w taki sam sposób jak powyżej (binarnie) bez odstępów. Aby oddzielić koniec kolejki jednego gracza od początku kolejki 
+kolejnego, wstawiane będą 3 zapalone bity, jako że wartość 7 nie jest poprawną współrzędną. Ruchy będą w kolejności od początku gry do stanu 
+obecnego.
+
+Przy przyjętym tutaj modelu nic nie stoi na przeszkodzie, żeby zapisywać niedokończony (niezaakceptowany jeszcze przez gracza) ruch, jako że można
+założyć wymaganie iż ruch jest skończony, jeśli stoi za nim sekwencja 3 zapalonych bitów (co z przyjętych założeń i tak jest spełnione dla wszystkich
+ruchów poza ostatnim więc dodanie 3 bitów na końcu pliku jest bardzo małym kosztem za dużą dodatkową funkcjonalność).
 
 \end{document}
