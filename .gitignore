@@ -1,3 +1,6 @@
 .gitignore
 *.kdev4
 build/
+*.aux
+*.log
+*.backup

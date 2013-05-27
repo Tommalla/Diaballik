@@ -81,7 +81,7 @@ Projekt zawiera następujące klasy z następującym podziałem obowiązków:
  \item Point - prosta klasa na punkt 2D, przydatny w wielu przypadkach,
  \item Move - prosta klasa, właściwie mogłaby być zastąpiona std::pair. Jako para punktów pełni rolę wygodnej struktury do przekazywania informacji
  o ruchu - skąd dokąd.
- \item BitContainer - zaimplementowana na vector<uchar8_t> klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
+ \item BitContainer - zaimplementowana na vector$<uchar8\_t>$ klasa przechowująca inty w skompresowanej postaci i dająca proste metody dostępu do nich.
  Używana do efektywnego pamięciowo przechowywania planszy.
  \item Board - klasa służąca jako opakowanie wokół BitContainera - logicznie reprezentuje planszę i udostępnia wiele operacji na planszy - 
  przesuwanie pionka po współrzędnych, szukanie różnego rodzaju własności ustawień na planszy itd. BitContainer działa jak tablica jednowymiarowa, więc
@@ -94,19 +94,33 @@ Cały projekt zaimplementowany jest z myślą o przenośności i optymalnym zar
 planowanym użyciem do pisania bota, mającego działać w mocno kontrolowanym środowisku ze skończonymi zasobami.
 Pionki na planszy oraz gracze i typy ruchów są reprezentowane przez enumy (kolejno: FieldType, GamePlayer, MoveType).
 
-\subsection*{DiaballikBot}
+\subsection*{DiaballikBot, GTP-E}
 Bot był zbudowany na silniku, więc dużo nie trzeba było dopisywać:
 \begin{itemize}
- \item CommunicationHandler - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji z wejściem/wyjściem
- związanych
+ \item CommunicationHandler - Singleton opakowywujący standardowe wejście i udostępniajacy kilka dodatkowych prostych funkcji związanych z 
+ wejściem/wyjściem
  \item GTPParser - Singleton służący do parsowania komunikatów do SI w protkole GTP. Uwaga, docelowo boty obsługiwane przez grę będą musiały
  obsługiwać rozszerzony protokół, co zostanie w parserze uwzględnione. Parser pamięta wskaźnik na obiekt AI.
- \item AI - abstrakcyjna klasa zapewniająca częściową implementację metod play i gen_move odpowiadających takim samym poleceniom w GTP. Implementacja
+ \item AI - abstrakcyjna klasa zapewniająca częściową implementację metod play i gen\_move odpowiadających takim samym poleceniom w GTP. Implementacja
  zawarta w AI zajmuje się tylko rejestrowaniem ruchów w chronionym atrybucie Game game oraz rozróżnianiem, który gracz to AI.
  \item MCTSAI, NullAI - klasy dziedziczące po AI. Każda klasa implementuje swój własny model sztucznej inteligencji. Widać, że bardzo łatwo można
  dopisać nowe strategie tworząc jedynie klasę dziedziczącą po AI i przedefiniowywując część metod.
 \end{itemize}
+Aby móc obsługiwać cofanie gry oraz edycję planszy, boty w komunikacji muszą implementować rozszerzoną wersję protokołu GTP z turnieju. Idea jest
+taka, że każdy bot miałby plik konfiguracyjny w swoim katalogu czytany przez grę, zawierający m.in. flagę informującą czy bot umie używać rozszerzonego
+protokołu. Jeśli tak - gra pozwalałaby cofać ruchy i edytować planszę. Jeśli nie, dostępna byłaby tylko standardowa gra.
 
+Samo rozszerzenie protokołu zawiera 2 nowe polecenia:
+\[undo\_move ~ <g>\]
+Wysyłane do obydwu graczy, mówiące że ostatni ruch gracza o kolorze pionka $<g>$ (opis zgodny ze stroną turnieju - $<g>$ to opis koloru gracza, w 
+praktyce 'b' lub 'w'), ma zostać cofnięty.
+\[new\_game ~ <p> ~ <b>  ~ <g>\]
+Gdzie $<p>$ to opis pól zajętych przez pionki kolejno gracza czarnego i białego podany w formacie zgodnym z $<r>$ z oryginalnego protokołu (ciąg
+nieoddzielonych białymi znakami wspórzędnych pól postaci [a-g][1-7]). W tym samym formacie jest $<b>$ - wskazuje zawsze 2 pola na których jest kolejno
+piłka gracza czarnego i białego. $<g>$ informuje, który gracz ma teraz wykonać ruch. Np. ustawienie takie jak na początku gry (gracze ustawieni w
+liniach po dwóch stronach planszy, czarny na górze, zaczyna biały) byłoby wywoływane poleceniem:
+\[new\_game ~ a7b7c7e7f7g7a1b1c1e1f1g1 ~ d7d1 ~ w\]
+Zmieniony protokół otrzymał autorską, roboczą nazwę GTP-E (GTP-Extended).
 \subsection*{}
 
 \end{document}
