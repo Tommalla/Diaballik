@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "constants.h"
+#include "GraphicsScene.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
@@ -15,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 		   SettingsHandler::getInstance().value("windowGeometry/positionY", this->geometry().y()).toInt());
 	
 	//creating all necessary objects
-	//TODO - implement and create 'em
+	this->ui->graphicsView->setScene(new GraphicsScene());
 	
 	//connecting signals
 	QObject::connect(ui->actionZakoncz, SIGNAL(triggered()), this, SLOT(close()));
