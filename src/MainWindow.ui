@@ -232,6 +232,8 @@
      <string>Gra</string>
     </property>
     <addaction name="actionNowa"/>
+    <addaction name="actionZapisz"/>
+    <addaction name="actionWczytaj"/>
     <addaction name="actionZakoncz"/>
    </widget>
    <widget class="QMenu" name="menuNarz_dzia">
@@ -286,6 +288,16 @@
   <action name="actionAutor">
    <property name="text">
     <string>Autor</string>
+   </property>
+  </action>
+  <action name="actionZapisz">
+   <property name="text">
+    <string>Zapisz</string>
+   </property>
+  </action>
+  <action name="actionWczytaj">
+   <property name="text">
+    <string>Wczytaj</string>
    </property>
   </action>
  </widget>
