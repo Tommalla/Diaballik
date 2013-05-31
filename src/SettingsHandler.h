@@ -9,6 +9,7 @@ All rights reserved */
 
 
 class SettingsHandler : public QSettings, public Singleton<SettingsHandler> {
+	friend class Singleton<SettingsHandler>;
 	private:
 		SettingsHandler();
 };
