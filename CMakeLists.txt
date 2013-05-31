@@ -10,6 +10,8 @@ find_package (Qt4 REQUIRED)
 include (${QT_USE_FILE})
 add_definitions (${QT_DEFINITIONS})
 
-#add_subdirectory(DiaballikEngine)
-#add_subdirectory(MCTSAI)
+#we want this version of DiaballikEngine to build first!
+add_subdirectory(DiaballikEngine)
+add_subdirectory(DiaballikBot)
+#add_subdirectory(NullAI)
 add_subdirectory (src)
