@@ -8,6 +8,10 @@ All rights reserved */
 #include "../DiaballikEngine/src/Singleton.h"
 
 
+/**
+ * @brief A Singleton<> made of QSettings
+ * All hail OOP!
+ **/
 class SettingsHandler : public QSettings, public Singleton<SettingsHandler> {
 	friend class Singleton<SettingsHandler>;
 	private:
