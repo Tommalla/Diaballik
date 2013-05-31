@@ -1,3 +1,7 @@
+set (HEADERS
+	constants.h
+)
+
 set (SOURCES
 	main.cpp
 )
