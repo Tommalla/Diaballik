@@ -1,10 +1,12 @@
 set (HEADERS
 	constants.h
+	GraphicsScene.h
 	SettingsHandler.h
 )
 
 set (SOURCES
 	main.cpp
+	GraphicsScene.cpp
 	SettingsHandler.cpp
 )
 
