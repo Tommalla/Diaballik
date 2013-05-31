@@ -1,3 +1,6 @@
+*.pdf
+*.out
+*.toc
 .gitignore
 *.kdev4
 build/
