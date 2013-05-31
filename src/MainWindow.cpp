@@ -8,7 +8,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	
 	//appearance settings - title, position, size
 	this->setWindowTitle(APP_NAME);
-	//TODO: take window position and size from settings
+	this->resize(SettingsHandler::getInstance().value("windowGeometry/width", this->geometry().width()).toInt(),
+		SettingsHandler::getInstance().value("windowGeometry/height", this->geometry().height()).toInt());
+	
+	this->move(SettingsHandler::getInstance().value("windowGeometry/positionX", this->geometry().x()).toInt(),
+		   SettingsHandler::getInstance().value("windowGeometry/positionY", this->geometry().y()).toInt());
 	
 	//creating all necessary objects
 	//TODO - implement and create 'em
@@ -18,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 }
 
 MainWindow::~MainWindow() {
-	//TODO write necessary settings to settings
+	SettingsHandler::getInstance().setValue("windowGeometry/width", this->geometry().width());
+	SettingsHandler::getInstance().setValue("windowGeometry/height", this->geometry().height());
+	SettingsHandler::getInstance().setValue("windowGeometry/positionX", this->geometry().x());
+	SettingsHandler::getInstance().setValue("windowGeometry/positionY", this->geometry().y());
+	
 	delete ui;
 }
