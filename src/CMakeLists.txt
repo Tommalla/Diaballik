@@ -1,9 +1,11 @@
 set (HEADERS
 	constants.h
+	SettingsHandler.h
 )
 
 set (SOURCES
 	main.cpp
+	SettingsHandler.cpp
 )
 
 set (GUI_HEADERS
