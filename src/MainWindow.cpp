@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	//creating all necessary objects
 	GraphicsScene* scene = new GraphicsScene();
 	this->ui->graphicsView->setScene(scene);
+	this->ui->graphicsView->setAlignment(Qt::AlignCenter);
 	StateHandler::getInstance().start(this);
 	GameHandler::getInstance().Initialize(scene);
 	
@@ -41,7 +42,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newGame() {
-	GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->geometry());
+	GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->rect());
+	//GameHandler::getInstance().newGame(QRect(QPoint(0, 0), 
+		//QPoint(this->ui->graphicsView->geometry().width() - this->ui->graphicsView->geometry().x(), 
+		//	this->ui->graphicsView->geometry().height() - this->ui->graphicsView->geometry().y())));
+	//this->ui->graphicsView->fitInView(0, 0, this->ui->graphicsView->scene()->width(), this->ui->graphicsView->scene()->height());
 }
 
 void MainWindow::startGameEditor() {

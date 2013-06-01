@@ -66,7 +66,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * If set to false, GameHandler will attempt to read the configuration of pawns currently present 
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
-		void newGame(const QRect viewRect, bool defaultConfig = true);
+		void newGame(QRect viewRect, bool defaultConfig = true);
 	signals:
 		void gameFinished();
 };
