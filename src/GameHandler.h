@@ -5,10 +5,14 @@ All rights reserved */
 #define GAMEHANDLER_H
 
 #include <QObject>
+#include <vector>
 #include "../DiaballikEngine/src/Game.h"
 #include "../DiaballikEngine/src/Singleton.h"
 #include "GraphicsScene.h"
 #include "GraphicsTile.h"
+#include "GraphicsMovableTile.h"
+
+using namespace std;
 
 /**
  * @brief The main class of the application
@@ -25,6 +29,13 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsScene* scene;
 		Game game;
 		
+		vector<GraphicsTile*> backgroundTiles;
+		vector<GraphicsMovableTile*> movableTiles;
+		vector<GraphicsTile*> selectedTiles;
+		
+		GraphicsTile* getTileAt(const Point& pos);
+		GraphicsMovableTile* getMovableTileAt(const Point& pos);
+		
 		GameHandler();
 	public:
 		void Initialize(GraphicsScene* scene);
@@ -34,7 +45,15 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @param tile A pointer to the caller (valid GraphicsTile)
 		 * @return true if the move succeeded, false if it's impossible
 		 **/
-		bool moveTile(const GraphicsTile* tile);
+		bool moveTile(const GraphicsMovableTile* src, const GraphicsMovableTile* dst);
+		/**
+		 * @brief Gets possible destinations for the tile to move/pass ball and
+		 * selects them on the board (calling GraphicsTile::select on tiles)
+		 * @param tile 
+		 * @return void
+		 **/
+		void showDestinationsFor(const GraphicsTile* tile);
+		
 		bool canUndoMove();
 		bool canRedoMove();
 		void undoMove();
@@ -47,7 +66,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * If set to false, GameHandler will attempt to read the configuration of pawns currently present 
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
-		void newGame(bool defaultConfig = true);
+		void newGame(const QRect viewRect, bool defaultConfig = true);
 	signals:
 		void gameFinished();
 };
