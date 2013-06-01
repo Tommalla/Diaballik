@@ -11,6 +11,7 @@ class GraphicsMovableTile : public GraphicsTile {
 	private:
 		//TODO qpropertyanimation and stuff like that
 	public:
+		GraphicsMovableTile (const QString& graphicsPath, const int x, const int y, const int width, const int height);
 		/**
 		 * @brief Moves the tile to a new position (instantly)
 		 **/

@@ -5,6 +5,7 @@ All rights reserved */
 #define GRAPHICSTILE_H
 
 #include <QGraphicsItem>
+#include "../DiaballikEngine/src/Point.h"
 
 
 /**
@@ -15,8 +16,9 @@ class GraphicsTile : public QGraphicsPixmapItem {
 	private:
 		int x, y;
 		bool selected;
+		QPixmap originalPixmap;
 	public:
-		GraphicsTile(const QString& graphicsPath, const int x, const int y);
+		GraphicsTile(const QString& graphicsPath, const int x, const int y, const int width, const int height);
 		/**
 		 * @brief Redraws (scales) internal QPixmap with new width/height
 		 **/
@@ -29,6 +31,8 @@ class GraphicsTile : public QGraphicsPixmapItem {
 		 * @brief Deselects the tile
 		 **/
 		void deselect();
+		
+		const Point getPos();
 };
 
 #endif // GRAPHICSTILE_H
