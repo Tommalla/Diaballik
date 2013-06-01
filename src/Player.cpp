@@ -1,22 +1,24 @@
 /* Tomasz [Tommalla] Zakrzewski, 2013
 All rights reserved */
 
+#include <cassert>
 #include "Player.h"
 
 Player::Player() {
-	moveReady = ready = false;
+	this->moveReady = this->ready = false;
 }
 
 bool Player::isMoveReady() {
-	return moveReady;
+	return this->isReady() && this->moveReady;
 }
 
 bool Player::isReady() {
-	return ready;
+	return this->ready;
 }
 
 Move& Player::getMove() {
-	return move;
+	assert(this->isMoveReady());
+	return this->move;
 }
 
 

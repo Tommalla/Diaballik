@@ -3,6 +3,7 @@ set (HEADERS
 	GraphicsMovableTile.h
 	GraphicsScene.h
 	GraphicsTile.h
+	Player.h
 	SettingsHandler.h
 )
 
@@ -11,16 +12,19 @@ set (SOURCES
 	GraphicsMovableTile.cpp
 	GraphicsScene.cpp
 	GraphicsTile.cpp
+	Player.cpp
 	SettingsHandler.cpp
 )
 
 set (MOC_HEADERS
 	GameHandler.h
+	HumanPlayer.h
 	StateHandler.h
 )
 
 set (MOC_SOURCES
 	GameHandler.cpp
+	HumanPlayer.cpp
 	StateHandler.cpp
 )
 

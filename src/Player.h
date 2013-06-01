@@ -4,7 +4,7 @@ All rights reserved */
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Move.h"
+#include "../DiaballikEngine/src/Move.h"
 
 class Player {
 	protected:
@@ -17,7 +17,7 @@ class Player {
 		bool isReady();
 		Move& getMove();
 		
-		virtual void endGame(bool win);
+		virtual void endGame(bool win) = 0;
     };
 
 #endif // PLAYER_H

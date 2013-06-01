@@ -7,11 +7,11 @@ All rights reserved */
 #include "Player.h"
 #include <QObject>
 
-class HumanPlayer : protected Player, protected QObject {
+class HumanPlayer : public QObject, public Player {
 	Q_OBJECT;
 	public:
 		HumanPlayer();
-		void endGame(bool win);
+		virtual void endGame(bool win);
 		
 	private slots:
 		void setMove(const Move& move);
