@@ -41,7 +41,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newGame() {
-	//GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->geometry());
+	GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->geometry());
 }
 
 void MainWindow::startGameEditor() {
