@@ -5,16 +5,17 @@ All rights reserved */
 
 GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y, const int width, const int height) {
 	this->selected = false;
+	this->x = x;
+	this->y = y;
 	
 	this->originalPixmap = QPixmap(graphicsPath);
 	this->redraw(width, height);
-	
-	this->setPos(x * width, y * height);
 }
 
 void GraphicsTile::redraw (const int width, const int height) {
 	QPixmap tmp = this->originalPixmap;
 	this->setPixmap(tmp.scaled(width, height));
+	this->setPos(this->x * width, this->y * height);
 }
 
 void GraphicsTile::select() {

@@ -20,6 +20,17 @@ bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovabl
 	//return true/false
 }
 
+void GameHandler::repaintTiles (QRect viewRect) {
+	int tileSize = min(viewRect.width(), viewRect.height()) / 7;
+	
+	for (GraphicsTile* tile: this->backgroundTiles)
+		tile->redraw(tileSize, tileSize);
+	
+	for (GraphicsTile* tile: this->movableTiles)
+		tile->redraw(tileSize, tileSize);
+}
+
+
 void GameHandler::newGame (QRect viewRect, bool defaultConfig) {
 	if (defaultConfig == true) {
 		qDebug("Creating new game from the scratch");
@@ -50,17 +61,6 @@ void GameHandler::newGame (QRect viewRect, bool defaultConfig) {
 		//creating new board:
 		this->game = Game();
 		int tileSize = min(viewRect.width(), viewRect.height()) / 7;
-		qDebug("X: %d, Y: %d, Width: %d, Height: %d", viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
-		
-		viewRect = QRect(max((viewRect.width() - 7 * tileSize) / 2, 0), max((viewRect.height() - 7 * tileSize) / 2, 0),
-				 viewRect.width(), viewRect.height());
-		
-		//viewRect.setX(max((viewRect.width() - 7 * tileSize) / 2, 0));
-		//viewRect.setY(max((viewRect.height() - 7 * tileSize) / 2, 0));
-		
-		qDebug("X: %d, Y: %d, Width: %d, Height: %d", viewRect.x(), viewRect.y(), viewRect.width(), viewRect.height());
-		
-		//this->scene->setSceneRect(viewRect);
 		
 		for (int x = 0; x < 7; ++x) {
 			for (int y = 0; y < 7; ++y) {
@@ -86,4 +86,5 @@ void GameHandler::newGame (QRect viewRect, bool defaultConfig) {
 		//TODO check if the Board is valid and start the game
 	}
 }
+
 

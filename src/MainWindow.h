@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow {
 	friend class StateHandler;	//so that states can change the ui
 	public:
 		explicit MainWindow(QWidget *parent = 0);
+		virtual void resizeEvent (QResizeEvent* event);
 		~MainWindow();
     
 	private:

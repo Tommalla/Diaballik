@@ -32,6 +32,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->actionZasadyGry, SIGNAL(triggered()), this, SLOT(showRules()));
 }
 
+void MainWindow::resizeEvent (QResizeEvent* event) {
+	QWidget::resizeEvent(event);
+	GameHandler::getInstance().repaintTiles(this->ui->graphicsView->viewport()->rect());
+	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
+					     this->ui->graphicsView->viewport()->height());
+}
+
+
 MainWindow::~MainWindow() {
 	SettingsHandler::getInstance().setValue("windowGeometry/width", this->geometry().width());
 	SettingsHandler::getInstance().setValue("windowGeometry/height", this->geometry().height());
@@ -42,11 +50,10 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newGame() {
+	//TODO add new game dialog
+	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
+					     this->ui->graphicsView->viewport()->height());
 	GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->rect());
-	//GameHandler::getInstance().newGame(QRect(QPoint(0, 0), 
-		//QPoint(this->ui->graphicsView->geometry().width() - this->ui->graphicsView->geometry().x(), 
-		//	this->ui->graphicsView->geometry().height() - this->ui->graphicsView->geometry().y())));
-	//this->ui->graphicsView->fitInView(0, 0, this->ui->graphicsView->scene()->width(), this->ui->graphicsView->scene()->height());
 }
 
 void MainWindow::startGameEditor() {

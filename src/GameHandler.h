@@ -53,6 +53,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @return void
 		 **/
 		void showDestinationsFor(const GraphicsTile* tile);
+		/**
+		 * @brief Orders all the tiles to repaint.
+		 **/
+		void repaintTiles(QRect viewRect);
 		
 		bool canUndoMove();
 		bool canRedoMove();
