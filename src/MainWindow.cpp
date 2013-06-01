@@ -25,6 +25,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	
 	//connecting signals
 	QObject::connect(ui->actionZakoncz, SIGNAL(triggered()), this, SLOT(close()));
+	QObject::connect(ui->actionNowa, SIGNAL(triggered()), this, SLOT(newGame()));
+	QObject::connect(ui->actionEdytorPlanszy, SIGNAL(triggered()), this, SLOT(startGameEditor()));
+	QObject::connect(ui->actionKlawiszologia, SIGNAL(triggered()), this, SLOT(showHelp()));
+	QObject::connect(ui->actionZasadyGry, SIGNAL(triggered()), this, SLOT(showRules()));
 }
 
 MainWindow::~MainWindow() {
@@ -35,3 +39,26 @@ MainWindow::~MainWindow() {
 	
 	delete ui;
 }
+
+void MainWindow::newGame() {
+	//GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->geometry());
+}
+
+void MainWindow::startGameEditor() {
+	//TODO start it!
+}
+
+void MainWindow::showRules() {
+	//TODO
+}
+
+void MainWindow::showAuthor() {
+	//TODO
+}
+
+void MainWindow::showHelp() {
+	//TODO
+}
+
+
+

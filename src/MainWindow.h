@@ -21,6 +21,12 @@ class MainWindow : public QMainWindow {
     
 	private:
 		Ui::MainWindow *ui;
+	private slots:
+		void newGame();
+		void startGameEditor();
+		void showRules();
+		void showAuthor();
+		void showHelp();
 };
 
 #endif // MAINWINDOW_H
