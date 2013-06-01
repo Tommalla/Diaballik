@@ -14,10 +14,12 @@ set (SOURCES
 
 set (MOC_HEADERS
 	GameHandler.h
+	StateHandler.h
 )
 
 set (MOC_SOURCES
 	GameHandler.cpp
+	StateHandler.cpp
 )
 
 set (GUI_HEADERS
