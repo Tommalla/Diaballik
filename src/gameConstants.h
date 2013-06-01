@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef GAME_CONSTANTS_H
+#define GAME_CONSTANTS_H
 
 /* Global contants that we cannot move to a settings file */
 
