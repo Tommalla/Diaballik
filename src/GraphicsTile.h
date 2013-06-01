@@ -14,6 +14,7 @@ All rights reserved */
 class GraphicsTile : public QGraphicsPixmapItem {
 	private:
 		int x, y;
+		bool selected;
 	public:
 		GraphicsTile(const QString& graphicsPath, const int x, const int y);
 		/**
@@ -21,13 +22,13 @@ class GraphicsTile : public QGraphicsPixmapItem {
 		 **/
 		void redraw(const int width, const int height);
 		/**
-		 * @brief Moves the tile to a new position (instantly)
+		 * @brief Selects the Tile (visually changes it)
 		 **/
-		void changePosition(const int newX, const int newY);
+		void select();
 		/**
-		 * @brief Moves the tile to a new position (smoothly and according to the game rules)
+		 * @brief Deselects the tile
 		 **/
-		void move(const int newX, const int newY);
+		void deselect();
 };
 
 #endif // GRAPHICSTILE_H
