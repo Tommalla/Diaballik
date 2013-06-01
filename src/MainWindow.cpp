@@ -2,6 +2,7 @@
 #include "ui_MainWindow.h"
 #include "constants.h"
 #include "GraphicsScene.h"
+#include "GameHandler.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
@@ -16,7 +17,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 		   SettingsHandler::getInstance().value("windowGeometry/positionY", this->geometry().y()).toInt());
 	
 	//creating all necessary objects
-	this->ui->graphicsView->setScene(new GraphicsScene());
+	GraphicsScene* scene = new GraphicsScene();
+	this->ui->graphicsView->setScene(scene);
+	GameHandler::getInstance().Initialize(scene);
 	
 	//connecting signals
 	QObject::connect(ui->actionZakoncz, SIGNAL(triggered()), this, SLOT(close()));
