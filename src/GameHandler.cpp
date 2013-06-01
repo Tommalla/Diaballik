@@ -18,6 +18,10 @@ bool GameHandler::moveTile (const GraphicsTile* tile) {
 
 
 void GameHandler::newGame (bool defaultConfig) {
-
+	//TODO read graphics paths from config
+	//TODO clear the scene
+	//TODO create board
+	//TODO create new items
+	//TODO change state
 }
 

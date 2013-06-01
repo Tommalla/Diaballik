@@ -10,7 +10,6 @@ All rights reserved */
 #include "GraphicsScene.h"
 #include "GraphicsTile.h"
 
-
 /**
  * @brief The main class of the application
  * Handles everything game-related - from creating and managing everything that is visible on the Scene
@@ -36,6 +35,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @return true if the move succeeded, false if it's impossible
 		 **/
 		bool moveTile(const GraphicsTile* tile);
+		bool canUndoMove();
+		bool canRedoMove();
+		void undoMove();
+		void redoMove();
 	public slots:
 		/**
 		 * @brief Starts a new game
@@ -45,6 +48,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
 		void newGame(bool defaultConfig = true);
+	signals:
+		void gameFinished();
 };
 
 #endif // GAMEHANDLER_H
