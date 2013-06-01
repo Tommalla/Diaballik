@@ -5,6 +5,11 @@ All rights reserved */
 #include "SettingsHandler.h"
 #include "gameConstants.h"
 
+void GameHandler::changeCurrentPlayer() {
+	this->currentPlayer = (this->currentPlayer + 1) % 2;
+}
+
+
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 }
@@ -13,6 +18,11 @@ void GameHandler::Initialize (GraphicsScene* scene) {
 	this->scene = scene;
 	this->initialized = true;
 }
+
+bool GameHandler::isMoveValid (const Point& src, const Point& dst) {
+	return this->game.isMoveValid(src, dst);
+}
+
 
 bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovableTile* dst) {
 	//TODO check if the move is valid
@@ -32,6 +42,11 @@ void GameHandler::repaintTiles (QRect viewRect) {
 
 
 void GameHandler::newGame (QRect viewRect, bool defaultConfig) {
+	this->lastSelector = NULL;
+	
+	this->currentPlayer = 0;
+	//TODO initialize players, connect human players etc.
+	
 	if (defaultConfig == true) {
 		qDebug("Creating new game from the scratch");
 		//creating a default board
@@ -86,5 +101,10 @@ void GameHandler::newGame (QRect viewRect, bool defaultConfig) {
 		//TODO check if the Board is valid and start the game
 	}
 }
+
+void GameHandler::checkForNewMoves() {
+	//TODO implement
+}
+
 
 

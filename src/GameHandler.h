@@ -5,12 +5,15 @@ All rights reserved */
 #define GAMEHANDLER_H
 
 #include <QObject>
+#include <QTimer>
 #include <vector>
 #include "../DiaballikEngine/src/Game.h"
 #include "../DiaballikEngine/src/Singleton.h"
 #include "GraphicsScene.h"
 #include "GraphicsTile.h"
 #include "GraphicsMovableTile.h"
+#include "Player.h"
+#include "HumanPlayer.h"
 
 using namespace std;
 
@@ -26,33 +29,51 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 	friend class Singleton<GameHandler>;
 	private:
 		bool initialized;
+		
 		GraphicsScene* scene;
 		Game game;
 		
 		vector<GraphicsTile*> backgroundTiles;
 		vector<GraphicsMovableTile*> movableTiles;
 		vector<GraphicsTile*> selectedTiles;
+		GraphicsTile* lastSelector;	//the last tile that was clicked and became
+		//the source of the last selection. If none, this shall be set to NULL.
 		
+		QTimer playersTimer;
+		Player* players[2];
+		int currentPlayer;
+		
+		void changeCurrentPlayer();
 		GraphicsTile* getTileAt(const Point& pos);
 		GraphicsMovableTile* getMovableTileAt(const Point& pos);
 		
 		GameHandler();
 	public:
+		/**
+		 * @brief Initializes the class
+		 * @param scene The GraphicsScene that is set in the view
+		 **/
 		void Initialize(GraphicsScene* scene);
 		
 		/**
+		 * @brief Returns true if a move is valid
+		 * @param src From coordinates
+		 * @param dst To coordinates
+		 **/
+		bool isMoveValid(const Point& src, const Point& dst);
+		/**
 		 * @brief Attempts to move a tile. Returns true if a move is possible.
-		 * @param tile A pointer to the caller (valid GraphicsTile)
+		 * @param src A pointer to the src (valid GraphicsMovableTile)
+		 * @param dst A pointer to the dst (valid GraphicsMovableTile)
 		 * @return true if the move succeeded, false if it's impossible
 		 **/
 		bool moveTile(const GraphicsMovableTile* src, const GraphicsMovableTile* dst);
 		/**
 		 * @brief Gets possible destinations for the tile to move/pass ball and
 		 * selects them on the board (calling GraphicsTile::select on tiles)
-		 * @param tile 
 		 * @return void
 		 **/
-		void showDestinationsFor(const GraphicsTile* tile);
+		void showDestinationsFor(const GraphicsMovableTile* tile);
 		/**
 		 * @brief Orders all the tiles to repaint.
 		 **/
@@ -62,7 +83,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		bool canRedoMove();
 		void undoMove();
 		void redoMove();
-	public slots:
+		
 		/**
 		 * @brief Starts a new game
 		 *
@@ -71,6 +92,13 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
 		void newGame(QRect viewRect, bool defaultConfig = true);
+	private slots:
+		/**
+		 * @brief Checks if the current player has yielded a move.
+		 * If so - performs it and changes the active player. Stops the internal timer while it's performing
+		 * the move.
+		 **/
+		void checkForNewMoves();
 	signals:
 		void gameFinished();
 };
