@@ -1,12 +1,14 @@
 set (HEADERS
-	constants.h
+	gameConstants.h
 	GraphicsScene.h
+	GraphicsTile.h
 	SettingsHandler.h
 )
 
 set (SOURCES
 	main.cpp
 	GraphicsScene.cpp
+	GraphicsTile.cpp
 	SettingsHandler.cpp
 )
 
@@ -46,3 +48,5 @@ add_executable (Diaballik
 
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries (Diaballik ${QT_LIBRARIES})
+target_link_libraries(Diaballik DiaballikEngine)
+
