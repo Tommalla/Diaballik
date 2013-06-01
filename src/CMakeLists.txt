@@ -1,5 +1,6 @@
 set (HEADERS
 	gameConstants.h
+	GraphicsMovableTile.h
 	GraphicsScene.h
 	GraphicsTile.h
 	SettingsHandler.h
@@ -7,6 +8,7 @@ set (HEADERS
 
 set (SOURCES
 	main.cpp
+	GraphicsMovableTile.cpp
 	GraphicsScene.cpp
 	GraphicsTile.cpp
 	SettingsHandler.cpp
