@@ -12,3 +12,12 @@ void GameHandler::Initialize (GraphicsScene* scene) {
 	this->initialized = true;
 }
 
+bool GameHandler::moveTile (const GraphicsTile* tile) {
+
+}
+
+
+void GameHandler::newGame (bool defaultConfig) {
+
+}
+

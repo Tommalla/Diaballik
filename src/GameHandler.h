@@ -5,8 +5,10 @@ All rights reserved */
 #define GAMEHANDLER_H
 
 #include <QObject>
+#include "../DiaballikEngine/src/Game.h"
 #include "../DiaballikEngine/src/Singleton.h"
 #include "GraphicsScene.h"
+#include "GraphicsTile.h"
 
 
 /**
@@ -22,10 +24,27 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 	private:
 		bool initialized;
 		GraphicsScene* scene;
+		Game game;
 		
 		GameHandler();
 	public:
 		void Initialize(GraphicsScene* scene);
+		
+		/**
+		 * @brief Attempts to move a tile. Returns true if a move is possible.
+		 * @param tile A pointer to the caller (valid GraphicsTile)
+		 * @return true if the move succeeded, false if it's impossible
+		 **/
+		bool moveTile(const GraphicsTile* tile);
+	public slots:
+		/**
+		 * @brief Starts a new game
+		 *
+		 * @param defaultConfig if set to true, GameHandler will create a new game on a standard board
+		 * If set to false, GameHandler will attempt to read the configuration of pawns currently present 
+		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
+		 **/
+		void newGame(bool defaultConfig = true);
 };
 
 #endif // GAMEHANDLER_H
