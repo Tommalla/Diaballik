@@ -30,14 +30,17 @@ set (MOC_SOURCES
 
 set (GUI_HEADERS
 	MainWindow.h
+	NewGameDialog.h
 )
 
 set (GUI_SOURCES
 	MainWindow.cpp
+	NewGameDialog.cpp
 )
 
 set (FORMS
 	MainWindow.ui
+	NewGameDialog.ui
 )
 
 qt4_wrap_cpp (GUI_SOURCES ${GUI_HEADERS})
