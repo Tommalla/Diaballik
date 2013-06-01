@@ -8,9 +8,13 @@ namespace Ui {
 	class MainWindow;
 }
 
+/**
+ * @brief The main window of the application
+ **/
 class MainWindow : public QMainWindow {
 	Q_OBJECT;
     
+	friend class StateHandler;	//so that states can change the ui
 	public:
 		explicit MainWindow(QWidget *parent = 0);
 		~MainWindow();

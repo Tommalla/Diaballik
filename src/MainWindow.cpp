@@ -3,6 +3,7 @@
 #include "gameConstants.h"
 #include "GraphicsScene.h"
 #include "GameHandler.h"
+#include "StateHandler.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	//creating all necessary objects
 	GraphicsScene* scene = new GraphicsScene();
 	this->ui->graphicsView->setScene(scene);
+	StateHandler::getInstance().start(this);
 	GameHandler::getInstance().Initialize(scene);
 	
 	//connecting signals
