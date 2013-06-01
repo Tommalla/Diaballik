@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "constants.h"
+#include "gameConstants.h"
 #include "GraphicsScene.h"
 #include "GameHandler.h"
 

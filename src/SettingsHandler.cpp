@@ -1,7 +1,7 @@
 /* Tomasz [Tommalla] Zakrzewski, 2013
 All rights reserved */
 
-#include "constants.h"
+#include "gameConstants.h"
 #include "SettingsHandler.h"
 
 SettingsHandler::SettingsHandler() : QSettings(SETTINGS_FILE, QSettings::IniFormat) {
