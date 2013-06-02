@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "SettingsHandler.h"
+#include "NewGameDialog.h"
 
 namespace Ui {
 	class MainWindow;
@@ -15,13 +16,16 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT;
     
 	friend class StateHandler;	//so that states can change the ui
+	
+	private:
+		Ui::MainWindow *ui;
+		NewGameDialog newGameDialog;
+	
 	public:
 		explicit MainWindow(QWidget *parent = 0);
 		virtual void resizeEvent (QResizeEvent* event);
 		~MainWindow();
     
-	private:
-		Ui::MainWindow *ui;
 	private slots:
 		void newGame();
 		void startGameEditor();

@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	
 	//connecting signals
 	QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
-	QObject::connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newGame()));
+	QObject::connect(ui->actionNew, SIGNAL(triggered()), &(this->newGameDialog), SLOT(exec()));
 	QObject::connect(ui->actionBoardEditor, SIGNAL(triggered()), this, SLOT(startGameEditor()));
 	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
 	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
@@ -51,12 +51,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newGame() {
-	//TODO add new game dialog
-	NewGameDialog dialog;
-	dialog.exec();
-	//this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
-					     //this->ui->graphicsView->viewport()->height());
-	//GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->rect());
+	//TODO add getting players from newGameDialog
+	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
+					     this->ui->graphicsView->viewport()->height());
+	GameHandler::getInstance().newGame(this->newGameDialog.getWhitePlayerType(), this->newGameDialog.getBlackPlayerType(),
+					   this->ui->graphicsView->viewport()->rect());
 }
 
 void MainWindow::startGameEditor() {
