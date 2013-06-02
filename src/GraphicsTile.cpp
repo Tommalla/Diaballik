@@ -2,17 +2,26 @@
 All rights reserved */
 
 #include <cassert>
+#include <QPainter>
 #include "GraphicsTile.h"
 #include "GameHandler.h"
 
 void GraphicsTile::drawSelection() {
-	//TODO implement
+	QPixmap tmp = this->pixmap();
+	QPainter painter(&tmp);
+	QBrush brush(QColor::fromRgb(100, 100, 100));
+	painter.drawEllipse(tmp.rect());
+	painter.end();
+	
+	this->setPixmap(tmp);
+	
 }
 
 void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	QGraphicsItem::mousePressEvent (event);
 	
 	if (this->selected == true) {	//we can only move to a selected tile
+		qDebug("Trying to move to (%d, %d)", this->x, this->y);
 		const GraphicsMovableTile* from = GameHandler::getInstance().getLastSelector();
 		assert(from != NULL);
 		
