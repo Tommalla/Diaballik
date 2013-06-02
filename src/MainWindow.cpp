@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	//connecting signals
 	QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 	QObject::connect(ui->actionNew, SIGNAL(triggered()), &(this->newGameDialog), SLOT(exec()));
+	QObject::connect(&(this->newGameDialog), SIGNAL(accepted()), this, SLOT(newGame()));
 	QObject::connect(ui->actionBoardEditor, SIGNAL(triggered()), this, SLOT(startGameEditor()));
 	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
 	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
