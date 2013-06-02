@@ -8,8 +8,11 @@ All rights reserved */
 
 
 class GraphicsMovableTile : public GraphicsTile {
+	Q_OBJECT;
 	private:
 		//TODO qpropertyanimation and stuff like that
+	protected:
+		virtual void mousePressEvent (QGraphicsSceneMouseEvent* event);
 	public:
 		GraphicsMovableTile (const QString& graphicsPath, const int x, const int y, const int width, const int height);
 		/**

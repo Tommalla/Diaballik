@@ -12,8 +12,10 @@ All rights reserved */
 #include "GraphicsScene.h"
 #include "GraphicsTile.h"
 #include "GraphicsMovableTile.h"
+#include "PlayerInfo.h"
 #include "Player.h"
 #include "HumanPlayer.h"
+#include "gameEnums.h"
 
 using namespace std;
 
@@ -36,7 +38,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		vector<GraphicsTile*> backgroundTiles;
 		vector<GraphicsMovableTile*> movableTiles;
 		vector<GraphicsTile*> selectedTiles;
-		GraphicsTile* lastSelector;	//the last tile that was clicked and became
+		GraphicsMovableTile* lastSelector;	//the last tile that was clicked and became
 		//the source of the last selection. If none, this shall be set to NULL.
 		
 		QTimer playersTimer;
@@ -44,9 +46,16 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		int currentPlayer;
 		
 		void changeCurrentPlayer();
+		void deletePlayers();
+		Player* createPlayer(const PlayerInfo& info, const int id);
+		
 		GraphicsTile* getTileAt(const Point& pos);
 		GraphicsMovableTile* getMovableTileAt(const Point& pos);
 		
+		/**
+		 * @brief Deselects currently selected tiles.
+		 **/
+		void deselectTiles();
 		GameHandler();
 	public:
 		/**
@@ -85,13 +94,21 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void redoMove();
 		
 		/**
+		 * @brief Returns the tile that is the source of the current selection.
+		 * @return A pointer to the Tile. If there's no selection then the returned 
+		 * value is NULL.
+		 **/
+		const GraphicsMovableTile* getLastSelector() const;
+		
+		/**
 		 * @brief Starts a new game
 		 *
 		 * @param defaultConfig if set to true, GameHandler will create a new game on a standard board
 		 * If set to false, GameHandler will attempt to read the configuration of pawns currently present 
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
-		void newGame(QRect viewRect, bool defaultConfig = true);
+		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
+			     QRect viewRect, bool defaultConfig = true);
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.
