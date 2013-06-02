@@ -52,27 +52,27 @@
               </sizepolicy>
              </property>
              <property name="title">
-              <string>Ruchy</string>
+              <string>Turns</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QPushButton" name="pushButton_4">
+               <widget class="QPushButton" name="nextTurnPushButton">
                 <property name="text">
-                 <string>Następna Kolejka</string>
+                 <string>Next</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_3">
+               <widget class="QPushButton" name="pausePushButton">
                 <property name="text">
-                 <string>Pauza</string>
+                 <string>Pause</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_2">
+               <widget class="QPushButton" name="previousTurnPushButton">
                 <property name="text">
-                 <string>Poprzednia kolejka</string>
+                 <string>Previous</string>
                 </property>
                </widget>
               </item>
@@ -88,27 +88,27 @@
               </sizepolicy>
              </property>
              <property name="title">
-              <string>Kolejka</string>
+              <string>Current turn</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="turnDonePushButton">
                 <property name="text">
-                 <string>Zatwierdź</string>
+                 <string>Done</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_7">
+               <widget class="QPushButton" name="redoPushButton">
                 <property name="text">
-                 <string>Następny ruch</string>
+                 <string>Redo move</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_5">
+               <widget class="QPushButton" name="undoPushButton">
                 <property name="text">
-                 <string>Poprzedni ruch</string>
+                 <string>Undo move</string>
                 </property>
                </widget>
               </item>
@@ -116,7 +116,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_8">
+            <widget class="QPushButton" name="startPushButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
               <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string>Rozpocznij Grę!</string>
+              <string>Start game!</string>
              </property>
             </widget>
            </item>
@@ -144,7 +144,7 @@
               <enum>QLayout::SetMinimumSize</enum>
              </property>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="statusLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                  <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
               </widget>
              </item>
              <item alignment="Qt::AlignHCenter">
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="stopButton">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -165,7 +165,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Przerwij</string>
+                <string>Stop</string>
                </property>
               </widget>
              </item>
@@ -180,18 +180,18 @@
               </sizepolicy>
              </property>
              <property name="title">
-              <string>Historia ruchów</string>
+              <string>Moves history</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="showHistoryCheckBox">
                 <property name="text">
-                 <string>Pokaż</string>
+                 <string>Show</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QListView" name="listView">
+               <widget class="QListView" name="historyListView">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
                   <horstretch>0</horstretch>
@@ -227,77 +227,77 @@
      <height>20</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuGra">
+   <widget class="QMenu" name="menuGame">
     <property name="title">
-     <string>Gra</string>
+     <string>Game</string>
     </property>
-    <addaction name="actionNowa"/>
-    <addaction name="actionZapisz"/>
-    <addaction name="actionWczytaj"/>
-    <addaction name="actionZakoncz"/>
+    <addaction name="actionNew"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionLoad"/>
+    <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuNarz_dzia">
+   <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Narzędzia</string>
+     <string>Tools</string>
     </property>
-    <addaction name="actionEdytorPlanszy"/>
-    <addaction name="actionUstawienia"/>
+    <addaction name="actionBoardEditor"/>
+    <addaction name="actionSettings"/>
    </widget>
-   <widget class="QMenu" name="menuPomoc">
+   <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Pomoc</string>
+     <string>Help</string>
     </property>
-    <addaction name="actionZasadyGry"/>
-    <addaction name="actionKlawiszologia"/>
-    <addaction name="actionAutor"/>
+    <addaction name="actionRules"/>
+    <addaction name="actionShortcuts"/>
+    <addaction name="actionAuthor"/>
    </widget>
-   <addaction name="menuGra"/>
-   <addaction name="menuNarz_dzia"/>
-   <addaction name="menuPomoc"/>
+   <addaction name="menuGame"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
-  <action name="actionNowa">
+  <action name="actionNew">
    <property name="text">
-    <string>Nowa</string>
+    <string>New</string>
    </property>
   </action>
-  <action name="actionZakoncz">
+  <action name="actionExit">
    <property name="text">
-    <string>Zakończ</string>
+    <string>Exit</string>
    </property>
   </action>
-  <action name="actionEdytorPlanszy">
+  <action name="actionBoardEditor">
    <property name="text">
-    <string>Edytor planszy</string>
+    <string>Board editor</string>
    </property>
   </action>
-  <action name="actionUstawienia">
+  <action name="actionSettings">
    <property name="text">
-    <string>Ustawienia</string>
+    <string>Settings</string>
    </property>
   </action>
-  <action name="actionZasadyGry">
+  <action name="actionRules">
    <property name="text">
-    <string>Zasady gry</string>
+    <string>Rules</string>
    </property>
   </action>
-  <action name="actionKlawiszologia">
+  <action name="actionShortcuts">
    <property name="text">
-    <string>Klawiszologia</string>
+    <string>Shortcuts</string>
    </property>
   </action>
-  <action name="actionAutor">
+  <action name="actionAuthor">
    <property name="text">
-    <string>Autor</string>
+    <string>Author</string>
    </property>
   </action>
-  <action name="actionZapisz">
+  <action name="actionSave">
    <property name="text">
-    <string>Zapisz</string>
+    <string>Save</string>
    </property>
   </action>
-  <action name="actionWczytaj">
+  <action name="actionLoad">
    <property name="text">
-    <string>Wczytaj</string>
+    <string>Load</string>
    </property>
   </action>
  </widget>

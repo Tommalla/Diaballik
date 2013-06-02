@@ -4,6 +4,7 @@
 #include "GraphicsScene.h"
 #include "GameHandler.h"
 #include "StateHandler.h"
+#include "NewGameDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
@@ -25,11 +26,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	GameHandler::getInstance().Initialize(scene);
 	
 	//connecting signals
-	QObject::connect(ui->actionZakoncz, SIGNAL(triggered()), this, SLOT(close()));
-	QObject::connect(ui->actionNowa, SIGNAL(triggered()), this, SLOT(newGame()));
-	QObject::connect(ui->actionEdytorPlanszy, SIGNAL(triggered()), this, SLOT(startGameEditor()));
-	QObject::connect(ui->actionKlawiszologia, SIGNAL(triggered()), this, SLOT(showHelp()));
-	QObject::connect(ui->actionZasadyGry, SIGNAL(triggered()), this, SLOT(showRules()));
+	QObject::connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+	QObject::connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newGame()));
+	QObject::connect(ui->actionBoardEditor, SIGNAL(triggered()), this, SLOT(startGameEditor()));
+	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
+	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -51,9 +52,11 @@ MainWindow::~MainWindow() {
 
 void MainWindow::newGame() {
 	//TODO add new game dialog
-	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
-					     this->ui->graphicsView->viewport()->height());
-	GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->rect());
+	NewGameDialog dialog;
+	dialog.exec();
+	//this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
+					     //this->ui->graphicsView->viewport()->height());
+	//GameHandler::getInstance().newGame(this->ui->graphicsView->viewport()->rect());
 }
 
 void MainWindow::startGameEditor() {
