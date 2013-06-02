@@ -1,32 +1,32 @@
 set (HEADERS
 	gameConstants.h
 	gameEnums.h
-	GraphicsMovableTile.h
 	GraphicsScene.h
-	GraphicsTile.h
 	PlayerInfo.h
-	Player.h
 	SettingsHandler.h
 )
 
 set (SOURCES
 	main.cpp
-	GraphicsMovableTile.cpp
 	GraphicsScene.cpp
-	GraphicsTile.cpp
-	Player.cpp
 	SettingsHandler.cpp
 )
 
 set (MOC_HEADERS
 	GameHandler.h
+	GraphicsMovableTile.h
+	GraphicsTile.h
 	HumanPlayer.h
+	Player.h
 	StateHandler.h
 )
 
 set (MOC_SOURCES
 	GameHandler.cpp
+	GraphicsMovableTile.cpp
+	GraphicsTile.cpp
 	HumanPlayer.cpp
+	Player.cpp
 	StateHandler.cpp
 )
 
