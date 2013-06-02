@@ -14,6 +14,7 @@ void HumanPlayer::endGame (bool win) {
 void HumanPlayer::setMove (const Move& move) {
 	this->moveReady = true;
 	this->move = move;
+	qDebug("HumanPlayer received a move!");
 }
 
 
