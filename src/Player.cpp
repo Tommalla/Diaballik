@@ -6,6 +6,7 @@ All rights reserved */
 
 Player::Player() {
 	this->moveReady = this->ready = false;
+	this->turnFinished = true;
 }
 
 bool Player::isMoveReady() {
@@ -16,9 +17,19 @@ bool Player::isReady() {
 	return this->ready;
 }
 
-Move& Player::getMove() {
+bool Player::isTurnFinished() {
+	return this->turnFinished;
+}
+
+const Move Player::getMove() {
 	assert(this->isMoveReady());
-	return this->move;
+	Move moveCopy = this->move;
+	this->move = Move(Point(-1, -1), Point(-1, -1));
+	return moveCopy;
+}
+
+void Player::finishTurn() {
+	this->turnFinished = true;
 }
 
 

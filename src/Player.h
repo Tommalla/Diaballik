@@ -8,17 +8,28 @@ All rights reserved */
 #include "../DiaballikEngine/src/Move.h"
 
 class Player : public QObject {
+	Q_OBJECT;
+	
 	protected:
-		bool moveReady, ready;
+		bool moveReady, ready, turnFinished;
 		Move move;
 	public:
 		Player();
 		
 		bool isMoveReady();
 		bool isReady();
-		Move& getMove();
+		bool isTurnFinished();
+		/**
+		 * @brief Returns the next move if it's ready
+		 **/
+		const Move getMove();
 		
 		virtual void endGame(bool win) = 0;
+	public slots:
+		/**
+		 * @brief Tells the player to finish current turn
+		 **/
+		void finishTurn();
     };
 
 #endif // PLAYER_H
