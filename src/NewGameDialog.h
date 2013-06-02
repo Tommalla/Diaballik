@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "gameEnums.h"
+#include "PlayerInfo.h"
 
 namespace Ui {
 	class NewGameDialog;
@@ -18,11 +19,12 @@ class NewGameDialog : public QDialog {
 	private:
 		Ui::NewGameDialog *ui;
 		void setWidgetUsable(QWidget* widget, const bool state = true);
+		const ApplicationPlayerType getWhitePlayerType() const;
+		const ApplicationPlayerType getBlackPlayerType() const;
     
 	public:
 		explicit NewGameDialog(QWidget *parent = 0);
-		const ApplicationPlayerType getWhitePlayerType() const;
-		const ApplicationPlayerType getBlackPlayerType() const;
+		const PlayerInfo getPlayerInfo(const int id) const;
 		~NewGameDialog();
 		
 	private slots:

@@ -8,6 +8,13 @@ void NewGameDialog::setWidgetUsable (QWidget* widget, const bool state) {
 	widget->setVisible(state);
 }
 
+const ApplicationPlayerType NewGameDialog::getBlackPlayerType() const {
+	return (ApplicationPlayerType)this->ui->blackComboBox->itemData(this->ui->blackComboBox->currentIndex()).toInt();
+}
+
+const ApplicationPlayerType NewGameDialog::getWhitePlayerType() const {
+	return (ApplicationPlayerType)this->ui->whiteComboBox->itemData(this->ui->whiteComboBox->currentIndex()).toInt();
+}
 
 NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewGameDialog) {
 	this->ui->setupUi(this);
@@ -38,12 +45,15 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 	QObject::connect(this->ui->whiteComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeWhiteGroupBox()));
 }
 
-const ApplicationPlayerType NewGameDialog::getBlackPlayerType() const {
-	return (ApplicationPlayerType)this->ui->blackComboBox->itemData(this->ui->blackComboBox->currentIndex()).toInt();
-}
-
-const ApplicationPlayerType NewGameDialog::getWhitePlayerType() const {
-	return (ApplicationPlayerType)this->ui->whiteComboBox->itemData(this->ui->whiteComboBox->currentIndex()).toInt();
+const PlayerInfo NewGameDialog::getPlayerInfo(const int id) const {
+	switch ( ((id == 0) ? this->getWhitePlayerType() : this->getBlackPlayerType()) ) {
+		case HUMAN_PLAYER:
+			return make_human_player();
+			break;
+		case AI_PLAYER:
+			//TODO: return make_ai_player()
+			break;
+	}
 }
 
 NewGameDialog::~NewGameDialog() {

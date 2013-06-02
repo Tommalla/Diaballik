@@ -54,7 +54,7 @@ void MainWindow::newGame() {
 	//TODO add getting players from newGameDialog
 	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
 					     this->ui->graphicsView->viewport()->height());
-	GameHandler::getInstance().newGame(this->newGameDialog.getWhitePlayerType(), this->newGameDialog.getBlackPlayerType(),
+	GameHandler::getInstance().newGame(this->newGameDialog.getPlayerInfo(0), this->newGameDialog.getPlayerInfo(1),
 					   this->ui->graphicsView->viewport()->rect());
 }
 

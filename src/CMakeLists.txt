@@ -4,6 +4,7 @@ set (HEADERS
 	GraphicsMovableTile.h
 	GraphicsScene.h
 	GraphicsTile.h
+	PlayerInfo.h
 	Player.h
 	SettingsHandler.h
 )
