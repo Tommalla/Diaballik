@@ -27,7 +27,7 @@
        <property name="title">
         <string>White Player</string>
        </property>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="whiteComboBox">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -37,7 +37,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QListWidget" name="listWidget">
+       <widget class="QListWidget" name="whiteListWidget">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -47,9 +47,6 @@
          </rect>
         </property>
        </widget>
-       <zorder>buttonBox</zorder>
-       <zorder>comboBox</zorder>
-       <zorder>listWidget</zorder>
       </widget>
      </item>
      <item>
@@ -57,7 +54,7 @@
        <property name="title">
         <string>Black Player</string>
        </property>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="blackComboBox">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -67,7 +64,7 @@
          </rect>
         </property>
        </widget>
-       <widget class="QListWidget" name="listWidget_2">
+       <widget class="QListWidget" name="blackListWidget">
         <property name="geometry">
          <rect>
           <x>10</x>
