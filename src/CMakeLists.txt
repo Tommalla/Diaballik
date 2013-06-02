@@ -1,5 +1,6 @@
 set (HEADERS
 	gameConstants.h
+	gameEnums.h
 	GraphicsMovableTile.h
 	GraphicsScene.h
 	GraphicsTile.h
