@@ -82,7 +82,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * selects them on the board (calling GraphicsTile::select on tiles)
 		 * @return void
 		 **/
-		void showDestinationsFor(const GraphicsMovableTile* tile);
+		void showDestinationsFor(GraphicsMovableTile* tile);
 		/**
 		 * @brief Orders all the tiles to repaint.
 		 **/

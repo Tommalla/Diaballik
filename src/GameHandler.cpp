@@ -71,7 +71,9 @@ bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovabl
 	//return true/false
 }
 
-void GameHandler::showDestinationsFor (const GraphicsMovableTile* tile) {
+void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
+	this->deselectTiles();
+	
 	vector<Point> destinations = this->game.getDestinationsFor(tile->getPos());
 	FieldState field = this->game.getFieldAt(tile->getPos());
 	
@@ -91,6 +93,8 @@ void GameHandler::showDestinationsFor (const GraphicsMovableTile* tile) {
 					break;
 				}
 		}
+		
+	this->lastSelector = tile;
 }
 
 void GameHandler::repaintTiles (QRect viewRect) {
