@@ -4,9 +4,10 @@ All rights reserved */
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <QObject>
 #include "../DiaballikEngine/src/Move.h"
 
-class Player {
+class Player : public QObject {
 	protected:
 		bool moveReady, ready;
 		Move move;

@@ -5,9 +5,8 @@ All rights reserved */
 #define HUMANPLAYER_H
 
 #include "Player.h"
-#include <QObject>
 
-class HumanPlayer : public QObject, public Player {
+class HumanPlayer : public Player {
 	Q_OBJECT;
 	public:
 		HumanPlayer();
