@@ -27,9 +27,9 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 			for (GraphicsTile* tile: this->backgroundTiles)
 				QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
 			
-			FieldState field = (id == 0) ? PLAYER_A : PLAYER_B;
+			GamePlayer fieldPlayer = (id == 0) ? GAME_PLAYER_A : GAME_PLAYER_B;
 			for (GraphicsMovableTile* tile: this->pawns)
-				if (this->game.getFieldAt(tile->getPos()) == field)
+				if (engine::getPlayerFor(this->game.getFieldAt(tile->getPos())) == fieldPlayer)
 					QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
 			
 			return res;
@@ -104,18 +104,18 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	for (Point dst: destinations)
 		if (field == PLAYER_A || field == PLAYER_B) {
 			qDebug("background being selected!");
-			for (GraphicsTile* tile: this->backgroundTiles)
-				if (dst == tile->getPos()) {
-					tile->select();
-					this->selectedTiles.push_back(tile);
+			for (GraphicsTile* dstTile: this->backgroundTiles)
+				if (dst == dstTile->getPos()) {
+					dstTile->select();
+					this->selectedTiles.push_back(dstTile);
 					break;
 				}
 		} else {
 			qDebug("pawns being selected!");
-			for (GraphicsMovableTile* tile: this->pawns)
-				if (dst == tile->getPos()) {
-					tile->select();
-					this->selectedTiles.push_back(tile);
+			for (GraphicsMovableTile* dstTile: this->pawns)
+				if (dst == dstTile->getPos()) {
+					dstTile->select();
+					this->selectedTiles.push_back(dstTile);
 					break;
 				}
 		}

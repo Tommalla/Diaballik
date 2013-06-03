@@ -33,6 +33,7 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 		
 		if ((from->getPos()) != (this->getPos()))	//if we're not moving to self
 			emit makeMove(Move(from->getPos(), this->getPos()));
+		else qDebug("Tried to move to self:(");
 	}
 }
 
