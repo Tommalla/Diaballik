@@ -72,10 +72,13 @@ bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovabl
 }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
+	FieldState field = this->game.getFieldAt(tile->getPos());
+	if (engine::getPlayerFor(field) != this->game.getCurrentPlayer())
+		return;	//wrong player, we won't be selecting anything
+	
 	this->deselectTiles();
 	
 	vector<Point> destinations = this->game.getDestinationsFor(tile->getPos());
-	FieldState field = this->game.getFieldAt(tile->getPos());
 	
 	for (Point dst: destinations)
 		if (field == PLAYER_A || field == PLAYER_B) {
@@ -143,7 +146,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->selectedTiles.clear();
 	
 		//creating new board:
-		this->game = Game();
+		this->game = Game(GAME_PLAYER_A);
 		int tileSize = min(viewRect.width(), viewRect.height()) / 7;
 		
 		for (int x = 0; x < 7; ++x) {
