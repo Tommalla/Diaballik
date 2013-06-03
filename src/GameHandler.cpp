@@ -131,6 +131,9 @@ void GameHandler::repaintTiles (QRect viewRect) {
 	
 	for (GraphicsTile* tile: this->pawns)
 		tile->redraw(tileSize, tileSize);
+	
+	for (GraphicsTile* tile: this->balls)
+		tile->redraw(tileSize, tileSize);
 }
 
 const GraphicsMovableTile* GameHandler::getLastSelector() const {
