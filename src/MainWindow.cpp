@@ -48,6 +48,7 @@ MainWindow::~MainWindow() {
 	SettingsHandler::getInstance().setValue("windowGeometry/positionX", this->geometry().x());
 	SettingsHandler::getInstance().setValue("windowGeometry/positionY", this->geometry().y());
 	
+	SettingsHandler::getInstance().sync();
 	delete ui;
 }
 
