@@ -33,10 +33,11 @@ void GraphicsMovableTile::changePosition (const int newX, const int newY) {
 }
 
 void GraphicsMovableTile::move (const int newX, const int newY) {
-	//TODO add animation
-	this->changeCoordinates(newX, newY);
+	int durationPerField = SettingsHandler::getInstance().value("animation/duration", DEFAULT_ANIMATION_DURATION).toInt();
+	int fields = max( abs(this->x - newX), abs(this->y - newY));
 	
-	this->animation.setDuration(SettingsHandler::getInstance().value("animation/duration", DEFAULT_ANIMATION_DURATION).toInt());
+	this->changeCoordinates(newX, newY);
+	this->animation.setDuration(durationPerField * (log2(fields) + 1));
 	this->animation.setEndValue(QPoint(newX * this->pixmap().width(), newY * this->pixmap().height()));
 	this->animation.start();
 }
