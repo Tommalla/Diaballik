@@ -4,7 +4,8 @@ All rights reserved */
 #ifndef GRAPHICSTILE_H
 #define GRAPHICSTILE_H
 
-#include <QGraphicsItem>
+#include <QGraphicsPixmapItem>
+#include <QPen>
 #include "../DiaballikEngine/src/Point.h"
 #include "../DiaballikEngine/src/Move.h"
 
@@ -18,6 +19,8 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 	private:
 		int x, y;
 		QPixmap originalPixmap;
+		QColor primarySelectionColor;
+		QPen primarySelectionPen;
 		
 		void drawSelection();	//draws selection around the item
 	protected:

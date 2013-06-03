@@ -3,14 +3,20 @@ All rights reserved */
 
 #include <cassert>
 #include <QPainter>
+#include <QDebug>
 #include "GraphicsTile.h"
 #include "GameHandler.h"
+#include "SettingsHandler.h"
+#include "gameConstants.h"
 
 void GraphicsTile::drawSelection() {
 	QPixmap tmp = this->pixmap();
 	QPainter painter(&tmp);
-	QBrush brush(QColor::fromRgb(100, 100, 100));
-	painter.drawEllipse(tmp.rect());
+	
+	this->primarySelectionPen.setColor(this->primarySelectionColor);
+	painter.setPen(this->primarySelectionPen);
+	
+	painter.drawRect(QRect(QPoint(2, 2), QPoint(tmp.width() - 4, tmp.height() - 4)));
 	painter.end();
 	
 	this->setPixmap(tmp);
@@ -35,9 +41,12 @@ GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y
 	this->selected = false;
 	this->x = x;
 	this->y = y;
-	
+
 	this->setAcceptedMouseButtons(Qt::LeftButton);
+
 	
+	this->primarySelectionColor = SettingsHandler::getInstance().value("selection/primarySelectionColor", DEFAULT_PRIMARY_SELECTION_COLOR).value<QColor>();
+	this->primarySelectionPen = SettingsHandler::getInstance().value("selection/primarySelectionPen", DEFAULT_PRIMARY_SELECTION_PEN).value<QPen>();
 	this->originalPixmap = QPixmap(graphicsPath);
 	this->redraw(width, height);
 }
@@ -49,7 +58,7 @@ void GraphicsTile::redraw (int width, int height) {
 	}
 	
 	QPixmap tmp = this->originalPixmap;
-	this->setPixmap(tmp.scaled(width, height));
+	this->setPixmap(tmp.scaled(width, height, Qt::KeepAspectRatio));
 	this->setPos(this->x * width, this->y * height);
 	
 	if (this->selected)
