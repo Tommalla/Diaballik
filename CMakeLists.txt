@@ -17,6 +17,6 @@ add_subdirectory(DiaballikBot)
 add_subdirectory (src)
 
 #installation
-set (CMAKE_INSTALL_PREFIX "$HOME")
+set (CMAKE_INSTALL_PREFIX $ENV{HOME})
 install (FILES ${PROJECT_BINARY_DIR}/Diaballik ${PROJECT_BINARY_DIR}/../config.ini DESTINATION .diaballik/ )
-install (DIRECTORY ${PROJECT_BINARY_DIR}/../graphics DESTINATION .diaballik/ )
+install (DIRECTORY ${PROJECT_BINARY_DIR}/../graphics DESTINATION .diaballik )
