@@ -17,17 +17,17 @@ All rights reserved */
 class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 	Q_OBJECT;
 	private:
-		int x, y;
 		QPixmap originalPixmap;
 		QColor primarySelectionColor;
 		QPen primarySelectionPen;
 		
 		void drawSelection();	//draws selection around the item
 	protected:
+		int x, y;
 		bool selected;
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
 	public:
-		GraphicsTile(const QString& graphicsPath, const int x, const int y, const int width, const int height);
+		GraphicsTile(const QString& graphicsPath, const int x, const int y, const int z, const int width, const int height);
 		/**
 		 * @brief Redraws (scales) internal QPixmap with new width/height
 		 * If any of parameters is set to -1, the pixmap is redrawn with its' current size

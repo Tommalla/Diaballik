@@ -1,6 +1,7 @@
 /* Tomasz [Tommalla] Zakrzewski, 2013
 All rights reserved */
 
+#include <cassert>
 #include "GameHandler.h"
 #include "SettingsHandler.h"
 #include "gameConstants.h"
@@ -27,7 +28,7 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 				QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
 			
 			FieldState field = (id == 0) ? PLAYER_A : PLAYER_B;
-			for (GraphicsMovableTile* tile: this->movableTiles)
+			for (GraphicsMovableTile* tile: this->pawns)
 				if (this->game.getFieldAt(tile->getPos()) == field)
 					QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
 			
@@ -43,6 +44,20 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 	}
 }
 
+GraphicsMovableTile* GameHandler::getPawnAt (const Point& pos) {
+	for (GraphicsMovableTile* tile: this->pawns)
+		if (tile->getPos() == pos)
+			return tile;
+	return NULL;
+}
+
+GraphicsMovableTile* GameHandler::getBallAt (const Point& pos) {
+	for (GraphicsMovableTile* tile: this->balls)
+		if (tile->getPos() == pos)
+			return tile;
+	return NULL;
+}
+
 void GameHandler::deselectTiles() {
 	for (GraphicsTile* tile: this->selectedTiles)
 		tile->deselect();
@@ -53,6 +68,12 @@ void GameHandler::deselectTiles() {
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 	this->lastSelector = NULL;
+	
+	this->playersTimer.setInterval(
+		SettingsHandler::getInstance().value("application/playersTimerInterval", DEFAULT_PLAYERS_TIMER_INTERVAL).toInt() );
+	this->playersTimer.stop();
+	
+	QObject::connect(&(this->playersTimer), SIGNAL(timeout()), this, SLOT(checkForNewMoves()));
 }
 
 void GameHandler::Initialize (GraphicsScene* scene) {
@@ -82,6 +103,7 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	
 	for (Point dst: destinations)
 		if (field == PLAYER_A || field == PLAYER_B) {
+			qDebug("background being selected!");
 			for (GraphicsTile* tile: this->backgroundTiles)
 				if (dst == tile->getPos()) {
 					tile->select();
@@ -89,7 +111,8 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 					break;
 				}
 		} else {
-			for (GraphicsMovableTile* tile: this->movableTiles)
+			qDebug("pawns being selected!");
+			for (GraphicsMovableTile* tile: this->pawns)
 				if (dst == tile->getPos()) {
 					tile->select();
 					this->selectedTiles.push_back(tile);
@@ -106,7 +129,7 @@ void GameHandler::repaintTiles (QRect viewRect) {
 	for (GraphicsTile* tile: this->backgroundTiles)
 		tile->redraw(tileSize, tileSize);
 	
-	for (GraphicsTile* tile: this->movableTiles)
+	for (GraphicsTile* tile: this->pawns)
 		tile->redraw(tileSize, tileSize);
 }
 
@@ -142,7 +165,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		//cleaning the board:
 		this->scene->clear();
 		this->backgroundTiles.clear();
-		this->movableTiles.clear();
+		this->pawns.clear();
 		this->selectedTiles.clear();
 	
 		//creating new board:
@@ -151,22 +174,20 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		
 		for (int x = 0; x < 7; ++x) {
 			for (int y = 0; y < 7; ++y) {
-				this->backgroundTiles.push_back(new GraphicsTile(backgroundTilePath, x, y, tileSize, tileSize));
+				this->backgroundTiles.push_back(new GraphicsTile(backgroundTilePath, x, y, -1000, tileSize, tileSize));
 				this->scene->addItem(this->backgroundTiles.back());
 			}
 		
-			this->movableTiles.push_back(new GraphicsMovableTile(blackPawnPath, x, 0, tileSize, tileSize));
-			this->scene->addItem(this->movableTiles.back());
-			this->movableTiles.push_back(new GraphicsMovableTile(whitePawnPath, x, 6, tileSize, tileSize));
-			this->scene->addItem(this->movableTiles.back());
-			
-			if (x == 3) {
-				this->movableTiles.push_back(new GraphicsMovableTile(ballPath, x, 0, tileSize, tileSize));
-				this->scene->addItem(this->movableTiles.back());
-				this->movableTiles.push_back(new GraphicsMovableTile(ballPath, x, 6, tileSize, tileSize));
-				this->scene->addItem(this->movableTiles.back());
-			}
+			this->pawns.push_back(new GraphicsMovableTile(blackPawnPath, x, 0, 0, tileSize, tileSize));
+			this->scene->addItem(this->pawns.back());
+			this->pawns.push_back(new GraphicsMovableTile(whitePawnPath, x, 6, 0, tileSize, tileSize));
+			this->scene->addItem(this->pawns.back());
 		}
+		
+		this->balls.push_back(new GraphicsMovableTile(ballPath,	3, 0, 1, tileSize, tileSize));
+		this->scene->addItem(this->balls.back());
+		this->balls.push_back(new GraphicsMovableTile(ballPath, 3, 6, 1, tileSize, tileSize));
+		this->scene->addItem(this->balls.back());
 		
 		this->deletePlayers();
 		this->currentPlayer = 0;
@@ -175,6 +196,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->players[1] = this->createPlayer(playerB, 1);
 		
 		//TODO - random player starting?
+		this->playersTimer.start();
 	} else {
 		//we're using the configuration from the scene
 		//TODO create a new Board object and set everything on it as it's on the Scene
@@ -183,7 +205,39 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 }
 
 void GameHandler::checkForNewMoves() {
-	//TODO implement
+	if (this->players[this->currentPlayer]->isTurnFinished()) {
+		this->changeCurrentPlayer();
+		this->turnsHistory.push_back(this->currentTurn);
+		this->currentTurn.clear();
+		
+		//TODO has to notify the opposite player of the last move (turn)
+	}
+	
+	if (this->players[this->currentPlayer]->isMoveReady()) {
+		this->playersTimer.stop();
+		
+		Move move = this->players[this->currentPlayer]->getMove();
+		
+		if (this->game.isMoveValid(move) ) {
+			FieldState field = this->game.getFieldAt(move.from);
+			GraphicsMovableTile* src;
+			
+			if (field == BALL_A || field == BALL_B)
+				src = this->getBallAt(move.from);
+			else
+				src = this->getPawnAt(move.from);
+			//FIXME have to differentiate between the players and balls. Idea: another vector?
+			
+			assert(src != NULL);
+			
+			src->move(move.to);
+			
+			this->game.makeMove(move);
+			this->deselectTiles();
+		}
+		
+		this->playersTimer.start();
+	}
 }
 
 

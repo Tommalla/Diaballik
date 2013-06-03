@@ -35,8 +35,12 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsScene* scene;
 		Game game;
 		
+		vector<Move> currentTurn;
+		vector< vector<Move> > turnsHistory;
+		
 		vector<GraphicsTile*> backgroundTiles;
-		vector<GraphicsMovableTile*> movableTiles;
+		vector<GraphicsMovableTile*> pawns;
+		vector<GraphicsMovableTile*> balls;
 		vector<GraphicsTile*> selectedTiles;
 		GraphicsMovableTile* lastSelector;	//the last tile that was clicked and became
 		//the source of the last selection. If none, this shall be set to NULL.
@@ -50,7 +54,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		Player* createPlayer(const PlayerInfo& info, const int id);
 		
 		GraphicsTile* getTileAt(const Point& pos);
-		GraphicsMovableTile* getMovableTileAt(const Point& pos);
+		GraphicsMovableTile* getBallAt(const Point& pos);
+		GraphicsMovableTile* getPawnAt(const Point& pos);
 		
 		/**
 		 * @brief Deselects currently selected tiles.

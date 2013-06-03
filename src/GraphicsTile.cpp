@@ -27,7 +27,7 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	QGraphicsItem::mousePressEvent (event);
 	
 	if (this->selected == true) {	//we can only move to a selected tile
-		qDebug("Trying to move to (%d, %d)", this->x, this->y);
+		qDebug("Trying to move to (%d, %d) [%d]", this->x, this->y, this->zValue());
 		const GraphicsMovableTile* from = GameHandler::getInstance().getLastSelector();
 		assert(from != NULL);
 		
@@ -37,7 +37,8 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 }
 
 
-GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y, const int width, const int height) {
+GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y, const int z, const int width, const int height) {
+	this->setZValue(z);
 	this->selected = false;
 	this->x = x;
 	this->y = y;
