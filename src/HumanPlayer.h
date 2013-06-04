@@ -9,7 +9,7 @@ All rights reserved */
 class HumanPlayer : public Player {
 	Q_OBJECT;
 	public:
-		HumanPlayer();
+		HumanPlayer(const PlayerInfo &info);
 		virtual void endGame(bool win);
 		
 	private slots:

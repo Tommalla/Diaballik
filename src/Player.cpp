@@ -4,7 +4,8 @@ All rights reserved */
 #include <cassert>
 #include "Player.h"
 
-Player::Player() {
+Player::Player(const PlayerInfo& info) {
+	this->info = info;
 	this->moveReady = this->ready = false;
 	this->turnFinished = false;
 }
@@ -26,6 +27,10 @@ const Move Player::getMove() {
 	Move moveCopy = this->move;
 	this->move = Move(Point(-1, -1), Point(-1, -1));
 	return moveCopy;
+}
+
+const PlayerInfo& Player::getPlayerInfo() const {
+	return info;
 }
 
 void Player::finishTurn() {

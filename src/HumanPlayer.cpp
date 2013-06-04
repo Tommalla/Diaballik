@@ -3,7 +3,7 @@ All rights reserved */
 
 #include "HumanPlayer.h"
 
-HumanPlayer::HumanPlayer() : Player::Player() {
+HumanPlayer::HumanPlayer(const PlayerInfo& info) : Player::Player(info) {
 	this->ready = true;
 }
 
