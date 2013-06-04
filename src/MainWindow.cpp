@@ -61,7 +61,7 @@ void MainWindow::newGame() {
 	
 	GameHandler::getInstance().newGame(playerA, playerB, this->ui->graphicsView->viewport()->rect());
 	
-	emit gameStarted(playerA, playerB);
+	StateHandler::getInstance().newGame(playerA, playerB);
 }
 
 void MainWindow::startGameEditor() {

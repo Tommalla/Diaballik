@@ -32,9 +32,6 @@ class MainWindow : public QMainWindow {
 		void showRules();
 		void showAuthor();
 		void showHelp();
-		
-	signals:
-		void gameStarted(const PlayerInfo& playerA, const PlayerInfo& playerB);
 };
 
 #endif // MAINWINDOW_H
