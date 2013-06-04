@@ -9,7 +9,7 @@ All rights reserved */
 #include "SettingsHandler.h"
 #include "gameConstants.h"
 
-void GraphicsTile::drawSelection() {
+void GraphicsTile::drawPrimarySelection() {
 	QPixmap tmp = this->pixmap();
 	QPainter painter(&tmp);
 	
@@ -64,7 +64,7 @@ void GraphicsTile::redraw (int width, int height) {
 	this->setPos(this->x * width, this->y * height);
 	
 	if (this->selected)
-		this->drawSelection();
+		this->drawPrimarySelection();
 }
 
 void GraphicsTile::select() {

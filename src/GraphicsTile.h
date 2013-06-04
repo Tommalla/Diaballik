@@ -19,9 +19,14 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 	private:
 		QPixmap originalPixmap;
 		QColor primarySelectionColor;
+		QColor secondarySelectionColor;
 		QPen primarySelectionPen;
 		
-		void drawSelection();	//draws selection around the item
+		/**
+		 * @brief Draws primary selection around the item.
+		 **/
+		void drawPrimarySelection();
+		
 	protected:
 		int x, y;
 		bool selected;

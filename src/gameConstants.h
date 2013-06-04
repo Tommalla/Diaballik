@@ -16,6 +16,7 @@ const QString APP_LOCATION = QDir::homePath() + "/.diaballik/";
 const QString SETTINGS_FILE = APP_LOCATION + "config.ini";
 
 const QColor DEFAULT_PRIMARY_SELECTION_COLOR = QColor::fromRgb(12, 232, 12);
+const QColor DEFAULT_SECONDARY_SELECTION_COLOR = QColor::fromRgb(205, 201, 201);
 const QPen DEFAULT_PRIMARY_SELECTION_PEN = QPen(Qt::DashLine);
 
 const int DEFAULT_PLAYERS_TIMER_INTERVAL = 100;
