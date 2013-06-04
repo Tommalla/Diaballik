@@ -121,6 +121,11 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * the move.
 		 **/
 		void checkForNewMoves();
+	public slots:
+		/**
+		 * @brief Finishes current turn and gives control to the next player.
+		 **/
+		void currentTurnDone();
 	signals:
 		void gameFinished();
 };

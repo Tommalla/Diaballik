@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->actionBoardEditor, SIGNAL(triggered()), this, SLOT(startGameEditor()));
 	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
 	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
+	QObject::connect(ui->turnDonePushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(currentTurnDone()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {

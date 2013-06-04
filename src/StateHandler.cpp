@@ -5,6 +5,7 @@ All rights reserved */
 #include <qeventtransition.h>
 #include <qsignaltransition.h>
 #include "StateHandler.h"
+#include "GameHandler.h"
 #include "ui_MainWindow.h"
 
 //not the best implementation ever, but it does the job
@@ -65,6 +66,10 @@ void StateHandler::start(MainWindow* window) {
 	this->HumanVsAIGame->addTransition(&(window->newGameDialog), SIGNAL(accepted()), this->Game);
 	this->AIVsAIGame->addTransition(window->ui->actionBoardEditor, SIGNAL(triggered()), this->BoardEditor);
 	this->AIVsAIGame->addTransition(&(window->newGameDialog), SIGNAL(accepted()), this->Game);
+	
+	this->HumanVsHumanGame->addTransition(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this->GameFinished);
+	this->HumanVsAIGame->addTransition(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this->GameFinished);
+	this->AIVsAIGame->addTransition(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this->GameFinished);
 	
 	
  	this->BoardEditor->addTransition(window->ui->startPushButton, SIGNAL(clicked()), this->GameFinished);

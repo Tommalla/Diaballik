@@ -8,6 +8,7 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::changeCurrentPlayer() {
+	this->deselectTiles();
 	this->currentPlayer = (this->currentPlayer + 1) % 2;
 	this->turnsHistory.push_back(this->currentTurn);
 	this->currentTurn.clear();
@@ -26,7 +27,7 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 	switch (info.type) {
 		case HUMAN_PLAYER:
 		{
-			HumanPlayer* res = new HumanPlayer();
+			HumanPlayer* res = new HumanPlayer(info);
 			
 			for (GraphicsTile* tile: this->backgroundTiles)
 				QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
@@ -248,9 +249,20 @@ void GameHandler::checkForNewMoves() {
 		
 		if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
 			this->changeCurrentPlayer();
+	
+		//FIXME: Needs debugging...
+// 		if (this->game.isFinished()) {
+// 			qDebug("Game finished! (This is going to need some debugging...");
+// // 			emit gameFinished();
+// 			//return;
+// 		}
+		
 		this->playersTimer.start();
 	}
 }
 
+void GameHandler::currentTurnDone() {
+	this->players[this->currentPlayer]->finishTurn();
+}
 
 
