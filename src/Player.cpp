@@ -6,7 +6,7 @@ All rights reserved */
 
 Player::Player() {
 	this->moveReady = this->ready = false;
-	this->turnFinished = true;
+	this->turnFinished = false;
 }
 
 bool Player::isMoveReady() {
@@ -31,7 +31,3 @@ const Move Player::getMove() {
 void Player::finishTurn() {
 	this->turnFinished = true;
 }
-
-
-
-

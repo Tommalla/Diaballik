@@ -9,6 +9,10 @@ All rights reserved */
 
 void GameHandler::changeCurrentPlayer() {
 	this->currentPlayer = (this->currentPlayer + 1) % 2;
+	this->turnsHistory.push_back(this->currentTurn);
+	this->currentTurn.clear();
+	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
+	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 }
 
 void GameHandler::deletePlayers() {
@@ -93,6 +97,9 @@ bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovabl
 }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
+	if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
+		return;
+	
 	FieldState field = this->game.getFieldAt(tile->getPos());
 	if (engine::getPlayerFor(field) != this->game.getCurrentPlayer())
 		return;	//wrong player, we won't be selecting anything
@@ -103,6 +110,8 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	
 	for (Point dst: destinations)
 		if (field == PLAYER_A || field == PLAYER_B) {
+			if (this->game.getMovesLeft() <= 0)
+				return;
 			qDebug("background being selected!");
 			for (GraphicsTile* dstTile: this->backgroundTiles)
 				if (dst == dstTile->getPos()) {
@@ -111,6 +120,8 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 					break;
 				}
 		} else {
+			if (this->game.getPassessLeft() <= 0)
+				return;
 			qDebug("pawns being selected!");
 			for (GraphicsMovableTile* dstTile: this->pawns)
 				if (dst == dstTile->getPos()) {
@@ -208,9 +219,6 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 void GameHandler::checkForNewMoves() {
 	if (this->players[this->currentPlayer]->isTurnFinished()) {
 		this->changeCurrentPlayer();
-		this->turnsHistory.push_back(this->currentTurn);
-		this->currentTurn.clear();
-		
 		//TODO has to notify the opposite player of the last move (turn)
 	}
 	
@@ -238,6 +246,8 @@ void GameHandler::checkForNewMoves() {
 			this->deselectTiles();
 		}
 		
+		if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
+			this->changeCurrentPlayer();
 		this->playersTimer.start();
 	}
 }
