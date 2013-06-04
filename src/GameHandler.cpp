@@ -148,9 +148,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		qDebug("Creating new game from the scratch");
 		//creating a default board
 		
-		//FIXME Don't know QSettings implementation, BUT if it reads the settings again every time then having this here
-		//is a good thing - a user can change the graphics in the config and have a "modded" game just by starting a new game;
-		//otherwise (eg. if it's not the case), this should be moved to gameConstants:
+		SettingsHandler::getInstance().sync();
 		
 		//reading tiles paths from config
 		QString backgroundTilePath, whitePawnPath, blackPawnPath, ballPath;
@@ -222,6 +220,7 @@ void GameHandler::checkForNewMoves() {
 		Move move = this->players[this->currentPlayer]->getMove();
 		
 		if (this->game.isMoveValid(move) ) {
+			qDebug("Valid move!");
 			FieldState field = this->game.getFieldAt(move.from);
 			GraphicsMovableTile* src;
 			

@@ -2,6 +2,7 @@
 All rights reserved */
 
 #include "StateHandler.h"
+#include "ui_MainWindow.h"
 
 StateHandler::StateHandler() : QObject() {
 	//TODO create states here
@@ -18,4 +19,6 @@ StateHandler::StateHandler() : QObject() {
 void StateHandler::start(MainWindow* window) {
 	this->window = window;
 	this->machine.start();
+	
+	//this->GameFinished->addTransition(window->ui->//hhmmm
 }
