@@ -21,7 +21,7 @@
        <widget class="QGraphicsView" name="graphicsView"/>
       </item>
       <item>
-       <widget class="QGroupBox" name="groupBox">
+       <widget class="QGroupBox" name="controlGropuBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -35,7 +35,7 @@
          </size>
         </property>
         <property name="title">
-         <string>Status</string>
+         <string>Control</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
@@ -44,7 +44,7 @@
             <enum>QLayout::SetMinimumSize</enum>
            </property>
            <item>
-            <widget class="QGroupBox" name="groupBox_2">
+            <widget class="QGroupBox" name="turnsGroupBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
                <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="groupBox_4">
+            <widget class="QGroupBox" name="currentTurnGroupBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
                <horstretch>0</horstretch>
@@ -139,7 +139,7 @@
             <enum>QLayout::SetMaximumSize</enum>
            </property>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
+            <layout class="QVBoxLayout" name="statusLayout">
              <property name="sizeConstraint">
               <enum>QLayout::SetMinimumSize</enum>
              </property>
