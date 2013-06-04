@@ -180,6 +180,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->backgroundTiles.clear();
 		this->pawns.clear();
 		this->selectedTiles.clear();
+		this->balls.clear();
 	
 		//creating new board:
 		this->game = Game(GAME_PLAYER_A);
