@@ -9,7 +9,7 @@
 #include <QPen>
 
 const QString AUTHOR = "Tomasz [Tommalla] Zakrzewski, tz336079@students.mimuw.edu.pl";
-const QString VERSION = "v0.1 beta";
+const QString VERSION = "v0.1 alpha";
 const QString APP_NAME = "Diaballik " + VERSION;
 
 const QString APP_LOCATION = QDir::homePath() + "/.diaballik/";
