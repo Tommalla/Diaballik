@@ -63,13 +63,6 @@ GraphicsMovableTile* GameHandler::getBallAt (const Point& pos) {
 	return NULL;
 }
 
-void GameHandler::deselectTiles() {
-	for (GraphicsTile* tile: this->selectedTiles)
-		tile->deselect();
-	this->selectedTiles.clear();
-}
-
-
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 	this->lastSelector = NULL;
@@ -79,6 +72,15 @@ GameHandler::GameHandler() : QObject() {
 	this->playersTimer.stop();
 	
 	QObject::connect(&(this->playersTimer), SIGNAL(timeout()), this, SLOT(checkForNewMoves()));
+}
+
+void GameHandler::deselectTiles() {
+	for (GraphicsTile* tile: this->selectedTiles)
+		tile->deselect();
+	this->selectedTiles.clear();
+	if (this->lastSelector != NULL)
+		this->lastSelector->deselect();
+	this->lastSelector = NULL;
 }
 
 void GameHandler::Initialize (GraphicsScene* scene) {
@@ -124,7 +126,7 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 			if (this->game.getPassessLeft() <= 0)
 				return;
 			qDebug("pawns being selected!");
-			for (GraphicsMovableTile* dstTile: this->pawns)
+			for (GraphicsTile* dstTile: this->pawns)
 				if (dst == dstTile->getPos()) {
 					dstTile->select();
 					this->selectedTiles.push_back(dstTile);
@@ -133,6 +135,16 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 		}
 		
 	this->lastSelector = tile;
+	tile->select(false);
+	
+	if (field == BALL_A || field == BALL_B)	//a hack to get the ball to cancel the selection
+		for(GraphicsTile* ball: this->balls)
+			if (ball->getPos() == tile->getPos()) {
+				ball->select(false);
+				this->selectedTiles.push_back(ball);
+				qDebug("selected the ball");
+				break;
+			}
 }
 
 void GameHandler::repaintTiles (QRect viewRect) {
@@ -265,5 +277,6 @@ void GameHandler::checkForNewMoves() {
 void GameHandler::currentTurnDone() {
 	this->players[this->currentPlayer]->finishTurn();
 }
+
 
 

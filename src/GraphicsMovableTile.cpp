@@ -5,11 +5,15 @@ All rights reserved */
 #include "GameHandler.h"
 #include "SettingsHandler.h"
 #include "gameConstants.h"
+#include <qgraphicssceneevent.h>
 
 void GraphicsMovableTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	GraphicsTile::mousePressEvent (event);
 	
-	if (this->selected == false)	//start a new selection
+	if (this->secondarySelected == true) {
+		GameHandler::getInstance().deselectTiles();
+		event->accept();
+	} else if (this->primarySelected == false)	//start a new selection
 		GameHandler::getInstance().showDestinationsFor(this);
 }
 

@@ -57,12 +57,12 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsMovableTile* getBallAt(const Point& pos);
 		GraphicsMovableTile* getPawnAt(const Point& pos);
 		
+		GameHandler();
+	public:
 		/**
 		 * @brief Deselects currently selected tiles.
 		 **/
 		void deselectTiles();
-		GameHandler();
-	public:
 		/**
 		 * @brief Initializes the class
 		 * @param scene The GraphicsScene that is set in the view

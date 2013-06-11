@@ -22,14 +22,15 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 		QColor secondarySelectionColor;
 		QPen primarySelectionPen;
 		
+		void drawSelection(const QColor& color);
 		/**
 		 * @brief Draws primary selection around the item.
 		 **/
 		void drawPrimarySelection();
-		
+		void drawSecondarySelection();
 	protected:
 		int x, y;
-		bool selected;
+		bool primarySelected, secondarySelected;
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
 	public:
 		GraphicsTile(const QString& graphicsPath, const int x, const int y, const int z, const int width, const int height);
@@ -43,7 +44,7 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 		/**
 		 * @brief Selects the Tile (visually changes it)
 		 **/
-		void select();
+		void select(const bool primary = true);
 		/**
 		 * @brief Deselects the tile
 		 **/
@@ -52,7 +53,6 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 		const Point getPos() const;
 	signals:
 		void makeMove(const Move& move);
-	
 };
 
 #endif // GRAPHICSTILE_H

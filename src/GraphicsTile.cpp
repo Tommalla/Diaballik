@@ -9,38 +9,46 @@ All rights reserved */
 #include "SettingsHandler.h"
 #include "gameConstants.h"
 
-void GraphicsTile::drawPrimarySelection() {
+void GraphicsTile::drawSelection (const QColor& color) {
 	QPixmap tmp = this->pixmap();
 	QPainter painter(&tmp);
 	
-	this->primarySelectionPen.setColor(this->primarySelectionColor);
+	this->primarySelectionPen.setColor(color);
 	painter.setPen(this->primarySelectionPen);
 	
 	painter.drawRect(QRect(QPoint(2, 2), QPoint(tmp.width() - 4, tmp.height() - 4)));
 	painter.end();
 	
 	this->setPixmap(tmp);
-	
+}
+
+
+void GraphicsTile::drawPrimarySelection() {
+	this->drawSelection(this->primarySelectionColor);
+}
+
+void GraphicsTile::drawSecondarySelection() {
+	this->drawSelection(this->secondarySelectionColor);
 }
 
 void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	QGraphicsItem::mousePressEvent (event);
 	
-	if (this->selected == true) {	//we can only move to a selected tile
+	if (this->primarySelected == true) {	//we can only move to a selected tile
 		qDebug("Trying to move to (%d, %d) [%d]", this->x, this->y, this->zValue());
 		const GraphicsMovableTile* from = GameHandler::getInstance().getLastSelector();
 		assert(from != NULL);
 		
 		if ((from->getPos()) != (this->getPos()))	//if we're not moving to self
-			emit makeMove(Move(from->getPos(), this->getPos()));
-		else qDebug("Tried to move to self:(");
+				emit makeMove(Move(from->getPos(), this->getPos()));
+		
 	}
 }
 
 
 GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y, const int z, const int width, const int height) {
 	this->setZValue(z);
-	this->selected = false;
+	this->primarySelected = this->secondarySelected = false;
 	this->x = x;
 	this->y = y;
 
@@ -63,18 +71,21 @@ void GraphicsTile::redraw (int width, int height) {
 	this->setPixmap(tmp.scaled(width, height, Qt::KeepAspectRatio));
 	this->setPos(this->x * width, this->y * height);
 	
-	if (this->selected)
+	if (this->primarySelected)
 		this->drawPrimarySelection();
+	if (this->secondarySelected)
+		this->drawSecondarySelection();
 }
 
-void GraphicsTile::select() {
+void GraphicsTile::select(const bool primary) {
 	qDebug("Tile(%d, %d) getting selected!\n", x, y);
-	this->selected = true;
+	this->primarySelected = primary;
+	this->secondarySelected = !primary;
 	this->redraw();
 }
 
 void GraphicsTile::deselect() {
-	this->selected = false;
+	this->primarySelected = this->secondarySelected = false;
 	this->redraw();
 }
 
