@@ -11,6 +11,7 @@ class HumanPlayer : public Player {
 	public:
 		HumanPlayer(const PlayerInfo &info);
 		virtual void endGame(bool win);
+		virtual void play(const vector<Move> moves);
 		
 	private slots:
 		void setMove(const Move& move);
