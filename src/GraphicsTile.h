@@ -29,7 +29,7 @@ class GraphicsTile : public QObject, public QGraphicsPixmapItem {
 		void drawPrimarySelection();
 		void drawSecondarySelection();
 	protected:
-		int x, y;
+		int innerX, innerY;
 		bool primarySelected, secondarySelected;
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
 	public:

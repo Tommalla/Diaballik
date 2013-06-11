@@ -35,7 +35,7 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	QGraphicsItem::mousePressEvent (event);
 	
 	if (this->primarySelected == true) {	//we can only move to a selected tile
-		qDebug("Trying to move to (%d, %d) [%d]", this->x, this->y, this->zValue());
+		qDebug("Trying to move to (%d, %d) [%d]", this->innerX, this->innerY, this->zValue());
 		const GraphicsMovableTile* from = GameHandler::getInstance().getLastSelector();
 		assert(from != NULL);
 		
@@ -49,8 +49,8 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y, const int z, const int width, const int height) {
 	this->setZValue(z);
 	this->primarySelected = this->secondarySelected = false;
-	this->x = x;
-	this->y = y;
+	this->innerX = x;
+	this->innerY = y;
 
 	this->setAcceptedMouseButtons(Qt::LeftButton);
 
@@ -69,7 +69,7 @@ void GraphicsTile::redraw (int width, int height) {
 	
 	QPixmap tmp = this->originalPixmap;
 	this->setPixmap(tmp.scaled(width, height, Qt::KeepAspectRatio));
-	this->setPos(this->x * width, this->y * height);
+	this->setPos(this->innerX * width, this->innerY * height);
 	
 	if (this->primarySelected)
 		this->drawPrimarySelection();
@@ -78,7 +78,7 @@ void GraphicsTile::redraw (int width, int height) {
 }
 
 void GraphicsTile::select(const bool primary) {
-	qDebug("Tile(%d, %d) getting selected!\n", x, y);
+	qDebug("Tile(%d, %d) getting selected!\n", innerX, innerY);
 	this->primarySelected = primary;
 	this->secondarySelected = !primary;
 	this->redraw();
@@ -90,7 +90,7 @@ void GraphicsTile::deselect() {
 }
 
 const Point GraphicsTile::getPos() const {
-	return Point(this->x, this->y);
+	return Point(this->innerX, this->innerY);
 }
 
 

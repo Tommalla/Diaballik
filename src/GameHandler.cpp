@@ -9,6 +9,8 @@ All rights reserved */
 
 void GameHandler::changeCurrentPlayer() {
 	this->deselectTiles();
+	for (int i = 0; i < 2; ++i)
+		this->players[i]->play(this->currentTurn);
 	this->currentPlayer = (this->currentPlayer + 1) % 2;
 	this->turnsHistory.push_back(this->currentTurn);
 	this->currentTurn.clear();
@@ -253,10 +255,11 @@ void GameHandler::checkForNewMoves() {
 			
 			assert(src != NULL);
 			
+			this->deselectTiles();
 			src->move(move.to);
 			
+			this->currentTurn.push_back(move);
 			this->game.makeMove(move);
-			this->deselectTiles();
 		}
 		
 		/*if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
@@ -274,6 +277,9 @@ void GameHandler::checkForNewMoves() {
 }
 
 void GameHandler::currentTurnDone() {
+	if (this->currentTurn.empty())
+		return;	//disallow for empty turns
+
 	this->deselectTiles();
 	this->players[this->currentPlayer]->finishTurn();
 }

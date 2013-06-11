@@ -26,8 +26,8 @@ GraphicsMovableTile::GraphicsMovableTile (const QString& graphicsPath, const int
 }
 
 void GraphicsMovableTile::changeCoordinates (const int newX, const int newY) {
-	this->x = newX;
-	this->y = newY;
+	this->innerX = newX;
+	this->innerY = newY;
 }
 
 
@@ -38,7 +38,7 @@ void GraphicsMovableTile::changePosition (const int newX, const int newY) {
 
 void GraphicsMovableTile::move (const int newX, const int newY) {
 	int durationPerField = SettingsHandler::getInstance().value("animation/duration", DEFAULT_ANIMATION_DURATION).toInt();
-	int fields = max( abs(this->x - newX), abs(this->y - newY));
+	int fields = max( abs(this->innerX - newX), abs(this->innerY - newY));
 	
 	this->changeCoordinates(newX, newY);
 	this->animation.setDuration(durationPerField * (log2(fields) + 1));
