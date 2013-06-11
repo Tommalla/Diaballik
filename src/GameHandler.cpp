@@ -250,7 +250,6 @@ void GameHandler::checkForNewMoves() {
 				src = this->getBallAt(move.from);
 			else
 				src = this->getPawnAt(move.from);
-			//FIXME have to differentiate between the players and balls. Idea: another vector?
 			
 			assert(src != NULL);
 			
@@ -260,21 +259,22 @@ void GameHandler::checkForNewMoves() {
 			this->deselectTiles();
 		}
 		
-		if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
-			this->changeCurrentPlayer();
+		/*if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
+			this->changeCurrentPlayer();*/
 	
 		//FIXME: Needs debugging...
-// 		if (this->game.isFinished()) {
-// 			qDebug("Game finished! (This is going to need some debugging...");
-// // 			emit gameFinished();
-// 			//return;
-// 		}
+		if (this->game.isFinished()) {
+			qDebug("Game finished! (This is going to need some debugging...");
+ 			emit gameFinished();
+			return;
+		}
 		
 		this->playersTimer.start();
 	}
 }
 
 void GameHandler::currentTurnDone() {
+	this->deselectTiles();
 	this->players[this->currentPlayer]->finishTurn();
 }
 
