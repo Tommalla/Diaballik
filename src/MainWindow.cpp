@@ -61,8 +61,8 @@ MainWindow::~MainWindow() {
 
 void MainWindow::newGame() {
 	this->ui->graphicsView->setSceneRect(0, 0, this->getSceneDimension(), this->getSceneDimension());
-	PlayerInfo playerA = this->newGameDialog.getPlayerInfo(0);
-	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(1);
+	PlayerInfo playerA = this->newGameDialog.getPlayerInfo(1);
+	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(0);
 	
 	GameHandler::getInstance().newGame(playerA, playerB, this->ui->graphicsView->viewport()->rect());
 	this->playerChanged();

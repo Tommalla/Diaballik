@@ -35,7 +35,7 @@ void GraphicsTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	QGraphicsItem::mousePressEvent (event);
 	
 	if (this->primarySelected == true) {	//we can only move to a selected tile
-		qDebug("Trying to move to (%d, %d) [%d]", this->innerX, this->innerY, this->zValue());
+		qDebug("Trying to move to (%d, %d)", this->innerX, this->innerY);
 		const GraphicsMovableTile* from = GameHandler::getInstance().getLastSelector();
 		assert(from != NULL);
 		
@@ -56,6 +56,7 @@ GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y
 
 	
 	this->primarySelectionColor = SettingsHandler::getInstance().value("selection/primarySelectionColor", DEFAULT_PRIMARY_SELECTION_COLOR).value<QColor>();
+	this->secondarySelectionColor = SettingsHandler::getInstance().value("selection/secondarySelectionColor", DEFAULT_SECONDARY_SELECTION_COLOR).value<QColor>();
 	//TODO add secondary color
 	this->primarySelectionPen = SettingsHandler::getInstance().value("selection/primarySelectionPen", DEFAULT_PRIMARY_SELECTION_PEN).value<QPen>();
 	this->originalPixmap = QPixmap(graphicsPath);

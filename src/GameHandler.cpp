@@ -226,8 +226,8 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->deletePlayers();
 		this->currentPlayer = 0;
 		
-		this->players[0] = this->createPlayer(playerB, 0);
-		this->players[1] = this->createPlayer(playerA, 1);
+		this->players[0] = this->createPlayer(playerA, 0);
+		this->players[1] = this->createPlayer(playerB, 1);
 		
 		//TODO - random player starting?
 		this->players[this->currentPlayer]->startTurn();
