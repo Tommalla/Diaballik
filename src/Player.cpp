@@ -36,3 +36,8 @@ const PlayerInfo& Player::getPlayerInfo() const {
 void Player::finishTurn() {
 	this->turnFinished = true;
 }
+
+void Player::startTurn() {
+	this->turnFinished = false;
+}
+

@@ -49,6 +49,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		Player* players[2];
 		int currentPlayer;
 		
+		const int getNextPlayerId() const;
 		void changeCurrentPlayer();
 		void deletePlayers();
 		Player* createPlayer(const PlayerInfo& info, const int id);

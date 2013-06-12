@@ -42,7 +42,11 @@ class Player : public QObject {
 		/**
 		 * @brief Tells the player to finish current turn
 		 **/
-		void finishTurn();
+		virtual void finishTurn();
+		/**
+		 * @brief Tells the player to start a new turn
+		 **/
+		virtual void startTurn();
     };
 
 #endif // PLAYER_H

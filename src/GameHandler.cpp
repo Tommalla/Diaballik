@@ -7,19 +7,26 @@ All rights reserved */
 #include "gameConstants.h"
 #include "../DiaballikEngine/src/functions.h"
 
+const int GameHandler::getNextPlayerId() const {
+	return (this->currentPlayer + 1) % PLAYERS_QTY;
+}
+
 void GameHandler::changeCurrentPlayer() {
 	this->deselectTiles();
-	for (int i = 0; i < 2; ++i)
+	
+	for (int i = 0; i < PLAYERS_QTY; ++i)
 		this->players[i]->play(this->currentTurn);
-	this->currentPlayer = (this->currentPlayer + 1) % 2;
+	
 	this->turnsHistory.push_back(this->currentTurn);
 	this->currentTurn.clear();
+	
+	this->currentPlayer = this->getNextPlayerId();
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 }
 
 void GameHandler::deletePlayers() {
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < PLAYERS_QTY; ++i) {
 		this->players[i]->deleteLater();
 		this->players[i] = NULL;
 	}
@@ -233,10 +240,8 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 }
 
 void GameHandler::checkForNewMoves() {
-	if (this->players[this->currentPlayer]->isTurnFinished()) {
+	if (this->players[this->currentPlayer]->isTurnFinished())
 		this->changeCurrentPlayer();
-		//TODO has to notify the opposite player of the last move (turn)
-	}
 	
 	if (this->players[this->currentPlayer]->isMoveReady()) {
 		this->playersTimer.stop();
@@ -265,9 +270,8 @@ void GameHandler::checkForNewMoves() {
 		/*if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
 			this->changeCurrentPlayer();*/
 	
-		//FIXME: Needs debugging...
 		if (this->game.isFinished()) {
-			qDebug("Game finished! (This is going to need some debugging...");
+			qDebug("Game finished!");
  			emit gameFinished();
 			return;
 		}
@@ -280,8 +284,9 @@ void GameHandler::currentTurnDone() {
 	if (this->currentTurn.empty())
 		return;	//disallow for empty turns
 
-	this->deselectTiles();
+	//this->deselectTiles();	TODO is this necessary?
 	this->players[this->currentPlayer]->finishTurn();
+	this->players[this->getNextPlayerId()]->startTurn();
 }
 
 
