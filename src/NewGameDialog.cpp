@@ -48,7 +48,7 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 const PlayerInfo NewGameDialog::getPlayerInfo(const int id) const {
 	switch ( ((id == 0) ? this->getWhitePlayerType() : this->getBlackPlayerType()) ) {
 		case HUMAN_PLAYER:
-			return make_human_player();
+			return make_human_player((id == 0) ? "white" : "black");
 			break;
 		case AI_PLAYER:
 			//TODO: return make_ai_player()

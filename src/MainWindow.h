@@ -29,6 +29,8 @@ class MainWindow : public QMainWindow {
     
 	private slots:
 		void newGame();
+		void playerChanged();
+		void gameFinished();
 		void startGameEditor();
 		void showRules();
 		void showAuthor();

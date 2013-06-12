@@ -23,6 +23,7 @@ void GameHandler::changeCurrentPlayer() {
 	this->currentPlayer = this->getNextPlayerId();
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
+	emit playerChanged();
 }
 
 void GameHandler::deletePlayers() {
@@ -225,16 +226,22 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->deletePlayers();
 		this->currentPlayer = 0;
 		
-		this->players[0] = this->createPlayer(playerA, 0);
-		this->players[1] = this->createPlayer(playerB, 1);
+		this->players[0] = this->createPlayer(playerB, 0);
+		this->players[1] = this->createPlayer(playerA, 1);
 		
 		//TODO - random player starting?
+		this->players[this->currentPlayer]->startTurn();
+		this->players[this->getNextPlayerId()]->finishTurn();
 		this->playersTimer.start();
 	} else {
 		//we're using the configuration from the scene
 		//TODO create a new Board object and set everything on it as it's on the Scene
 		//TODO check if the Board is valid and start the game
 	}
+}
+
+const QString& GameHandler::getPlayerName (const bool current) const {
+	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
 }
 
 void GameHandler::checkForNewMoves() {
@@ -282,9 +289,8 @@ void GameHandler::currentTurnDone() {
 	if (this->currentTurn.empty())
 		return;	//disallow for empty turns
 
-	//this->deselectTiles();	TODO is this necessary?
-	this->players[this->currentPlayer]->finishTurn();
 	this->players[this->getNextPlayerId()]->startTurn();
+	this->players[this->currentPlayer]->finishTurn();
 }
 
 

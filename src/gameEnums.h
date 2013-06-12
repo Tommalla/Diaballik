@@ -6,8 +6,8 @@
  **/
 enum ApplicationPlayerType {
 	HUMAN_PLAYER,
-	AI_PLAYER,
-	NETWORK_PLAYER	//future idea
+	AI_PLAYER
+	//NETWORK_PLAYER	//future idea
 };
 
 #endif

@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
 	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
 	QObject::connect(ui->turnDonePushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(currentTurnDone()));
+	QObject::connect(&(GameHandler::getInstance()), SIGNAL(playerChanged()), this, SLOT(playerChanged()));
+	QObject::connect(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this, SLOT(gameFinished()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -63,9 +65,20 @@ void MainWindow::newGame() {
 	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(1);
 	
 	GameHandler::getInstance().newGame(playerA, playerB, this->ui->graphicsView->viewport()->rect());
-	
+	this->playerChanged();
 	StateHandler::getInstance().newGame(playerA, playerB);
 }
+
+void MainWindow::playerChanged() {
+	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
+	this->ui->statusLabel->setText("Current player: " + GameHandler::getInstance().getPlayerName());
+}
+
+void MainWindow::gameFinished() {
+	this->ui->statusLabel->setText("Game finished! The " + GameHandler::getInstance().getPlayerName() + 
+	" player won!");
+}
+
 
 void MainWindow::startGameEditor() {
 	//TODO start it!

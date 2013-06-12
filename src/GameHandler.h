@@ -115,6 +115,15 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
 			     QRect viewRect, bool defaultConfig = true);
+		/**
+		 * @brief Returns the name of the player
+		 * 
+		 * @param current If set to true, the method shall return the name of the current player. Otherwise
+		 * it will return the name of the next player.
+		 * 
+		 * @return The name described. An empty QString if there is any error (eg. players are nonexistent).
+		 **/
+		const QString& getPlayerName(const bool current = true) const;
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.
@@ -128,6 +137,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		void currentTurnDone();
 	signals:
+		void playerChanged();
 		void gameFinished();
 };
 
