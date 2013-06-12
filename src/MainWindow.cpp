@@ -38,8 +38,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 void MainWindow::resizeEvent (QResizeEvent* event) {
 	QWidget::resizeEvent(event);
 	GameHandler::getInstance().repaintTiles(this->ui->graphicsView->viewport()->rect());
-	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
-					     this->ui->graphicsView->viewport()->height());
+	int tmp = min(this->ui->graphicsView->viewport()->width(), this->ui->graphicsView->viewport()->height());
+	this->ui->graphicsView->setSceneRect(0, 0, tmp,
+					    tmp);
+	
+	//this->ui->graphicsView->fitInView(this->ui->graphicsView->scene()->sceneRect());
+	
+	
 }
 
 
