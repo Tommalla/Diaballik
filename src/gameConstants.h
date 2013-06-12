@@ -22,4 +22,6 @@ const QPen DEFAULT_PRIMARY_SELECTION_PEN = QPen(Qt::DashLine);
 const int DEFAULT_PLAYERS_TIMER_INTERVAL = 100;
 const int DEFAULT_ANIMATION_DURATION = 100;
 
+const int PLAYERS_QTY = 2;
+
 #endif
