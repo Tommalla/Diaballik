@@ -92,7 +92,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		/**
 		 * @brief Orders all the tiles to repaint.
 		 **/
-		void repaintTiles(QRect viewRect);
+		void repaintTiles(const int tileSize);
 		
 		bool canUndoMove();
 		bool canRedoMove();

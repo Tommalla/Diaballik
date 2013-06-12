@@ -20,6 +20,7 @@ class MainWindow : public QMainWindow {
 	private:
 		Ui::MainWindow *ui;
 		NewGameDialog newGameDialog;
+		const qreal getSceneDimension() const;
 	
 	public:
 		explicit MainWindow(QWidget *parent = 0);

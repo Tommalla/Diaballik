@@ -56,6 +56,7 @@ GraphicsTile::GraphicsTile(const QString& graphicsPath, const int x, const int y
 
 	
 	this->primarySelectionColor = SettingsHandler::getInstance().value("selection/primarySelectionColor", DEFAULT_PRIMARY_SELECTION_COLOR).value<QColor>();
+	//TODO add secondary color
 	this->primarySelectionPen = SettingsHandler::getInstance().value("selection/primarySelectionPen", DEFAULT_PRIMARY_SELECTION_PEN).value<QPen>();
 	this->originalPixmap = QPixmap(graphicsPath);
 	this->redraw(width, height);

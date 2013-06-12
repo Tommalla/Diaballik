@@ -156,11 +156,7 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 			}
 }
 
-void GameHandler::repaintTiles (QRect viewRect) {
-	int tileSize = min(viewRect.width(), viewRect.height()) / 7;
-	
-	this->scene->setSceneRect(0, 0, 7 * tileSize, 7 * tileSize);
-	
+void GameHandler::repaintTiles (const int tileSize) {
 	for (GraphicsTile* tile: this->backgroundTiles)
 		tile->redraw(tileSize, tileSize);
 	
@@ -169,9 +165,6 @@ void GameHandler::repaintTiles (QRect viewRect) {
 	
 	for (GraphicsTile* tile: this->balls)
 		tile->redraw(tileSize, tileSize);
-	
-	qDebug("%.2lf %.2lf %.2lf %.2lf", this->scene->sceneRect().x(), this->scene->sceneRect().y(), this->scene->sceneRect().width(),
-		this->scene->sceneRect().height());
 }
 
 const GraphicsMovableTile* GameHandler::getLastSelector() const {

@@ -6,6 +6,10 @@
 #include "StateHandler.h"
 #include "NewGameDialog.h"
 
+const qreal MainWindow::getSceneDimension() const {
+	return min(this->ui->graphicsView->viewport()->width(), this->ui->graphicsView->viewport()->height());
+}
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
 	this->ui->setupUi(this);
@@ -37,16 +41,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
 	QWidget::resizeEvent(event);
-	GameHandler::getInstance().repaintTiles(this->ui->graphicsView->viewport()->rect());
-	int tmp = min(this->ui->graphicsView->viewport()->width(), this->ui->graphicsView->viewport()->height());
-	this->ui->graphicsView->setSceneRect(0, 0, tmp,
-					    tmp);
+	qreal dimension = this->getSceneDimension();
 	
-	//this->ui->graphicsView->fitInView(this->ui->graphicsView->scene()->sceneRect());
-	
-	
+	GameHandler::getInstance().repaintTiles(dimension / 7.0);
+	this->ui->graphicsView->setSceneRect(0, 0, dimension, dimension);
 }
-
 
 MainWindow::~MainWindow() {
 	SettingsHandler::getInstance().setValue("windowGeometry/width", this->geometry().width());
@@ -59,9 +58,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newGame() {
-	//TODO add getting players from newGameDialog
-	this->ui->graphicsView->setSceneRect(0, 0, this->ui->graphicsView->viewport()->width(),
-					     this->ui->graphicsView->viewport()->height());
+	this->ui->graphicsView->setSceneRect(0, 0, this->getSceneDimension(), this->getSceneDimension());
 	PlayerInfo playerA = this->newGameDialog.getPlayerInfo(0);
 	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(1);
 	
