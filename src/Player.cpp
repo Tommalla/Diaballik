@@ -7,7 +7,7 @@ All rights reserved */
 Player::Player(const PlayerInfo& info) {
 	this->info = info;
 	this->moveReady = this->ready = false;
-	this->turnFinished = false;
+	this->turnFinished = true;
 }
 
 bool Player::isMoveReady() {
