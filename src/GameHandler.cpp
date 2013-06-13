@@ -300,8 +300,15 @@ void GameHandler::checkForNewMoves() {
 			
 			//TODO: if the move was the next from the history, increase the index
 			//if not, erase the end of the vector and start appending new moves
+			//forgetting the move if it's not from history:
+			if (this->lastMoveId + 1 < this->turnsHistory[this->currentTurnId].size() &&
+				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move)
+				this->dropHistoryTail();
+			
 			this->lastMoveId++;
-			this->turnsHistory[this->currentTurnId].push_back(move);
+			if (this->turnsHistory[this->currentTurnId].size() == this->lastMoveId)
+				this->turnsHistory[this->currentTurnId].push_back(move);
+			
 			this->game.makeMove(move);
 		}
 		
