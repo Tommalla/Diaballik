@@ -37,6 +37,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		
 		vector< vector<Move> > turnsHistory;
 		int lastMoveId, currentTurnId;
+		/**
+		 * @brief Deletes all the turns and moves remembered after lastMoveId.
+		 **/
+		void dropHistoryTail();
 		
 		vector<GraphicsTile*> backgroundTiles;
 		vector<GraphicsMovableTile*> pawns;

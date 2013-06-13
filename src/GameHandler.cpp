@@ -320,16 +320,19 @@ void GameHandler::currentTurnDone() {
 }
 
 void GameHandler::undoMove() {
-	qDebug("undoMove()");
+	qDebug("undoMove() %d %d", this->lastMoveId, this->currentTurnId);
 	//TODO implement
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
 		//we cannot move back, have to switch player
 		this->changeCurrentPlayer(true);
-	} else return;
+	} else if (this->lastMoveId < 0 && this->currentTurnId == 0)
+		return;
 	
 	Move move = this->turnsHistory[this->currentTurnId][this->lastMoveId];
+	move.revert();
 	
 	if (this->game.isMovePossible(move)) {
+		qDebug("Undo possible!");
 		this->moveTile(move);
 		this->lastMoveId--;
 		this->game.makeMove(move, true);
@@ -337,7 +340,7 @@ void GameHandler::undoMove() {
 		//TODO after we implement Player::undoMove
 // 		for (Player* player: this->players)
 // 			player->undoMove(move);
-	}
+	} else qDebug("Undo impossible: %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
 }
 
 void GameHandler::redoMove() {
