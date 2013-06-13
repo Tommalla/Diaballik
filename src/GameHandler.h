@@ -35,9 +35,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsScene* scene;
 		Game game;
 		
-		vector<Move> currentTurn;
 		vector< vector<Move> > turnsHistory;
-		int currentMoveId, currentTurnId;
+		int lastMoveId, currentTurnId;
 		
 		vector<GraphicsTile*> backgroundTiles;
 		vector<GraphicsMovableTile*> pawns;
@@ -51,7 +50,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		int currentPlayer;
 		
 		const int getNextPlayerId() const;
-		void changeCurrentPlayer();
+		void changeCurrentPlayer(const bool undo = false);
 		void deletePlayers();
 		Player* createPlayer(const PlayerInfo& info, const int id);
 		
@@ -83,7 +82,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @param dst A pointer to the dst (valid GraphicsMovableTile)
 		 * @return true if the move succeeded, false if it's impossible
 		 **/
-		bool moveTile(const GraphicsMovableTile* src, const GraphicsMovableTile* dst);
+		void moveTile(const Move& move);
 		/**
 		 * @brief Gets possible destinations for the tile to move/pass ball and
 		 * selects them on the board (calling GraphicsTile::select on tiles)

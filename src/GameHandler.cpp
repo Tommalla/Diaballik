@@ -11,16 +11,28 @@ const int GameHandler::getNextPlayerId() const {
 	return (this->currentPlayer + 1) % PLAYERS_QTY;
 }
 
-void GameHandler::changeCurrentPlayer() {
+void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->deselectTiles();
 	
 	for (int i = 0; i < PLAYERS_QTY; ++i)
-		this->players[i]->play(this->currentTurn);
+		this->players[i]->play(this->turnsHistory[this->currentTurnId]);
 	
-	this->turnsHistory.push_back(this->currentTurn);
-	this->currentTurn.clear();
+	if (!undo) {
+		this->turnsHistory.push_back(vector<Move>());
+		this->currentTurnId++;
+		this->lastMoveId = -1;
+	} else {
+		if (this->currentTurnId > 0) {
+			this->currentTurnId--;
+			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
+		} else {
+			this->currentTurnId = 0;
+			this->lastMoveId = -1;
+		}
+	}
 	
 	this->currentPlayer = this->getNextPlayerId();
+	//TODO have to set current player with correct parameters (moves and passes left)
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 	emit playerChanged();
@@ -103,10 +115,19 @@ bool GameHandler::isMoveValid (const Point& src, const Point& dst) {
 }
 
 
-bool GameHandler::moveTile (const GraphicsMovableTile* src, const GraphicsMovableTile* dst) {
-	//TODO check if the move is valid
-	//if so-make it
-	//return true/false
+void GameHandler::moveTile (const Move& move) {
+	FieldState field = this->game.getFieldAt(move.from);
+	GraphicsMovableTile* src;
+	
+	if (field == BALL_A || field == BALL_B)
+		src = this->getBallAt(move.from);
+	else
+		src = this->getPawnAt(move.from);
+	
+	assert(src != NULL);
+	
+	this->deselectTiles();
+	src->move(move.to);
 }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
@@ -232,6 +253,11 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		//TODO - random player starting?
 		this->players[this->currentPlayer]->startTurn();
 		this->players[this->getNextPlayerId()]->finishTurn();
+		
+		this->lastMoveId = -1;
+		this->currentTurnId = 0;
+		this->turnsHistory = {vector<Move>()};
+		
 		this->playersTimer.start();
 	} else {
 		//we're using the configuration from the scene
@@ -262,22 +288,13 @@ void GameHandler::checkForNewMoves() {
 		
 		if (this->game.isMoveValid(move) ) {
 			qDebug("Valid move!");
-			FieldState field = this->game.getFieldAt(move.from);
-			GraphicsMovableTile* src;
-			
-			if (field == BALL_A || field == BALL_B)
-				src = this->getBallAt(move.from);
-			else
-				src = this->getPawnAt(move.from);
-			
-			assert(src != NULL);
-			
-			this->deselectTiles();
-			src->move(move.to);
+
+			this->moveTile(move);
 			
 			//TODO: if the move was the next from the history, increase the index
 			//if not, erase the end of the vector and start appending new moves
-			this->currentTurn.push_back(move);
+			this->lastMoveId++;
+			this->turnsHistory[this->currentTurnId].push_back(move);
 			this->game.makeMove(move);
 		}
 		
@@ -295,7 +312,7 @@ void GameHandler::checkForNewMoves() {
 }
 
 void GameHandler::currentTurnDone() {
-	if (this->currentTurn.empty())
+	if (this->turnsHistory[this->currentTurnId].empty())
 		return;	//disallow for empty turns
 
 	this->players[this->getNextPlayerId()]->startTurn();
@@ -304,6 +321,23 @@ void GameHandler::currentTurnDone() {
 
 void GameHandler::undoMove() {
 	qDebug("undoMove()");
+	//TODO implement
+	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
+		//we cannot move back, have to switch player
+		this->changeCurrentPlayer(true);
+	} else return;
+	
+	Move move = this->turnsHistory[this->currentTurnId][this->lastMoveId];
+	
+	if (this->game.isMovePossible(move)) {
+		this->moveTile(move);
+		this->lastMoveId--;
+		this->game.makeMove(move, true);
+		
+		//TODO after we implement Player::undoMove
+// 		for (Player* player: this->players)
+// 			player->undoMove(move);
+	}
 }
 
 void GameHandler::redoMove() {
