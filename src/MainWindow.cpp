@@ -39,6 +39,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->turnDonePushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(currentTurnDone()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(playerChanged()), this, SLOT(playerChanged()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this, SLOT(gameFinished()));
+	QObject::connect(ui->undoPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(undoMove()));
+	QObject::connect(ui->redoPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoMove()));
+	QObject::connect(ui->previousTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(undoTurn()));
+	QObject::connect(ui->nextTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoTurn()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -75,8 +79,9 @@ void MainWindow::playerChanged() {
 }
 
 void MainWindow::gameFinished() {
-	this->ui->statusLabel->setText("Game finished! The " + GameHandler::getInstance().getPlayerName() + 
-	" player won!");
+	QString name = GameHandler::getInstance().getWinnerName();
+	this->ui->statusLabel->setText("Game finished " + 
+	((name.size() == 0) ? "It's a draw!" : "The " + name + " player won!"));
 }
 
 

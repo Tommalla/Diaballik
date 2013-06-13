@@ -37,6 +37,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		
 		vector<Move> currentTurn;
 		vector< vector<Move> > turnsHistory;
+		int currentMoveId, currentTurnId;
 		
 		vector<GraphicsTile*> backgroundTiles;
 		vector<GraphicsMovableTile*> pawns;
@@ -94,11 +95,6 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		void repaintTiles(const int tileSize);
 		
-		bool canUndoMove();
-		bool canRedoMove();
-		void undoMove();
-		void redoMove();
-		
 		/**
 		 * @brief Returns the tile that is the source of the current selection.
 		 * @return A pointer to the Tile. If there's no selection then the returned 
@@ -124,6 +120,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @return The name described. An empty QString if there is any error (eg. players are nonexistent).
 		 **/
 		const QString& getPlayerName(const bool current = true) const;
+		const QString& getWinnerName() const;
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.
@@ -136,6 +133,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @brief Finishes current turn and gives control to the next player.
 		 **/
 		void currentTurnDone();
+		void undoMove();
+		void redoMove();
+		void undoTurn();
+		void redoTurn();
 	signals:
 		void playerChanged();
 		void gameFinished();

@@ -244,6 +244,13 @@ const QString& GameHandler::getPlayerName (const bool current) const {
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
 }
 
+const QString& GameHandler::getWinnerName() const {
+	if (this->game.isFinished() == false || this->game.getWinner() == NONE)
+		return "";
+	return this->getPlayerName();
+}
+
+
 void GameHandler::checkForNewMoves() {
 	if (this->players[this->currentPlayer]->isTurnFinished())
 		this->changeCurrentPlayer();
@@ -268,6 +275,8 @@ void GameHandler::checkForNewMoves() {
 			this->deselectTiles();
 			src->move(move.to);
 			
+			//TODO: if the move was the next from the history, increase the index
+			//if not, erase the end of the vector and start appending new moves
 			this->currentTurn.push_back(move);
 			this->game.makeMove(move);
 		}
@@ -292,6 +301,26 @@ void GameHandler::currentTurnDone() {
 	this->players[this->getNextPlayerId()]->startTurn();
 	this->players[this->currentPlayer]->finishTurn();
 }
+
+void GameHandler::undoMove() {
+	qDebug("undoMove()");
+}
+
+void GameHandler::redoMove() {
+	qDebug("redoMove()");
+}
+
+void GameHandler::undoTurn() {
+	qDebug("undoTurn()");
+}
+
+void GameHandler::redoTurn() {
+	qDebug("redoTurn()");
+}
+
+
+
+
 
 
 
