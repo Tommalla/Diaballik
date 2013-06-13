@@ -88,6 +88,8 @@ void StateHandler::start(MainWindow* window) {
 		{true, true, true, false, true});
 	
 	this->HumanVsHumanGame->assignProperty(window->ui->stopButton, "visible", false);
+	this->HumanVsHumanGame->assignProperty(window->ui->pausePushButton, "visible", false);
+	this->HumanVsAIGame->assignProperty(window->ui->pausePushButton, "visible", false);
 
  	this->machine.setInitialState(this->GameFinished);
 	this->machine.start();
