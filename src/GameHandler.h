@@ -123,7 +123,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @return The name described. An empty QString if there is any error (eg. players are nonexistent).
 		 **/
 		const QString& getPlayerName(const bool current = true) const;
-		const QString& getWinnerName() const;
+		const QString getWinnerName() const;
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.

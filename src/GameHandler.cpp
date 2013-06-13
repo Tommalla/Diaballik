@@ -7,6 +7,13 @@ All rights reserved */
 #include "gameConstants.h"
 #include "../DiaballikEngine/src/functions.h"
 
+void GameHandler::dropHistoryTail() {
+	while (this->turnsHistory.size() > this->currentTurnId + 1)
+		this->turnsHistory.pop_back();
+	while (this->turnsHistory.back().size() > this->lastMoveId + 1)
+		this->turnsHistory.back().pop_back();
+}
+
 const int GameHandler::getNextPlayerId() const {
 	return (this->currentPlayer + 1) % PLAYERS_QTY;
 }
@@ -270,7 +277,7 @@ const QString& GameHandler::getPlayerName (const bool current) const {
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
 }
 
-const QString& GameHandler::getWinnerName() const {
+const QString GameHandler::getWinnerName() const {
 	if (this->game.isFinished() == false || this->game.getWinner() == NONE)
 		return "";
 	return this->getPlayerName();
