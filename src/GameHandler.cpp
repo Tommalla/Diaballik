@@ -21,6 +21,9 @@ const int GameHandler::getNextPlayerId() const {
 void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->deselectTiles();
 	
+	this->players[this->getNextPlayerId()]->startTurn();
+	this->players[this->currentPlayer]->finishTurn();
+	
 	for (int i = 0; i < PLAYERS_QTY; ++i)
 		this->players[i]->play(this->turnsHistory[this->currentTurnId]);
 	
@@ -39,7 +42,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	}
 	
 	this->currentPlayer = this->getNextPlayerId();
-	//TODO have to set current player with correct parameters (moves and passes left)
+	//TODO have to set current player with correct parameters (moves and passes left) <---- the bug lies here!
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 	emit playerChanged();
@@ -338,6 +341,7 @@ void GameHandler::undoMove() {
 	//TODO implement
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
 		//we cannot move back, have to switch player
+		qDebug("Dupa");
 		this->changeCurrentPlayer(true);
 	} else if (this->lastMoveId < 0 && this->currentTurnId == 0)
 		return;
