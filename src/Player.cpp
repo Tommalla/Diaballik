@@ -26,6 +26,7 @@ const Move Player::getMove() {
 	assert(this->isMoveReady());
 	Move moveCopy = this->move;
 	this->move = Move(Point(-1, -1), Point(-1, -1));
+	this->moveReady = false;
 	return moveCopy;
 }
 
