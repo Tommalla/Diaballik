@@ -118,6 +118,13 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
 			     QRect viewRect, bool defaultConfig = true);
 		/**
+		 * @brief If possible, loads the game from the save (filename).
+		 *
+		 * @param filename The path to the save file.
+		 * @return bool True if the load succeded.
+		 **/
+		bool loadGame(const QString filename);
+		/**
 		 * @brief Returns the name of the player
 		 * 
 		 * @param current If set to true, the method shall return the name of the current player. Otherwise

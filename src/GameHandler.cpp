@@ -307,6 +307,11 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	}
 }
 
+bool GameHandler::loadGame (const QString filename) {
+	qDebug("Loading game...");
+}
+
+
 const QString& GameHandler::getPlayerName (const bool current) const {
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
 }

@@ -29,6 +29,7 @@ class MainWindow : public QMainWindow {
     
 	private slots:
 		void newGame();
+		void loadGame();
 		void playerChanged();
 		void moveFinished();
 		void gameFinished();

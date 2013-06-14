@@ -1,3 +1,5 @@
+#include <QFileDialog>
+#include <QMessageBox>
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "gameConstants.h"
@@ -44,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->previousTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(undoTurn()));
 	QObject::connect(ui->nextTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoTurn()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(moveFinished()), this, SLOT(moveFinished()));
+	QObject::connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadGame()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -73,6 +76,19 @@ void MainWindow::newGame() {
 	this->playerChanged();
 	StateHandler::getInstance().newGame(playerA, playerB);
 }
+
+void MainWindow::loadGame() {
+	QString filename = QFileDialog::getOpenFileName(this,
+		tr("Load game"), QDir::homePath() + "/.diaballik/saves/", tr("Diaballik save files (*.sav)"));
+	
+	QMessageBox msgBox;
+	msgBox.setWindowTitle("Error!");
+	msgBox.setText("There was an error loading the game! Your save might be corrupted.");
+	
+	if(!GameHandler::getInstance().loadGame(filename))
+		msgBox.exec();
+}
+
 
 void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
