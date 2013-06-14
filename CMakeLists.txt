@@ -12,7 +12,7 @@ add_definitions (${QT_DEFINITIONS})
 
 #we want this version of DiaballikEngine to build first!
 add_subdirectory(DiaballikEngine)
-add_subdirectory(DiaballikBot)
+#add_subdirectory(DiaballikBot)
 #add_subdirectory(NullAI)
 add_subdirectory (src)
 
