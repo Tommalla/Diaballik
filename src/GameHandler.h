@@ -62,6 +62,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsTile* getTileAt(const Point& pos);
 		GraphicsMovableTile* getBallAt(const Point& pos);
 		GraphicsMovableTile* getPawnAt(const Point& pos);
+		GraphicsMovableTile* getSource(const Move& move);
 		
 		GameHandler();
 	public:
@@ -82,12 +83,13 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		bool isMoveValid(const Point& src, const Point& dst);
 		/**
-		 * @brief Attempts to move a tile. Returns true if a move is possible.
-		 * @param src A pointer to the src (valid GraphicsMovableTile)
-		 * @param dst A pointer to the dst (valid GraphicsMovableTile)
-		 * @return true if the move succeeded, false if it's impossible
+		 * @brief Attempts to move a tile.
 		 **/
 		void moveTile(const Move& move);
+		/**
+		 * @brief Moves the tile (without animation)
+		 **/
+		void changeTilePosition(const Move& move);
 		/**
 		 * @brief Gets possible destinations for the tile to move/pass ball and
 		 * selects them on the board (calling GraphicsTile::select on tiles)

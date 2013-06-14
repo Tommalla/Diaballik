@@ -113,6 +113,20 @@ GraphicsMovableTile* GameHandler::getBallAt (const Point& pos) {
 	return NULL;
 }
 
+GraphicsMovableTile* GameHandler::getSource (const Move& move) {
+	FieldState field = this->game.getFieldAt(move.from);
+	GraphicsMovableTile* src;
+	
+	if (field == BALL_A || field == BALL_B)
+		src = this->getBallAt(move.from);
+	else
+		src = this->getPawnAt(move.from);
+	
+	assert(src != NULL);
+	return src;
+}
+
+
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 	this->lastSelector = NULL;
@@ -144,18 +158,15 @@ bool GameHandler::isMoveValid (const Point& src, const Point& dst) {
 
 
 void GameHandler::moveTile (const Move& move) {
-	FieldState field = this->game.getFieldAt(move.from);
-	GraphicsMovableTile* src;
-	
-	if (field == BALL_A || field == BALL_B)
-		src = this->getBallAt(move.from);
-	else
-		src = this->getPawnAt(move.from);
-	
-	assert(src != NULL);
-	
+	GraphicsMovableTile* src = this->getSource(move);
 	this->deselectTiles();
 	src->move(move.to);
+}
+
+void GameHandler::changeTilePosition (const Move& move) {
+	GraphicsMovableTile* src = this->getSource(move);
+	this->deselectTiles();
+	src->changePosition(move.to.x, move.to.y);
 }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
@@ -397,6 +408,23 @@ void GameHandler::redoMove() {
 
 void GameHandler::undoTurn() {
 	qDebug("undoTurn()");
+	//TODO check if the player can undo the said turn
+	for (int i = this->lastMoveId; i >= 0; --i) {	//undo the moves in the right order
+		Move move = this->turnsHistory[this->currentTurnId][i];
+		move.revert();
+		assert(this->game.isMovePossible(move));
+		
+		this->changeTilePosition(move);
+		this->game.makeMove(move, true);
+	}
+	
+	this->lastMoveId = -1;
+	
+	if (this->currentTurnId <= 0)
+		return;
+		
+	this->changeCurrentPlayer(true);
+	emit moveFinished();
 }
 
 void GameHandler::redoTurn() {
