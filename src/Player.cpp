@@ -34,6 +34,11 @@ const PlayerInfo& Player::getPlayerInfo() const {
 	return info;
 }
 
+void Player::undoTurn (const vector< Move > moves) {
+	//empty
+}
+
+
 void Player::finishTurn() {
 	this->turnFinished = true;
 }

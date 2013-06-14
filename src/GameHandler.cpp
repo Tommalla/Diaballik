@@ -8,7 +8,6 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
-	qDebug("%d ? %d", this->turnsHistory.size(), this->movesLeft.size());
 	assert(this->turnsHistory.size() == this->movesLeft.size());
 	
 	while (this->turnsHistory.size() > this->currentTurnId + 1) {
@@ -29,12 +28,10 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->players[this->getNextPlayerId()]->startTurn();
 	this->players[this->currentPlayer]->finishTurn();
 	
-	for (int i = 0; i < PLAYERS_QTY; ++i)
-		this->players[i]->play(this->turnsHistory[this->currentTurnId]);
-	
 	if (!undo) {
-		//TODO this code is buggy
-		//also, add movesLeft here
+		for (int i = 0; i < PLAYERS_QTY; ++i)
+			this->players[i]->play(this->turnsHistory[this->currentTurnId]);
+
 		if (this->turnsHistory.size() <= this->currentTurnId + 1)
 			this->turnsHistory.push_back(vector<Move>());
 		if (this->movesLeft.size() <= this->currentTurnId + 1)
@@ -46,6 +43,10 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	} else {
 		if (this->currentTurnId > 0) {
 			this->currentTurnId--;
+			
+			for (Player* player: this->players)
+				player->undoTurn(this->turnsHistory[this->currentTurnId]);
+			
 			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 		} else {
 			this->currentTurnId = 0;
@@ -367,10 +368,6 @@ void GameHandler::undoMove() {
 		this->moveTile(move);
 		this->lastMoveId--;
 		this->game.makeMove(move, true);
-		
-		//TODO after we implement Player::undoMove
-// 		for (Player* player: this->players)
-// 			player->undoMove(move);
 	} else qDebug("Undo impossible: %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
 }
 

@@ -37,6 +37,11 @@ class Player : public QObject {
 		 * @param moves The moves that the game accepted and performed.
 		 **/
 		virtual void play(const vector<Move> moves) = 0;
+		/**
+		 * @brief Tells the player to undo a turn
+		 *
+		 **/
+		virtual void undoTurn(const vector<Move> moves);
 		virtual void endGame(bool win) = 0;
 	public slots:
 		/**
