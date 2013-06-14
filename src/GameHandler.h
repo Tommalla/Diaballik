@@ -36,6 +36,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		Game game;
 		
 		vector< vector<Move> > turnsHistory;
+		vector< pair<uint8_t, uint8_t> > movesLeft;
 		int lastMoveId, currentTurnId;
 		/**
 		 * @brief Deletes all the turns and moves remembered after lastMoveId.

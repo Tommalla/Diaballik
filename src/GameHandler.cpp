@@ -8,8 +8,13 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
-	while (this->turnsHistory.size() > this->currentTurnId + 1)
+	qDebug("%d ? %d", this->turnsHistory.size(), this->movesLeft.size());
+	assert(this->turnsHistory.size() == this->movesLeft.size());
+	
+	while (this->turnsHistory.size() > this->currentTurnId + 1) {
 		this->turnsHistory.pop_back();
+		this->movesLeft.pop_back();	//sizes ought to be the same
+	}
 	while (this->turnsHistory.back().size() > this->lastMoveId + 1)
 		this->turnsHistory.back().pop_back();
 }
@@ -28,7 +33,14 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->players[i]->play(this->turnsHistory[this->currentTurnId]);
 	
 	if (!undo) {
-		this->turnsHistory.push_back(vector<Move>());
+		//TODO this code is buggy
+		//also, add movesLeft here
+		if (this->turnsHistory.size() <= this->currentTurnId + 1)
+			this->turnsHistory.push_back(vector<Move>());
+		if (this->movesLeft.size() <= this->currentTurnId + 1)
+			this->movesLeft.push_back(make_pair(2, 1));
+		
+		this->movesLeft[this->currentTurnId] = make_pair(this->game.getMovesLeft(), this->game.getPassessLeft());
 		this->currentTurnId++;
 		this->lastMoveId = -1;
 	} else {
@@ -42,8 +54,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	}
 	
 	this->currentPlayer = this->getNextPlayerId();
-	//TODO have to set current player with correct parameters (moves and passes left) <---- the bug lies here!
-	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()));
+	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()), 
+		this->movesLeft[this->currentTurnId].first, this->movesLeft[this->currentTurnId].second);
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 	emit playerChanged();
 }
@@ -267,6 +279,7 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		this->lastMoveId = -1;
 		this->currentTurnId = 0;
 		this->turnsHistory = {vector<Move>()};
+		this->movesLeft = {{2, 1}};
 		
 		this->playersTimer.start();
 	} else {
@@ -329,7 +342,7 @@ void GameHandler::checkForNewMoves() {
 }
 
 void GameHandler::currentTurnDone() {
-	if (this->turnsHistory[this->currentTurnId].empty())
+	if (this->lastMoveId < 0)
 		return;	//disallow for empty turns
 
 	this->players[this->getNextPlayerId()]->startTurn();
@@ -363,6 +376,12 @@ void GameHandler::undoMove() {
 
 void GameHandler::redoMove() {
 	qDebug("redoMove()");
+// 	if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
+// 		this->currentTurnId + 1 < this->turnsHistory.size()) {
+// 		this->currentTurnId++;
+// 		this->lastMoveId = -1;
+// 		} /*else if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
+// 			this->currentTurnId + 1 < this->turnsHistory.size())*/
 }
 
 void GameHandler::undoTurn() {
