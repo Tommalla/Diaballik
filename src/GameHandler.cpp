@@ -327,6 +327,7 @@ void GameHandler::checkForNewMoves() {
 				this->turnsHistory[this->currentTurnId].push_back(move);
 			
 			this->game.makeMove(move);
+			emit moveFinished();
 		}
 		
 		/*if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
@@ -352,7 +353,7 @@ void GameHandler::currentTurnDone() {
 
 void GameHandler::undoMove() {
 	qDebug("undoMove() %d %d", this->lastMoveId, this->currentTurnId);
-	//TODO implement
+
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
 		//we cannot move back, have to switch player
 		qDebug("Dupa");
@@ -368,17 +369,22 @@ void GameHandler::undoMove() {
 		this->moveTile(move);
 		this->lastMoveId--;
 		this->game.makeMove(move, true);
+		emit moveFinished();
 	} else qDebug("Undo impossible: %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
 }
 
 void GameHandler::redoMove() {
 	qDebug("redoMove()");
-// 	if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
-// 		this->currentTurnId + 1 < this->turnsHistory.size()) {
-// 		this->currentTurnId++;
-// 		this->lastMoveId = -1;
-// 		} /*else if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
-// 			this->currentTurnId + 1 < this->turnsHistory.size())*/
+	//move to the current turn
+	if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 < this->turnsHistory.size())
+		this->changeCurrentPlayer();
+	else if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 < this->turnsHistory.size())
+		return;
+	
+	//send the move to the current player
+// 	this->players[this->currentPlayer]
 }
 
 void GameHandler::undoTurn() {

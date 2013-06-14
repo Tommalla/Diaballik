@@ -30,6 +30,7 @@ class MainWindow : public QMainWindow {
 	private slots:
 		void newGame();
 		void playerChanged();
+		void moveFinished();
 		void gameFinished();
 		void startGameEditor();
 		void showRules();

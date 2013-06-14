@@ -52,6 +52,7 @@ class Player : public QObject {
 		 * @brief Tells the player to start a new turn
 		 **/
 		virtual void startTurn();
+		virtual void setMove(const Move& move);
     };
 
 #endif // PLAYER_H

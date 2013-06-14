@@ -17,14 +17,6 @@ void HumanPlayer::play (const vector< Move > moves) {
 }
 
 
-void HumanPlayer::setMove (const Move& move) {
-	if (this->turnFinished)
-		return;
-	
-	this->moveReady = true;
-	//this->turnFinished = false;
-	this->move = move;
-	qDebug("HumanPlayer received a move!");
-}
+
 
 

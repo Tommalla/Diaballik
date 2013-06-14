@@ -47,3 +47,13 @@ void Player::startTurn() {
 	this->turnFinished = false;
 }
 
+void Player::setMove (const Move& move) {
+	if (this->turnFinished)
+		return;
+	
+	this->moveReady = true;
+	//this->turnFinished = false;
+	this->move = move;
+	qDebug("Player received a move!");
+}
+

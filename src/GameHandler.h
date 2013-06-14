@@ -125,6 +125,11 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		const QString& getPlayerName(const bool current = true) const;
 		const QString getWinnerName() const;
+		
+		const bool canUndoMove() const;
+		const bool canRedoMove() const;
+		const bool canUndoTurn() const;
+		const bool canRedoTurn() const;
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.
@@ -144,6 +149,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 	signals:
 		void playerChanged();
 		void gameFinished();
+		void moveFinished();
 };
 
 #endif // GAMEHANDLER_H

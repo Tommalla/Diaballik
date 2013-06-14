@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->redoPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoMove()));
 	QObject::connect(ui->previousTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(undoTurn()));
 	QObject::connect(ui->nextTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoTurn()));
+	QObject::connect(&(GameHandler::getInstance()), SIGNAL(moveFinished()), this, SLOT(moveFinished()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -76,6 +77,10 @@ void MainWindow::newGame() {
 void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
 	this->ui->statusLabel->setText("Current player: " + GameHandler::getInstance().getPlayerName());
+}
+
+void MainWindow::moveFinished() {
+	qDebug("moveFinished! Have to add some stuff to the gui");
 }
 
 void MainWindow::gameFinished() {

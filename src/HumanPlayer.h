@@ -13,8 +13,8 @@ class HumanPlayer : public Player {
 		virtual void endGame(bool win);
 		virtual void play(const vector<Move> moves);
 		
-	private slots:
-		void setMove(const Move& move);
+// 	private slots:
+// 		virtual void setMove(const Move& move);
 };
 
 #endif // HUMANPLAYER_H
