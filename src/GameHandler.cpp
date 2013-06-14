@@ -374,17 +374,17 @@ void GameHandler::undoMove() {
 }
 
 void GameHandler::redoMove() {
-	qDebug("redoMove()");
+	qDebug("redoMove() %d %d", this->lastMoveId, this->currentTurnId);
 	//move to the current turn
-	if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
+	if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
 		this->currentTurnId + 1 < this->turnsHistory.size())
 		this->changeCurrentPlayer();
-	else if (this->lastMoveId >= this->turnsHistory[this->currentTurnId].size() && 
-		this->currentTurnId + 1 < this->turnsHistory.size())
+	else if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 >= this->turnsHistory.size())
 		return;
 	
 	//send the move to the current player
-// 	this->players[this->currentPlayer]
+	this->players[this->currentPlayer]->setMove(this->turnsHistory[this->currentTurnId][this->lastMoveId + 1]);
 }
 
 void GameHandler::undoTurn() {
