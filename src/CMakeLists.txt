@@ -3,12 +3,14 @@ set (HEADERS
 	gameEnums.h
 	GraphicsScene.h
 	PlayerInfo.h
+	SaveHandler.h
 	SettingsHandler.h
 )
 
 set (SOURCES
 	main.cpp
 	GraphicsScene.cpp
+	SaveHandler.cpp
 	SettingsHandler.cpp
 )
 
