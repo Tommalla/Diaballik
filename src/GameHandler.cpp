@@ -8,12 +8,13 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
-	assert(this->turnsHistory.size() == this->movesLeft.size());
 	
-	while (this->turnsHistory.size() > this->currentTurnId + 1) {
+	while (this->turnsHistory.size() > this->currentTurnId + 1)
 		this->turnsHistory.pop_back();
-		this->movesLeft.pop_back();	//sizes ought to be the same
-	}
+	
+	while (this->movesLeft.size() > this->currentTurnId + 1)
+		this->movesLeft.pop_back();
+
 	while (this->turnsHistory.back().size() > this->lastMoveId + 1)
 		this->turnsHistory.back().pop_back();
 }
@@ -42,10 +43,10 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->lastMoveId = -1;
 	} else {
 		if (this->currentTurnId > 0) {
-			if (this->turnsHistory[this->currentTurnId].empty()) {
+			if (this->turnsHistory[this->currentTurnId].empty())
 				this->turnsHistory.pop_back();
-				this->movesLeft.pop_back();
-			}
+			
+			this->movesLeft.pop_back();
 			
 			this->currentTurnId--;
 			
