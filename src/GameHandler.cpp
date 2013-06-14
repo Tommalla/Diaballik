@@ -42,6 +42,11 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->lastMoveId = -1;
 	} else {
 		if (this->currentTurnId > 0) {
+			if (this->turnsHistory[this->currentTurnId].empty()) {
+				this->turnsHistory.pop_back();
+				this->movesLeft.pop_back();
+			}
+			
 			this->currentTurnId--;
 			
 			for (Player* player: this->players)
@@ -330,6 +335,7 @@ void GameHandler::checkForNewMoves() {
 			emit moveFinished();
 		}
 		
+		//TODO make this a feature
 		/*if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
 			this->changeCurrentPlayer();*/
 	
@@ -382,6 +388,8 @@ void GameHandler::redoMove() {
 	else if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
 		this->currentTurnId + 1 >= this->turnsHistory.size())
 		return;
+	
+	qDebug("redo possible!");
 	
 	//send the move to the current player
 	this->players[this->currentPlayer]->setMove(this->turnsHistory[this->currentTurnId][this->lastMoveId + 1]);
