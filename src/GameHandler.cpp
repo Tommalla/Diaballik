@@ -317,6 +317,15 @@ const QString GameHandler::getWinnerName() const {
 	return this->getPlayerName();
 }
 
+const int GameHandler::getMovesLeft() const {
+	return this->game.getMovesLeft();
+}
+
+const int GameHandler::getPassesLeft() const {
+	return this->game.getPassessLeft();
+}
+
+
 
 void GameHandler::checkForNewMoves() {
 	if (this->players[this->currentPlayer]->isTurnFinished())

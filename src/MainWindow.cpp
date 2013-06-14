@@ -77,10 +77,13 @@ void MainWindow::newGame() {
 void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
 	this->ui->statusLabel->setText("Current player: " + GameHandler::getInstance().getPlayerName());
+	this->moveFinished();
 }
 
 void MainWindow::moveFinished() {
-	qDebug("moveFinished! Have to add some stuff to the gui");
+	QString txt = QString("Moves left: %1, Passes left: %2").arg(GameHandler::getInstance().getMovesLeft()).arg(
+			      GameHandler::getInstance().getPassesLeft());
+	this->ui->movesLeftLabel->setText(txt);
 }
 
 void MainWindow::gameFinished() {

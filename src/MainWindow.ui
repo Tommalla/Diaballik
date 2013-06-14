@@ -92,6 +92,16 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
+               <widget class="QLabel" name="movesLeftLabel">
+                <property name="text">
+                 <string>Moves left: X  Passes left: Y</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="turnDonePushButton">
                 <property name="text">
                  <string>Done</string>

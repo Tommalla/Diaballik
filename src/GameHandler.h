@@ -132,6 +132,15 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		const bool canRedoMove() const;
 		const bool canUndoTurn() const;
 		const bool canRedoTurn() const;
+		
+		/**
+		 * @brief Returns how many moves are left for the current player
+		 **/
+		const int getMovesLeft() const;
+		/**
+		 * @brief Returns how many passes are left for the current player
+		 **/
+		const int getPassesLeft() const;
 	private slots:
 		/**
 		 * @brief Checks if the current player has yielded a move.
