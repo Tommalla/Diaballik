@@ -420,8 +420,8 @@ void GameHandler::undoTurn() {
 	
 	this->lastMoveId = -1;
 	
-	for (Player* player: this->players)
-		player->undoTurn(this->turnsHistory[this->currentTurnId]);
+// 	for (Player* player: this->players)
+// 		player->undoTurn(this->turnsHistory[this->currentTurnId]);
 	
 	if (this->currentTurnId <= 0)
 		return;
@@ -434,20 +434,28 @@ void GameHandler::undoTurn() {
 void GameHandler::redoTurn() {
 	qDebug("redoTurn()");
 	
-	if (this->currentTurnId + 1 >= this->turnsHistory.size())
-		return;
+	//check if there is a move available in this turn or the next
+	if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 < this->turnsHistory.size()) 
+			this->changeCurrentPlayer();
+	else if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 >= this->turnsHistory.size())
+			return;
 	
-	for (int i = max(this->lastMoveId, 0); i < this->turnsHistory[this->currentTurnId].size(); ++i) {	//redo the moves in the right order
+	//perform all the moves from the turn
+	for (int i = this->lastMoveId + 1; i < this->turnsHistory[this->currentTurnId].size(); ++i) {	//redo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
 		assert(this->game.isMoveValid(move));
 		
 		this->changeTilePosition(move);
 		this->game.makeMove(move);
 	}
-	
-	for (Player* player: this->players)
-		player->play(this->turnsHistory[this->currentTurnId]);
 
+	this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
+	
+	if (this->currentTurnId + 1 >= this->turnsHistory.size())
+		return;
+	
 	this->changeCurrentPlayer();
 	emit moveFinished();
 }
