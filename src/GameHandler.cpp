@@ -2,6 +2,7 @@
 All rights reserved */
 
 #include <cassert>
+#include <QDebug>
 #include "GameHandler.h"
 #include "SettingsHandler.h"
 #include "gameConstants.h"
@@ -65,6 +66,24 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()), 
 		this->movesLeft[this->currentTurnId].first, this->movesLeft[this->currentTurnId].second);
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
+	
+	//hashes
+	if (!undo) {
+		//new configuration
+		QString h = QString::fromStdString(this->game.getHash());
+		
+		if (hashes.contains(h)) {	//state repetition - draw
+			this->game.setCurrentPlayer(NONE);
+			emit gameFinished();
+			return;
+		}
+		hashes.insert(h);
+		hashesHistory.push_back(h);
+	} else {
+		hashes.remove(hashesHistory.back());
+		hashesHistory.pop_back();
+	}
+	
 	emit playerChanged();
 }
 
@@ -237,6 +256,8 @@ const GraphicsMovableTile* GameHandler::getLastSelector() const {
 void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 			   QRect viewRect, bool defaultConfig) {
 	this->lastSelector = NULL;
+	hashes.clear();
+	hashesHistory.clear();
 	
 	if (defaultConfig == true) {
 		qDebug("Creating new game from the scratch");
@@ -310,6 +331,8 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		//TODO create a new Board object and set everything on it as it's on the Scene
 		//TODO check if the Board is valid and start the game
 	}
+	
+	this->hashes.insert(QString::fromStdString(this->game.getHash()));
 }
 
 bool GameHandler::loadGame (const QString filename) {
@@ -379,11 +402,11 @@ void GameHandler::checkForNewMoves() {
 
 			this->moveTile(move);
 			
-			//TODO: if the move was the next from the history, increase the index
+			//if the move was the next from the history, increase the index
 			//if not, erase the end of the vector and start appending new moves
 			//forgetting the move if it's not from history:
 			if (this->lastMoveId + 1 < this->turnsHistory[this->currentTurnId].size() &&
-				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move)
+				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move)	//a different move
 				this->dropHistoryTail();
 			
 			this->lastMoveId++;

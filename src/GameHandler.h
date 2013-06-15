@@ -5,6 +5,7 @@ All rights reserved */
 #define GAMEHANDLER_H
 
 #include <QObject>
+#include <QSet>
 #include <QTimer>
 #include <vector>
 #include "../DiaballikEngine/src/Game.h"
@@ -34,9 +35,11 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		
 		GraphicsScene* scene;
 		Game game;
+		QSet<QString> hashes;
 		
 		vector< vector<Move> > turnsHistory;
 		vector< pair<uint8_t, uint8_t> > movesLeft;
+		vector< QString > hashesHistory;
 		int lastMoveId, currentTurnId;
 		/**
 		 * @brief Deletes all the turns and moves remembered after lastMoveId.
