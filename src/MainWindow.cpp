@@ -104,6 +104,8 @@ void MainWindow::loadGame() {
 		msgBox.exec();
 	
 	this->loading = false;
+	this->playerChanged();
+	StateHandler::getInstance().newGame(this->lastPlayerA, this->lastPlayerB);
 }
 
 void MainWindow::saveGame() {

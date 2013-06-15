@@ -119,6 +119,18 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 	}
 }
 
+void GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo& playerB) {
+	this->deletePlayers();
+	
+	this->players[0] = this->createPlayer(playerA, 0);
+	this->players[1] = this->createPlayer(playerB, 1);
+	
+	this->players[this->currentPlayer]->startTurn();
+	this->players[this->getNextPlayerId()]->finishTurn();
+	this->playersTimer.start();
+}
+
+
 GraphicsMovableTile* GameHandler::getPawnAt (const Point& pos) {
 	for (GraphicsMovableTile* tile: this->pawns)
 		if (tile->getPos() == pos)
@@ -190,6 +202,7 @@ void GameHandler::createSceneBoard (const int tileSize, const vector< Point > pa
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 	this->lastSelector = NULL;
+	this->players[0] = this->players[1] = NULL;
 	
 	this->playersTimer.setInterval(
 		SettingsHandler::getInstance().value("application/playersTimerInterval", DEFAULT_PLAYERS_TIMER_INTERVAL).toInt() );
@@ -317,23 +330,15 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		//TODO check if the Board is valid and start the game
 	}
 	
-	this->deletePlayers();
 	this->currentPlayer = 0;
 	
-	this->players[0] = this->createPlayer(playerA, 0);
-	this->players[1] = this->createPlayer(playerB, 1);
-	
-	//TODO - random player starting?
-	this->players[this->currentPlayer]->startTurn();
-	this->players[this->getNextPlayerId()]->finishTurn();
+	this->initializePlayers(playerA, playerB);
 	
 	this->lastMoveId = -1;
 	this->currentTurnId = 0;
 	this->turnsHistory = {vector<Move>()};
 	this->movesLeft = {{2, 1}};
 	this->hashes.insert(QString::fromStdString(this->game.getHash()));
-	
-	this->playersTimer.start();
 }
 
 bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, const PlayerInfo& playerB, 
@@ -357,9 +362,70 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	if (this->game.newGame(pawns[0], pawns[1], balls) == false)
 		return false;
 	
-	//TODO create and validate history
-	//board validated
+	this->game.setCurrentPlayer((save.getPlayer() == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
+	this->currentPlayer = save.getPlayer();
+	this->turnsHistory = save.getHistory();
+
+	//validate moves from history
+	Game tmpGame = this->game;
+	int p = this->currentPlayer;
+	
+	//go back through the history and calculate the initial board
+	for (int i = this->turnsHistory.size() - 1; i >= 0; --i) {
+		for (int j = this->turnsHistory[i].size() - 1; j >= 0; --j) {
+			Move move = this->turnsHistory[i][j];
+			move.revert();
+			
+			if (tmpGame.isMovePossible(move) == false)
+				return false;
+			
+			tmpGame.makeMove(move, true);
+		}
+		
+		p = (p + 1) % 2;
+		tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
+	}
+	
+	//back at the beginning, can start calculating now
+	this->movesLeft.clear();
+	this->hashes.clear();
+	this->hashesHistory.clear();
+	
+	this->hashes.insert(QString::fromStdString(tmpGame.getHash()));
+	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
+	
+	for (vector<Move> moves: this->turnsHistory) {
+		for (Move move: moves) {
+			if (!tmpGame.isMoveValid(move))
+				return false;
+			tmpGame.makeMove(move);
+		}
+	
+		movesLeft.push_back(make_pair(tmpGame.getMovesLeft(), tmpGame.getPassessLeft()));
+	
+		p = (p + 1) % 2;
+		tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
+		QString h = QString::fromStdString(tmpGame.getHash());
+		
+		if (hashes.contains(h))
+			return false;
+		
+		hashes.insert(h);
+		hashesHistory.push_back(h);
+	}
+	
+	//FIXME possibly buggy
+	if (!this->turnsHistory.empty()) {
+		this->currentTurnId = max(0, (int)this->turnsHistory.size() - 1);
+		this->lastMoveId = this->turnsHistory.back().size() - 1;
+	} else {
+		this->currentTurnId = 0;
+		this->lastMoveId = -1;
+	}
+	
+	//board validated, history created, time to draw!
 	this->createSceneBoard(tileSize, pawns, balls);
+	this->initializePlayers(playerA, playerB);
 	
 	return true;
 }
@@ -388,6 +454,8 @@ bool GameHandler::saveGame (const QString filename) const {
 
 
 const QString& GameHandler::getPlayerName (const bool current) const {
+	if (this->players[0] == NULL || this->players[1] == NULL)
+		return "";
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
 }
 

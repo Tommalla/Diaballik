@@ -115,6 +115,9 @@ bool SaveHandler::load() {
 			in >> tmp;
 			b.addBits(tmp);
 		}
+		
+		if (turn.size() > 3)
+			return false;
 	}
 	return true;
 }
