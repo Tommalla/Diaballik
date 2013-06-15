@@ -13,15 +13,19 @@ using namespace std;
 
 class SaveHandler {
 	private:
-		vector< vector< Point > > pawns;
-		vector< Point > balls;
+		QString filename;
+		vector< Point > figures;
 		int player;
 		vector< vector< Move > > history;
 	public:
 		SaveHandler(const QString& filename);
 		
 		bool load();
-// 		bool save() //TODO
+ 		bool save(const vector<Point>& figures, const int id, const vector<vector<Move> >& history); //TODO
+		
+		const vector<Point>& getFigures() const;
+		const int getPlayer() const;
+		const vector<vector<Move> >& getHistory() const;
 };
 
 #endif // SAVEHANDLER_H

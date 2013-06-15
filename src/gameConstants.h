@@ -24,4 +24,6 @@ const int DEFAULT_ANIMATION_DURATION = 100;
 
 const int PLAYERS_QTY = 2;
 
+const int SANE_HISTORY_SIZE = 100000;
+
 #endif
