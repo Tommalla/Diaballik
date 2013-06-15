@@ -16,6 +16,7 @@ const qreal MainWindow::getSceneDimension() const {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), 
 					ui(new Ui::MainWindow) {
 	this->ui->setupUi(this);
+	this->loading = false;
 	
 	//appearance settings - title, position, size
 	this->setWindowTitle(APP_NAME);
@@ -74,25 +75,32 @@ void MainWindow::newGame() {
 	PlayerInfo playerA = this->newGameDialog.getPlayerInfo(1);
 	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(0);
 	
-	int tileSize = min(this->ui->graphicsView->viewport()->rect().width(),
-			   this->ui->graphicsView->viewport()->rect().height())/ 7;
+	this->lastPlayerA = playerA;
+	this->lastPlayerB = playerB;
 	
-	GameHandler::getInstance().newGame(playerA, playerB, tileSize);
-	this->playerChanged();
-	StateHandler::getInstance().newGame(playerA, playerB);
+	if (!loading) {
+		GameHandler::getInstance().newGame(playerA, playerB, this->getSceneDimension() / 7.0);
+		this->playerChanged();
+		StateHandler::getInstance().newGame(playerA, playerB);
+	}
 }
 
 void MainWindow::loadGame() {
+	this->loading = true;
 	QString filename = QFileDialog::getOpenFileName(this,
 		tr("Load game"), SAVES_DIR, tr("Diaballik save files (*.sav)"));
-	//TODO add newGameDialog execution
+	
+	this->newGameDialog.exec();
 	
 	QMessageBox msgBox;
 	msgBox.setWindowTitle("Error!");
 	msgBox.setText("There was an error loading the game! Your save might be corrupted.");
 	
-	if(!GameHandler::getInstance().loadGame(filename))
+	if(!GameHandler::getInstance().loadGame(filename, this->lastPlayerA, this->lastPlayerB, 
+		this->getSceneDimension() / 7.0))
 		msgBox.exec();
+	
+	this->loading = false;
 }
 
 void MainWindow::saveGame() {

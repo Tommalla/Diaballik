@@ -336,7 +336,8 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	this->playersTimer.start();
 }
 
-bool GameHandler::loadGame (const QString filename) {
+bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, const PlayerInfo& playerB, 
+			    const int tileSize) {
 	//TODO will need some player info
 	qDebug("Loading game...");
 	SaveHandler save(filename);
@@ -358,7 +359,7 @@ bool GameHandler::loadGame (const QString filename) {
 	
 	//TODO create and validate history
 	//board validated
-	//TODO create board
+	this->createSceneBoard(tileSize, pawns, balls);
 	
 	return true;
 }

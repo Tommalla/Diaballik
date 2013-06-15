@@ -21,6 +21,8 @@ class MainWindow : public QMainWindow {
 		Ui::MainWindow *ui;
 		NewGameDialog newGameDialog;
 		const qreal getSceneDimension() const;
+		PlayerInfo lastPlayerA, lastPlayerB;
+		bool loading;
 	
 	public:
 		explicit MainWindow(QWidget *parent = 0);

@@ -135,7 +135,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @param filename The path to the save file.
 		 * @return bool True if the load succeded.
 		 **/
-		bool loadGame(const QString filename);
+		bool loadGame(const QString filename, const PlayerInfo& playerA, const PlayerInfo& playerB, 
+			      const int tileSize);
 		/**
 		 * @brief If possible, saves the current game to filename.
 		 *
