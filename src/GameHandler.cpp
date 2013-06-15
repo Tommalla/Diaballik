@@ -276,6 +276,10 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		
 			this->pawns.push_back(new GraphicsMovableTile(blackPawnPath, x, 0, 0, tileSize, tileSize));
 			this->scene->addItem(this->pawns.back());
+		}
+		
+		//this loop is separate because of sequency reasons
+		for (int x = 0; x < 7; ++x) {
 			this->pawns.push_back(new GraphicsMovableTile(whitePawnPath, x, 6, 0, tileSize, tileSize));
 			this->scene->addItem(this->pawns.back());
 		}
@@ -324,8 +328,17 @@ bool GameHandler::saveGame (const QString filename) const {
 	qDebug("Saving game...");
 	SaveHandler save(filename);
 	
-	//TODO: prepare the data
 	vector<Point> figures;
+	for (GraphicsTile* tile: this->pawns)
+		figures.push_back(tile->getPos());
+	for (GraphicsTile* ball: this->balls)
+		figures.push_back(ball->getPos());
+	
+	vector< vector<Move> > history = this->turnsHistory;
+	while (history.size() > this->currentTurnId)
+		history.pop_back();
+	while (history.back().size() > this->lastMoveId)
+		history.back().pop_back();
 	
 	if (!save.save(figures, this->currentPlayer, this->turnsHistory))
 		return false;
