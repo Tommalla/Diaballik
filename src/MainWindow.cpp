@@ -74,7 +74,10 @@ void MainWindow::newGame() {
 	PlayerInfo playerA = this->newGameDialog.getPlayerInfo(1);
 	PlayerInfo playerB = this->newGameDialog.getPlayerInfo(0);
 	
-	GameHandler::getInstance().newGame(playerA, playerB, this->ui->graphicsView->viewport()->rect());
+	int tileSize = min(this->ui->graphicsView->viewport()->rect().width(),
+			   this->ui->graphicsView->viewport()->rect().height())/ 7;
+	
+	GameHandler::getInstance().newGame(playerA, playerB, tileSize);
 	this->playerChanged();
 	StateHandler::getInstance().newGame(playerA, playerB);
 }

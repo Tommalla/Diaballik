@@ -128,7 +128,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
 		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
-			     QRect viewRect, bool defaultConfig = true);
+			     const int tileSize, bool defaultConfig = true);
 		/**
 		 * @brief If possible, loads the game from the save (filename).
 		 *

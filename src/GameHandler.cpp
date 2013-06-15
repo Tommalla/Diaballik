@@ -293,7 +293,7 @@ const GraphicsMovableTile* GameHandler::getLastSelector() const {
 }
 
 void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
-			   QRect viewRect, bool defaultConfig) {
+			   const int tileSize, bool defaultConfig) {
 	this->lastSelector = NULL;
 	this->hashes.clear();
 	this->hashesHistory.clear();
@@ -302,7 +302,6 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 		qDebug("Creating new game from the scratch");
 		//creating a default board
 		this->game = Game(GAME_PLAYER_A);
-		int tileSize = min(viewRect.width(), viewRect.height()) / 7;
 		vector<Point> pawns[2];
 		vector<Point> balls = {Point(3, 0), Point(3, 6)};
 		
@@ -311,30 +310,30 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 				pawns[i].push_back(Point(x, 6 * i));
 		
 		this->createSceneBoard(tileSize, pawns, balls);
-		
-		this->deletePlayers();
-		this->currentPlayer = 0;
-		
-		this->players[0] = this->createPlayer(playerA, 0);
-		this->players[1] = this->createPlayer(playerB, 1);
-		
-		//TODO - random player starting?
-		this->players[this->currentPlayer]->startTurn();
-		this->players[this->getNextPlayerId()]->finishTurn();
-		
-		this->lastMoveId = -1;
-		this->currentTurnId = 0;
-		this->turnsHistory = {vector<Move>()};
-		this->movesLeft = {{2, 1}};
-		
-		this->playersTimer.start();
+	
 	} else {
 		//we're using the configuration from the scene
 		//TODO create a new Board object and set everything on it as it's on the Scene
 		//TODO check if the Board is valid and start the game
 	}
 	
+	this->deletePlayers();
+	this->currentPlayer = 0;
+	
+	this->players[0] = this->createPlayer(playerA, 0);
+	this->players[1] = this->createPlayer(playerB, 1);
+	
+	//TODO - random player starting?
+	this->players[this->currentPlayer]->startTurn();
+	this->players[this->getNextPlayerId()]->finishTurn();
+	
+	this->lastMoveId = -1;
+	this->currentTurnId = 0;
+	this->turnsHistory = {vector<Move>()};
+	this->movesLeft = {{2, 1}};
 	this->hashes.insert(QString::fromStdString(this->game.getHash()));
+	
+	this->playersTimer.start();
 }
 
 bool GameHandler::loadGame (const QString filename) {
