@@ -90,6 +90,9 @@ void MainWindow::loadGame() {
 	QString filename = QFileDialog::getOpenFileName(this,
 		tr("Load game"), SAVES_DIR, tr("Diaballik save files (*.sav)"));
 	
+	if (filename.length() == 0)
+		return;
+	
 	this->newGameDialog.exec();
 	
 	QMessageBox msgBox;
@@ -106,6 +109,9 @@ void MainWindow::loadGame() {
 void MainWindow::saveGame() {
 	QString filename = QFileDialog::getSaveFileName(this, 
 		tr("Save game"), SAVES_DIR, tr("Diaballik save files (*.sav)"));
+	
+	if (filename.length() == 0)
+		return;
 	
  	bool res = GameHandler::getInstance().saveGame(filename);
 	assert(res);
