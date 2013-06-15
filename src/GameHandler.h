@@ -67,6 +67,15 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsMovableTile* getPawnAt(const Point& pos);
 		GraphicsMovableTile* getSource(const Move& move);
 		
+		/**
+		 * @brief Creates the visible board and related internal components
+		 *
+		 * @param tileSize The size of a single tile
+		 * @param pawns An array of vectors of positions of the pawns (black, white)
+		 * @param balls A vector of balls (black, white)
+		 **/
+		void createSceneBoard(const int tileSize, const vector<Point> pawns[2], const vector<Point> balls);
+		
 		GameHandler();
 	public:
 		/**

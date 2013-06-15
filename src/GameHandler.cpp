@@ -10,7 +10,6 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
-	
 	while (this->turnsHistory.size() > this->currentTurnId + 1)
 		this->turnsHistory.pop_back();
 	
@@ -72,16 +71,16 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		//new configuration
 		QString h = QString::fromStdString(this->game.getHash());
 		
-		if (hashes.contains(h)) {	//state repetition - draw
+		if (this->hashes.contains(h)) {	//state repetition - draw
 			this->game.setCurrentPlayer(NONE);
 			emit gameFinished();
 			return;
 		}
-		hashes.insert(h);
-		hashesHistory.push_back(h);
+		this->hashes.insert(h);
+		this->hashesHistory.push_back(h);
 	} else {
-		hashes.remove(hashesHistory.back());
-		hashesHistory.pop_back();
+		this->hashes.remove(hashesHistory.back());
+		this->hashesHistory.pop_back();
 	}
 	
 	emit playerChanged();
@@ -147,6 +146,46 @@ GraphicsMovableTile* GameHandler::getSource (const Move& move) {
 	return src;
 }
 
+void GameHandler::createSceneBoard (const int tileSize, const vector< Point > pawns[2], const vector< Point > balls) {
+	//cleaning the board:
+	this->scene->clear();
+	this->backgroundTiles.clear();
+	this->pawns.clear();
+	this->selectedTiles.clear();
+	this->balls.clear();
+	
+	SettingsHandler::getInstance().sync();
+	
+	QString backgroundTilePath, whitePawnPath, blackPawnPath, ballPath;
+	backgroundTilePath = whitePawnPath = blackPawnPath = ballPath = APP_LOCATION + "graphics/";
+	
+	backgroundTilePath += SettingsHandler::getInstance().value("graphics/backgroundTile", "background.png").toString();
+	whitePawnPath += SettingsHandler::getInstance().value("graphics/whitePawn", "white.png").toString();
+	blackPawnPath += SettingsHandler::getInstance().value("graphics/blackPawn", "black.png").toString();
+	ballPath += SettingsHandler::getInstance().value("graphics/ball", "ball.png").toString();
+	
+	qDebug("Paths:\n%s\n%s\n%s\n%s", backgroundTilePath.toStdString().c_str(), whitePawnPath.toStdString().c_str(),
+	       blackPawnPath.toStdString().c_str(), ballPath.toStdString().c_str());
+	
+	QString pawnPaths[2] = {blackPawnPath, whitePawnPath};
+	
+	for (int x = 0; x < 7; ++x)
+		for (int y = 0; y < 7; ++y) {
+			this->backgroundTiles.push_back(new GraphicsTile(backgroundTilePath, x, y, -1000, tileSize, tileSize));
+			this->scene->addItem(this->backgroundTiles.back());
+		}	
+	
+	for (int i = 0; i < 2; ++i)
+		for (Point pawn: pawns[i]) {
+			this->pawns.push_back(new GraphicsMovableTile(pawnPaths[i], pawn.x, pawn.y,  0, tileSize, tileSize));
+			this->scene->addItem(this->pawns.back());
+		}
+	
+	for (Point ball: balls) {
+		this->balls.push_back(new GraphicsMovableTile(ballPath, ball.x, ball.y, 1, tileSize, tileSize));
+		this->scene->addItem(this->balls.back());
+	}
+}
 
 GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
@@ -256,59 +295,22 @@ const GraphicsMovableTile* GameHandler::getLastSelector() const {
 void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 			   QRect viewRect, bool defaultConfig) {
 	this->lastSelector = NULL;
-	hashes.clear();
-	hashesHistory.clear();
+	this->hashes.clear();
+	this->hashesHistory.clear();
 	
 	if (defaultConfig == true) {
 		qDebug("Creating new game from the scratch");
 		//creating a default board
-		
-		SettingsHandler::getInstance().sync();
-		
-		//reading tiles paths from config
-		QString backgroundTilePath, whitePawnPath, blackPawnPath, ballPath;
-		
-		backgroundTilePath = whitePawnPath = blackPawnPath = ballPath = APP_LOCATION + "graphics/";
-		
-		backgroundTilePath += SettingsHandler::getInstance().value("graphics/backgroundTile", "background.png").toString();
-		whitePawnPath += SettingsHandler::getInstance().value("graphics/whitePawn", "white.png").toString();
-		blackPawnPath += SettingsHandler::getInstance().value("graphics/blackPawn", "black.png").toString();
-		ballPath += SettingsHandler::getInstance().value("graphics/ball", "ball.png").toString();
-		
-		qDebug("Paths:\n%s\n%s\n%s\n%s", backgroundTilePath.toStdString().c_str(), whitePawnPath.toStdString().c_str(),
-		       blackPawnPath.toStdString().c_str(), ballPath.toStdString().c_str());
-	
-		//cleaning the board:
-		this->scene->clear();
-		this->backgroundTiles.clear();
-		this->pawns.clear();
-		this->selectedTiles.clear();
-		this->balls.clear();
-	
-		//creating new board:
 		this->game = Game(GAME_PLAYER_A);
 		int tileSize = min(viewRect.width(), viewRect.height()) / 7;
+		vector<Point> pawns[2];
+		vector<Point> balls = {Point(3, 0), Point(3, 6)};
 		
-		for (int x = 0; x < 7; ++x) {
-			for (int y = 0; y < 7; ++y) {
-				this->backgroundTiles.push_back(new GraphicsTile(backgroundTilePath, x, y, -1000, tileSize, tileSize));
-				this->scene->addItem(this->backgroundTiles.back());
-			}
+		for (int i = 0; i < 2; ++i)
+			for (int x = 0; x < 7; ++x)
+				pawns[i].push_back(Point(x, 6 * i));
 		
-			this->pawns.push_back(new GraphicsMovableTile(blackPawnPath, x, 0, 0, tileSize, tileSize));
-			this->scene->addItem(this->pawns.back());
-		}
-		
-		//this loop is separate because of sequency reasons
-		for (int x = 0; x < 7; ++x) {
-			this->pawns.push_back(new GraphicsMovableTile(whitePawnPath, x, 6, 0, tileSize, tileSize));
-			this->scene->addItem(this->pawns.back());
-		}
-		
-		this->balls.push_back(new GraphicsMovableTile(ballPath,	3, 0, 1, tileSize, tileSize));
-		this->scene->addItem(this->balls.back());
-		this->balls.push_back(new GraphicsMovableTile(ballPath, 3, 6, 1, tileSize, tileSize));
-		this->scene->addItem(this->balls.back());
+		this->createSceneBoard(tileSize, pawns, balls);
 		
 		this->deletePlayers();
 		this->currentPlayer = 0;
@@ -342,7 +344,22 @@ bool GameHandler::loadGame (const QString filename) {
 	if (!save.load())
 		return false;
 	
-	//TODO create game from save info
+	vector< Point > figures = save.getFigures();
+	vector< Point > pawns[2];
+	vector< Point > balls;
+	
+	//divide the figures to black and white
+	for (int i = 0; i < 2; ++i)
+		for (int j = i * 7; j < (i + 1) * 7; ++j)
+			pawns[i].push_back(figures[j]);
+		
+	balls = {figures[figures.size() - 2], figures.back()};
+	if (this->game.newGame(pawns[0], pawns[1], balls) == false)
+		return false;
+	
+	//TODO create and validate history
+	//board validated
+	//TODO create board
 	
 	return true;
 }
@@ -526,10 +543,3 @@ void GameHandler::redoTurn() {
 	
 	emit moveFinished();
 }
-
-
-
-
-
-
-
