@@ -5,6 +5,7 @@ All rights reserved */
 #include "GameHandler.h"
 #include "SettingsHandler.h"
 #include "gameConstants.h"
+#include "SaveHandler.h"
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
@@ -309,6 +310,13 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 
 bool GameHandler::loadGame (const QString filename) {
 	qDebug("Loading game...");
+	SaveHandler save(filename);
+	if (!save.load())
+		return false;
+	
+	//TODO create game from save info
+	
+	return true;
 }
 
 
@@ -329,8 +337,6 @@ const int GameHandler::getMovesLeft() const {
 const int GameHandler::getPassesLeft() const {
 	return this->game.getPassessLeft();
 }
-
-
 
 void GameHandler::checkForNewMoves() {
 	if (this->players[this->currentPlayer]->isTurnFinished())

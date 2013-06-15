@@ -4,7 +4,7 @@ All rights reserved */
 #include <QDataStream>
 #include <QFile>
 #include "SaveHandler.h"
-#include "../DiaballikEngine/src/BitContainerInputStream.h"
+#include "../DiaballikEngine/src/BitContainerStream.h"
 #include "gameConstants.h"
 
 SaveHandler::SaveHandler (const QString& filename) {
@@ -22,6 +22,8 @@ bool SaveHandler::load() {
 	
 	QDataStream in(&file);
 	
+	qDebug("Started reading %s", filename.toStdString().c_str());
+	
 	//read DIABSAVE
 	QString diabsave = "";
 	quint8 tmp;
@@ -32,6 +34,8 @@ bool SaveHandler::load() {
 	
 	if (diabsave != "DIABSAVE" || in.atEnd())
 		return false;	//incorrect beginning
+		
+	qDebug(diabsave.toStdString().c_str());
 	
 	int bytes = 12;
 	//read 12 first bytes
@@ -43,7 +47,7 @@ bool SaveHandler::load() {
 	if (i < bytes || in.atEnd())
 		return false;	//file too short
 		
-	BitContainerInputStream b(data);
+	BitContainerStream b(data);
 	b.setBitsPerValue(3);
 	
 	this->figures.clear();
@@ -57,7 +61,7 @@ bool SaveHandler::load() {
 	//history - continuous read/parse in order to avoid errors by
 	//file corruption
 	//read player number first
-	b = BitContainerInputStream();
+	b = BitContainerStream();
 	in >> tmp;
 	b.addBits(tmp);
 	b.setBitsPerValue(1);
@@ -107,7 +111,26 @@ bool SaveHandler::load() {
 }
 
 bool SaveHandler::save (const vector< Point >& figures, const int id, const vector< vector< Move > >& history) {
-
+	//open QDataStream
+	QFile file(filename);
+	if (file.open(QIODevice::WriteOnly) == false)
+		return false;
+	
+	QDataStream out(&file);
+	
+	qDebug("Started writing to %s", filename.toStdString().c_str());
+	
+	//write out DIABSAVE
+	QString diabsave = "DIABSAVE";
+	for (int i = 0; i < 8; ++i)
+		out << (quint8)diabsave[i].toAscii();
+	
+	//TODO now at here!
+	//create bitset
+	//obtain data from the bitset
+	//write data
+	
+	return true;
 }
 
 const vector< Point >& SaveHandler::getFigures() const {
