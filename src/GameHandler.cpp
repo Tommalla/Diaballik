@@ -309,12 +309,26 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 }
 
 bool GameHandler::loadGame (const QString filename) {
+	//TODO will need some player info
 	qDebug("Loading game...");
 	SaveHandler save(filename);
 	if (!save.load())
 		return false;
 	
 	//TODO create game from save info
+	
+	return true;
+}
+
+bool GameHandler::saveGame (const QString filename) const {
+	qDebug("Saving game...");
+	SaveHandler save(filename);
+	
+	//TODO: prepare the data
+	vector<Point> figures;
+	
+	if (!save.save(figures, this->currentPlayer, this->turnsHistory))
+		return false;
 	
 	return true;
 }

@@ -1,3 +1,4 @@
+#include <cassert>
 #include <QFileDialog>
 #include <QMessageBox>
 #include "MainWindow.h"
@@ -47,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->nextTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoTurn()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(moveFinished()), this, SLOT(moveFinished()));
 	QObject::connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadGame()));
+	QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveGame()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -79,7 +81,8 @@ void MainWindow::newGame() {
 
 void MainWindow::loadGame() {
 	QString filename = QFileDialog::getOpenFileName(this,
-		tr("Load game"), QDir::homePath() + "/.diaballik/saves/", tr("Diaballik save files (*.sav)"));
+		tr("Load game"), SAVES_DIR, tr("Diaballik save files (*.sav)"));
+	//TODO add newGameDialog execution
 	
 	QMessageBox msgBox;
 	msgBox.setWindowTitle("Error!");
@@ -87,6 +90,14 @@ void MainWindow::loadGame() {
 	
 	if(!GameHandler::getInstance().loadGame(filename))
 		msgBox.exec();
+}
+
+void MainWindow::saveGame() {
+	QString filename = QFileDialog::getSaveFileName(this, 
+		tr("Save game"), SAVES_DIR, tr("Diaballik save files (*.sav)"));
+	
+ 	bool res = GameHandler::getInstance().saveGame(filename);
+	assert(res);
 }
 
 

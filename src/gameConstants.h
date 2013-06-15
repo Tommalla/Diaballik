@@ -14,6 +14,7 @@ const QString APP_NAME = "Diaballik " + VERSION;
 
 const QString APP_LOCATION = QDir::homePath() + "/.diaballik/";
 const QString SETTINGS_FILE = APP_LOCATION + "config.ini";
+const QString SAVES_DIR = APP_LOCATION + "saves/";
 
 const QColor DEFAULT_PRIMARY_SELECTION_COLOR = QColor::fromRgb(12, 232, 12);
 const QColor DEFAULT_SECONDARY_SELECTION_COLOR = QColor::fromRgb(205, 201, 201);

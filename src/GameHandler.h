@@ -125,6 +125,13 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		bool loadGame(const QString filename);
 		/**
+		 * @brief If possible, saves the current game to filename.
+		 *
+		 * @param filename The path to the desired savegame file.
+		 * @return bool True if save succeded.
+		 **/
+		bool saveGame(const QString filename) const;
+		/**
 		 * @brief Returns the name of the player
 		 * 
 		 * @param current If set to true, the method shall return the name of the current player. Otherwise
