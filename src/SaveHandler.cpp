@@ -48,6 +48,9 @@ bool SaveHandler::load() {
 	if (i < bytes || in.atEnd())
 		return false;	//file too short
 		
+	for (uint8_t row: data)
+		qDebug("%d", row);
+		
 	BitContainerInputStream b(data);
 	b.setBitsPerValue(3);
 	
@@ -56,8 +59,13 @@ bool SaveHandler::load() {
 	this->history.clear();
 	//parse 'em
 	
-	for (i = 0; i < 16; ++i)	//2 x 7 pawns + 2 x 1 ball
-		this->figures.push_back(Point(b.getNextValue(), b.getNextValue()));
+	for (i = 0; i < 16; ++i) {	//2 x 7 pawns + 2 x 1 ball
+		int x, y;
+		x = b.getNextValue();
+		y = b.getNextValue();
+		this->figures.push_back(Point(x, y));
+		qDebug("read pawn at %d %d", this->figures.back().x, this->figures.back().y);
+	}
 	
 	//history - continuous read/parse in order to avoid errors by
 	//file corruption
@@ -151,6 +159,9 @@ bool SaveHandler::save (const vector< Point >& figures, const int id, const vect
 	vector<quint8> data = b.getData();
 	for (quint8 row: data)
 		out << (unsigned char)row;
+	
+	for (quint8 row: data)
+		qDebug("%d", row);
 	
 	return true;
 }
