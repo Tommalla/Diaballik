@@ -470,10 +470,8 @@ void GameHandler::undoTurn() {
 // 	for (Player* player: this->players)
 // 		player->undoTurn(this->turnsHistory[this->currentTurnId]);
 	
-	if (this->currentTurnId <= 0)
-		return;
-		
-	this->changeCurrentPlayer(true);
+	if (this->currentTurnId > 0)
+		this->changeCurrentPlayer(true);
 	
 	emit moveFinished();
 }
@@ -500,10 +498,9 @@ void GameHandler::redoTurn() {
 
 	this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 	
-	if (this->currentTurnId + 1 >= this->turnsHistory.size())
-		return;
+	if (this->currentTurnId + 1 < this->turnsHistory.size())
+		this->changeCurrentPlayer();
 	
-	this->changeCurrentPlayer();
 	emit moveFinished();
 }
 
