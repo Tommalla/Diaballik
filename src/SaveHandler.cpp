@@ -125,10 +125,29 @@ bool SaveHandler::save (const vector< Point >& figures, const int id, const vect
 	for (int i = 0; i < 8; ++i)
 		out << (quint8)diabsave[i].toAscii();
 	
-	//TODO now at here!
-	//create bitset
-	//obtain data from the bitset
-	//write data
+	BitContainerStream b;
+	b.setBitsPerValue(3);
+	for (Point point: figures) {
+		b.append(point.x);
+		b.append(point.y);
+	}
+	b.setBitsPerValue(1);
+	b.append(id);
+	b.setBitsPerValue(3);
+	for (auto iter = history.begin(); iter != history.end(); ++iter) {
+		if (iter != history.begin())
+			b.append(7);	//end of turn
+		for (Move move: *iter) {
+			b.append(move.from.x);
+			b.append(move.from.y);
+			b.append(move.to.x);
+			b.append(move.to.y);
+		}
+	}
+	
+	vector<quint8> data = b.getData();
+	for (quint8 row: data)
+		out << row;
 	
 	return true;
 }
