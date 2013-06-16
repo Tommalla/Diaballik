@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->actionBoardEditor, SIGNAL(triggered()), this, SLOT(startGameEditor()));
 	QObject::connect(ui->actionShortcuts, SIGNAL(triggered()), this, SLOT(showHelp()));
 	QObject::connect(ui->actionRules, SIGNAL(triggered()), this, SLOT(showRules()));
+	QObject::connect(ui->actionAuthor, SIGNAL(triggered()), this, SLOT(showAuthor()));
 	QObject::connect(ui->turnDonePushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(currentTurnDone()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(playerChanged()), this, SLOT(playerChanged()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(gameFinished()), this, SLOT(gameFinished()));
@@ -144,15 +145,18 @@ void MainWindow::startGameEditor() {
 }
 
 void MainWindow::showRules() {
-	//TODO
+	QMessageBox msgBox;
+	msgBox.information(this, "[This] Game rules", RULES_MESSAGE);
 }
 
 void MainWindow::showAuthor() {
-	//TODO
+	QMessageBox msgBox;
+	msgBox.about(this, "Author", AUTHOR_MESSAGE);
 }
 
 void MainWindow::showHelp() {
-	//TODO
+	QMessageBox msgBox;
+	msgBox.information(this, "Game help", HELP_MESSAGE);
 }
 
 
