@@ -82,7 +82,6 @@ void MainWindow::newGame() {
 	if (!loading) {
 		GameHandler::getInstance().newGame(playerA, playerB, this->getSceneDimension() / 7.0);
 		this->playerChanged();
-		StateHandler::getInstance().newGame(playerA, playerB);
 	}
 }
 
@@ -106,7 +105,6 @@ void MainWindow::loadGame() {
 	
 	this->loading = false;
 	this->playerChanged();
-	StateHandler::getInstance().newGame(this->lastPlayerA, this->lastPlayerB);
 }
 
 void MainWindow::saveGame() {
@@ -125,6 +123,7 @@ void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
 	this->ui->statusLabel->setText("Current player: " + GameHandler::getInstance().getPlayerName());
 	this->moveFinished();
+	StateHandler::getInstance().playerChanged();
 }
 
 void MainWindow::moveFinished() {
@@ -134,6 +133,7 @@ void MainWindow::moveFinished() {
 }
 
 void MainWindow::gameFinished() {
+	StateHandler::getInstance().gameFinished();
 	QString name = GameHandler::getInstance().getWinnerName();
 	this->ui->statusLabel->setText("Game finished " + 
 	((name.size() == 0) ? "It's a draw!" : "The " + name + " player won!"));

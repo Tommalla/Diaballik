@@ -6,12 +6,13 @@
  **/
 enum ApplicationPlayerType {
 	HUMAN_PLAYER = 2,
-	AI_PLAYER = 3
+	AI_PLAYER = 3,
+	NO_PLAYER = 0
 	//NETWORK_PLAYER	//future idea
 };
 
 enum ApplicationState {
-	GAME_FINISHED = 0,
+	GAME_FINISHED = NO_PLAYER,
 	BOARD_EDITOR = 1,
 	HUMAN_MOVE = HUMAN_PLAYER,
 	AI_MOVE = AI_PLAYER

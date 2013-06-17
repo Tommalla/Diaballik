@@ -155,6 +155,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 **/
 		const QString& getPlayerName(const bool current = true) const;
 		const QString getWinnerName() const;
+		const ApplicationPlayerType getPlayerType(const bool current = true) const;
 		
 		const bool canUndoMove() const;
 		const bool canRedoMove() const;

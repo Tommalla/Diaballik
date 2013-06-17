@@ -26,7 +26,6 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 		
 		StateHandler();
 	public:
-		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB);
 		void start(MainWindow* window);
 		//TODO boolean methods like canMovePawn etc.
 		

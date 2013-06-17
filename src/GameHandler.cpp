@@ -474,6 +474,13 @@ const QString GameHandler::getWinnerName() const {
 	return this->getPlayerName();
 }
 
+const ApplicationPlayerType GameHandler::getPlayerType (const bool current) const {
+	if (this->players[0] == NULL || this->players[1] == NULL)
+		return NO_PLAYER;
+	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().type;
+}
+
+
 const int GameHandler::getMovesLeft() const {
 	return this->game.getMovesLeft();
 }
