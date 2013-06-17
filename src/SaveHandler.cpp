@@ -159,6 +159,8 @@ bool SaveHandler::save (const vector< Point >& figures, const int id, const vect
 		}
 	}
 	
+	b.append(7);
+	
 	vector<quint8> data = b.getData();
 	for (quint8 row: data)
 		out << (unsigned char)row;

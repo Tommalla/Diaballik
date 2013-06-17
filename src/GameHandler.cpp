@@ -365,7 +365,8 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	this->game.setCurrentPlayer((save.getPlayer() == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
 	this->currentPlayer = save.getPlayer();
 	this->turnsHistory = save.getHistory();
-
+	qDebug("Player %d starting", this->currentPlayer);
+	
 	//validate moves from history
 	Game tmpGame = this->game;
 	int p = this->currentPlayer;
@@ -392,10 +393,12 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	this->hashesHistory.clear();
 	
 	this->hashes.insert(QString::fromStdString(tmpGame.getHash()));
+	//p = (p + 1) % 2;
 	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
 	
 	for (vector<Move> moves: this->turnsHistory) {
 		for (Move move: moves) {
+			qDebug("%d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
 			if (!tmpGame.isMoveValid(move))
 				return false;
 			tmpGame.makeMove(move);
@@ -414,6 +417,8 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		hashesHistory.push_back(h);
 	}
 	
+	qDebug("Player %d finally starting", p);
+	
 	//FIXME possibly buggy
 	if (!this->turnsHistory.empty()) {
 		this->currentTurnId = max(0, (int)this->turnsHistory.size() - 1);
@@ -422,6 +427,8 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		this->currentTurnId = 0;
 		this->lastMoveId = -1;
 	}
+	
+	this->game = tmpGame;
 	
 	//board validated, history created, time to draw!
 	this->createSceneBoard(tileSize, pawns, balls);
@@ -441,10 +448,12 @@ bool GameHandler::saveGame (const QString filename) const {
 		figures.push_back(ball->getPos());
 	
 	vector< vector<Move> > history = this->turnsHistory;
-	while (history.size() > this->currentTurnId)
+	while (history.size() > this->currentTurnId + 1)
 		history.pop_back();
-	while (history.back().size() > this->lastMoveId)
+	while (history.back().size() > this->lastMoveId + 1)
 		history.back().pop_back();
+	
+	qDebug("Saving history of size: %d, move: %d", history.size(), history.back().size());
 	
 	if (!save.save(figures, this->currentPlayer, this->turnsHistory))
 		return false;
