@@ -3,12 +3,14 @@
 
 #include <QString>
 #include "gameEnums.h"
+#include "../DiaballikEngine/src/enums.h"
 
 struct PlayerInfo {
 	ApplicationPlayerType type;
 	QString botPath;
 	bool GTPE;
 	QString name;
+	GamePlayer player;
 };
 
 const PlayerInfo make_human_player(const QString& name);

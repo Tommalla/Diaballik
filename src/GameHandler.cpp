@@ -93,7 +93,10 @@ void GameHandler::deletePlayers() {
 	}
 }
 
-Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
+Player* GameHandler::createPlayer (PlayerInfo info, const int id) {
+	GamePlayer fieldPlayer = (id == 0) ? GAME_PLAYER_A : GAME_PLAYER_B;
+	info.player = fieldPlayer;
+	
 	switch (info.type) {
 		case HUMAN_PLAYER:
 		{
@@ -102,7 +105,6 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 			for (GraphicsTile* tile: this->backgroundTiles)
 				QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
 			
-			GamePlayer fieldPlayer = (id == 0) ? GAME_PLAYER_A : GAME_PLAYER_B;
 			for (GraphicsMovableTile* tile: this->pawns)
 				if (engine::getPlayerFor(this->game.getFieldAt(tile->getPos())) == fieldPlayer)
 					QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
@@ -112,8 +114,8 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 		}
 		case AI_PLAYER:
 		{
-			//AIPlayer* res;
-			//TODO create new AIPlayer - need AI implementation first!
+			AIPlayer* res = new AIPlayer(info);
+			return res;
 			break;
 		}
 		default:

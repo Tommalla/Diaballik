@@ -1,4 +1,5 @@
 set (HEADERS
+	AIPlayer.h
 	gameConstants.h
 	gameEnums.h
 	GraphicsScene.h
@@ -8,6 +9,7 @@ set (HEADERS
 )
 
 set (SOURCES
+	AIPlayer.cpp
 	main.cpp
 	GraphicsScene.cpp
 	PlayerInfo.cpp

@@ -21,7 +21,7 @@ class Player : public QObject {
 	public:
 		Player(const PlayerInfo& info);
 		
-		bool isMoveReady();
+		virtual bool isMoveReady();
 		bool isReady();
 		bool isTurnFinished();
 		/**
@@ -36,7 +36,7 @@ class Player : public QObject {
 		 *
 		 * @param moves The moves that the game accepted and performed.
 		 **/
-		virtual void play(const vector<Move> moves) = 0;
+		virtual void play(const vector<Move> moves);
 		/**
 		 * @brief Tells the player to undo a turn
 		 *
@@ -47,7 +47,7 @@ class Player : public QObject {
 		 *
 		 * @param win If the player was the winner
 		 **/
-		virtual void endGame(bool win) = 0;
+		virtual void endGame(bool win);
 	public slots:
 		/**
 		 * @brief Tells the player to finish current turn

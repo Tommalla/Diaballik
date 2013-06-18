@@ -16,6 +16,7 @@ All rights reserved */
 #include "PlayerInfo.h"
 #include "Player.h"
 #include "HumanPlayer.h"
+#include "AIPlayer.h"
 #include "gameEnums.h"
 
 using namespace std;
@@ -60,7 +61,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		const int getNextPlayerId() const;
 		void changeCurrentPlayer(const bool undo = false);
 		void deletePlayers();
-		Player* createPlayer(const PlayerInfo& info, const int id);
+		Player* createPlayer(PlayerInfo info, const int id);
 		bool initializePlayers(const PlayerInfo& playerA, const PlayerInfo& playerB);
 		
 		GraphicsTile* getTileAt(const Point& pos);
