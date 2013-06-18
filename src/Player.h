@@ -27,7 +27,7 @@ class Player : public QObject {
 		/**
 		 * @brief Returns the next move if it's ready
 		 **/
-		const Move getMove();
+		virtual const Move getMove();
 		
 		const PlayerInfo& getPlayerInfo() const;
 		

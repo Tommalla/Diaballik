@@ -52,7 +52,7 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 	QStringList list = dir.entryList();
 	qDebug("List: %d", list.size());
 	for (int i = 0; i < list.size(); ++i) {
-		QString configPath = BOTS_DIR + "/" + list[i] + "/config.ini";
+		QString configPath = BOTS_DIR + list[i] + "/config.ini";
 		QFile settings(configPath);
 		
 		if (settings.exists()) {
@@ -62,7 +62,7 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 			QString name = botSettings.value("Info/name").toString();
 			bool GTPE = botSettings.value("Info/GTP-E", false).toBool();
 			
-			this->bots.push_back(make_ai_player(exec, name, GTPE));
+			this->bots.push_back(make_ai_player(BOTS_DIR + list[i] + "/" + exec, name, GTPE));
 			QStringList tmp;
 			tmp.append(name);
 			tmp.append((GTPE) ? "YES" : "NO");
