@@ -5,12 +5,14 @@ All rights reserved */
 #define AIPLAYER_H
 
 #include <QProcess>
+#include <QTime>
 #include <queue>
 #include "Player.h"
 
 class AIPlayer : public Player {
 	private:
 		QProcess bot;
+		QTime moveTimer;
 		bool processing;
 		queue<Move> movesQueue;
 	public:

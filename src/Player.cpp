@@ -56,6 +56,6 @@ void Player::setMove (const Move& move) {
 	
 	this->moveReady = true;
 	this->move = move;
-	qDebug("Player received a move!");
+	qDebug("Player received a move! %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
 }
 

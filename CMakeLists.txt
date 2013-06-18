@@ -12,7 +12,7 @@ add_definitions (${QT_DEFINITIONS})
 
 #we want this version of DiaballikEngine to build first!
 add_subdirectory(DiaballikEngine)
-#add_subdirectory(DiaballikBot)
+add_subdirectory(DiaballikBot)
 #add_subdirectory(NullAI)
 add_subdirectory (src)
 
@@ -20,3 +20,5 @@ add_subdirectory (src)
 set (CMAKE_INSTALL_PREFIX $ENV{HOME})
 install (FILES ${PROJECT_BINARY_DIR}/Diaballik ${PROJECT_SOURCE_DIR}/config.ini DESTINATION .diaballik/ )
 install (DIRECTORY ${PROJECT_SOURCE_DIR}/graphics DESTINATION .diaballik )
+install (DIRECTORY ${PROJECT_SOURCE_DIR}/bots DESTINATION .diaballik)
+install (PROGRAMS ${PROJECT_BINARY_DIR}/DiaballikBot/DiaballikBot DESTINATION .diaballik/bots/MCTSAI/ RENAME engine)
