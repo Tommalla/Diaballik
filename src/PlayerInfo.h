@@ -10,18 +10,7 @@ struct PlayerInfo {
 	QString name;
 };
 
-static const PlayerInfo make_human_player(const QString& name) {
-	PlayerInfo res;
-	res.type = HUMAN_PLAYER;
-	res.name = name;
-	return res;
-}
-// 
-// static const PlayerInfo make_ai_player(const QString& path) {
-// 	PlayerInfo res;
-// 	res.type = AI_PLAYER;
-// 	res.botPath = path;
-// 	return res;
-// }
+const PlayerInfo make_human_player(const QString& name);
+const PlayerInfo make_ai_player(const QString& path, const QString& name);
 
 #endif

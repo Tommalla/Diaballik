@@ -10,6 +10,7 @@ set (HEADERS
 set (SOURCES
 	main.cpp
 	GraphicsScene.cpp
+	PlayerInfo.cpp
 	SaveHandler.cpp
 	SettingsHandler.cpp
 )
