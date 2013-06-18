@@ -32,7 +32,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	
 	if (!undo) {
 		for (int i = 0; i < PLAYERS_QTY; ++i)
-			this->players[i]->play(this->turnsHistory[this->currentTurnId]);
+			this->players[i]->play(this->players[this->currentPlayer]->getPlayerInfo().player,
+				this->turnsHistory[this->currentTurnId]);
 
 		if ((int)this->turnsHistory.size() <= this->currentTurnId + 1)
 			this->turnsHistory.push_back(vector<Move>());
@@ -52,7 +53,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 			this->currentTurnId--;
 			
 			for (Player* player: this->players)
-				player->undoTurn(this->turnsHistory[this->currentTurnId]);
+				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+						 this->turnsHistory[this->currentTurnId]);
 			
 			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 		} else {

@@ -36,12 +36,12 @@ class Player : public QObject {
 		 *
 		 * @param moves The moves that the game accepted and performed.
 		 **/
-		virtual void play(const vector<Move> moves);
+		virtual void play(const GamePlayer& player, const vector<Move>& moves);
 		/**
 		 * @brief Tells the player to undo a turn
 		 *
 		 **/
-		virtual void undoTurn(const vector<Move> moves);
+		virtual void undoTurn (const GamePlayer& player, const vector<Move>& moves);
 		/**
 		 * @brief Tells the player that the game has finished
 		 *

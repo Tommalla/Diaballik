@@ -16,8 +16,8 @@ bool AIPlayer::isMoveReady() {
 }
 
 
-void AIPlayer::play (const std::vector< Move, std::allocator< Move > > moves) {
-	Player::play (moves);
+void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
+	Player::play (player, moves);
 	//TODO send turn to player
 }
 
@@ -26,8 +26,8 @@ void AIPlayer::genMove() {
 }
 
 
-void AIPlayer::undoTurn (const std::vector< Move, std::allocator< Move > > moves) {
-	Player::undoTurn (moves);
+void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) {
+	Player::undoTurn (player, moves);
 	//TODO send undo turn to player
 }
 

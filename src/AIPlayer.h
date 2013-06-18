@@ -10,9 +10,9 @@ class AIPlayer : public Player {
 	public:
 		AIPlayer (const PlayerInfo& info);
 		virtual bool isMoveReady();
-		virtual void play (const std::vector< Move, std::allocator< Move > > moves);
+		virtual void play (const GamePlayer& player, const vector<Move>& moves);
 		void genMove();
-		virtual void undoTurn (const std::vector< Move, std::allocator< Move > > moves);
+		virtual void undoTurn (const GamePlayer& player, const vector<Move>& moves);
 		virtual void endGame (bool win);
 		virtual void finishTurn();
 		virtual void startTurn();

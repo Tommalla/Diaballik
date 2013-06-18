@@ -37,8 +37,8 @@ const PlayerInfo& Player::getPlayerInfo() const {
 //Those need no implementation in this superclass, but I'm leaving
 //them here so if there were any derived classes that would not need to 
 //implement anything specific for those methods, they wouldn't have to
-void Player::play (const vector< Move > moves) {}
-void Player::undoTurn (const vector< Move > moves) {}
+void Player::play (const GamePlayer& player, const vector< Move >& moves) {}
+void Player::undoTurn (const GamePlayer& player, const vector< Move >& moves) {}
 void Player::endGame (bool win) {}
 
 
