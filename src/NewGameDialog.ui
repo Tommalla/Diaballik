@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>534</width>
-    <height>277</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,15 +37,49 @@
          </rect>
         </property>
        </widget>
-       <widget class="QListWidget" name="whiteListWidget">
+       <widget class="QTreeWidget" name="whiteTreeWidget">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>50</y>
           <width>241</width>
-          <height>181</height>
+          <height>201</height>
          </rect>
         </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="autoScroll">
+         <bool>false</bool>
+        </property>
+        <property name="rootIsDecorated">
+         <bool>true</bool>
+        </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <attribute name="headerDefaultSectionSize">
+         <number>180</number>
+        </attribute>
+        <attribute name="headerMinimumSectionSize">
+         <number>10</number>
+        </attribute>
+        <attribute name="headerStretchLastSection">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Bot</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>GTP-E</string>
+         </property>
+        </column>
        </widget>
       </widget>
      </item>
@@ -64,15 +98,49 @@
          </rect>
         </property>
        </widget>
-       <widget class="QListWidget" name="blackListWidget">
+       <widget class="QTreeWidget" name="blackTreeWidget">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>50</y>
           <width>241</width>
-          <height>181</height>
+          <height>201</height>
          </rect>
         </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="autoScroll">
+         <bool>false</bool>
+        </property>
+        <property name="rootIsDecorated">
+         <bool>true</bool>
+        </property>
+        <property name="columnCount">
+         <number>2</number>
+        </property>
+        <attribute name="headerDefaultSectionSize">
+         <number>180</number>
+        </attribute>
+        <attribute name="headerMinimumSectionSize">
+         <number>10</number>
+        </attribute>
+        <attribute name="headerStretchLastSection">
+         <bool>false</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string notr="true">Bot</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string notr="true">GTP-E</string>
+         </property>
+        </column>
        </widget>
       </widget>
      </item>

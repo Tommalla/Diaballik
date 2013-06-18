@@ -42,6 +42,11 @@ class Player : public QObject {
 		 *
 		 **/
 		virtual void undoTurn(const vector<Move> moves);
+		/**
+		 * @brief Tells the player that the game has finished
+		 *
+		 * @param win If the player was the winner
+		 **/
 		virtual void endGame(bool win) = 0;
 	public slots:
 		/**

@@ -2,8 +2,11 @@
 #define NEWGAMEDIALOG_H
 
 #include <QDialog>
+#include <vector>
 #include "gameEnums.h"
 #include "PlayerInfo.h"
+
+using namespace std;
 
 namespace Ui {
 	class NewGameDialog;
@@ -18,6 +21,8 @@ class NewGameDialog : public QDialog {
 	
 	private:
 		Ui::NewGameDialog *ui;
+		vector<PlayerInfo> bots; 
+		
 		void setWidgetUsable(QWidget* widget, const bool state = true);
 		const ApplicationPlayerType getWhitePlayerType() const;
 		const ApplicationPlayerType getBlackPlayerType() const;

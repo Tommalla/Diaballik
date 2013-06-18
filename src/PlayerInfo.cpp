@@ -7,10 +7,11 @@ const PlayerInfo make_human_player(const QString& name) {
 	return res;
 }
 
-const PlayerInfo make_ai_player(const QString& path, const QString& name) {
+const PlayerInfo make_ai_player(const QString& path, const QString& name, const bool GTPE) {
 	PlayerInfo res;
 	res.type = AI_PLAYER;
 	res.botPath = path;
 	res.name = name;
+	res.GTPE = GTPE;
  	return res;
 }

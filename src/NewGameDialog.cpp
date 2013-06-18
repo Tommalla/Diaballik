@@ -1,5 +1,9 @@
+#include <QDir>
+#include <QSettings>
 #include "NewGameDialog.h"
 #include "ui_NewGameDialog.h"
+#include "gameConstants.h"
+
 
 //FIXME this is not the best implementation possible... (lots of delicious pasta)
 
@@ -23,8 +27,8 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 	//this->ui->groupBox->setSizePolicy(Qt::MinimumSize);
 	//this->ui->groupBox_2->setSizePolicy(Qt::MinimumSize);
 	
-	this->setWidgetUsable(this->ui->blackListWidget, false);
-	this->setWidgetUsable(this->ui->whiteListWidget, false);
+	this->setWidgetUsable(this->ui->blackTreeWidget, false);
+	this->setWidgetUsable(this->ui->whiteTreeWidget, false);
 	
 	//create entries in comboBoxes
 	QComboBox* tempComboBoxTab[2] = { this->ui->blackComboBox, this->ui->whiteComboBox };
@@ -35,14 +39,45 @@ NewGameDialog::NewGameDialog(QWidget *parent) : QDialog(parent), ui(new Ui::NewG
 	}
 
 	//fill bots list
-	QListWidget* tempListWidgetTab[2] = { this->ui->whiteListWidget, this->ui->blackListWidget };
+	QTreeWidget* tempListWidgetTab[2] = { this->ui->whiteTreeWidget, this->ui->blackTreeWidget };
 	
-	for (QListWidget* listWidget: tempListWidgetTab) {
-		listWidget->addItem("Here be bots! (in the future)");
-	}
 	
 	QObject::connect(this->ui->blackComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBlackGroupBox()));
 	QObject::connect(this->ui->whiteComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeWhiteGroupBox()));
+	
+	//TODO load the bots info
+	QDir dir(BOTS_DIR);
+	dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+	
+	QStringList list = dir.entryList();
+	qDebug("List: %d", list.size());
+	for (int i = 0; i < list.size(); ++i) {
+		QString configPath = BOTS_DIR + "/" + list[i] + "/config.ini";
+		QFile settings(configPath);
+		
+		if (settings.exists()) {
+			qDebug("opened file!");
+			QSettings botSettings(configPath, QSettings::IniFormat);
+			QString exec = botSettings.value("Info/exec").toString();
+			QString name = botSettings.value("Info/name").toString();
+			bool GTPE = botSettings.value("Info/GTP-E", false).toBool();
+			
+			this->bots.push_back(make_ai_player(exec, name, GTPE));
+			QStringList tmp;
+			tmp.append(name);
+			tmp.append((GTPE) ? "YES" : "NO");
+			
+			for (QTreeWidget* treeWidget: tempListWidgetTab) {
+				treeWidget->addTopLevelItem(new QTreeWidgetItem(tmp));
+			}
+		}
+	}
+	
+	for (QTreeWidget* treeWidget: tempListWidgetTab) {
+		treeWidget->setRootIsDecorated(false);
+		treeWidget->setCurrentItem(treeWidget->itemAt(0, 0));
+	}
+	
 }
 
 const PlayerInfo NewGameDialog::getPlayerInfo(const int id) const {
@@ -51,7 +86,12 @@ const PlayerInfo NewGameDialog::getPlayerInfo(const int id) const {
 			return make_human_player((id == 0) ? "white" : "black");
 			break;
 		case AI_PLAYER:
-			//TODO: return make_ai_player()
+		{
+			QTreeWidget* widget = (id == 0) ? this->ui->whiteTreeWidget : this->ui->blackTreeWidget;
+			PlayerInfo res = this->bots[widget->currentIndex().row()];
+			res.name = QString((id == 0) ? "white" : "black") + "(" + res.name + ")";
+			return res;
+		}
 			break;
 	}
 }
@@ -63,10 +103,10 @@ NewGameDialog::~NewGameDialog() {
 void NewGameDialog::changeWhiteGroupBox () {
 	switch (this->getWhitePlayerType()) {
 		case HUMAN_PLAYER:
-			this->setWidgetUsable(this->ui->whiteListWidget, false);
+			this->setWidgetUsable(this->ui->whiteTreeWidget, false);
 			break;
 		case AI_PLAYER:
-			this->setWidgetUsable(this->ui->whiteListWidget, true);
+			this->setWidgetUsable(this->ui->whiteTreeWidget, true);
 			break;
 	}
 }
@@ -74,10 +114,10 @@ void NewGameDialog::changeWhiteGroupBox () {
 void NewGameDialog::changeBlackGroupBox () {
 	switch (this->getBlackPlayerType()) {
 		case HUMAN_PLAYER:
-			this->setWidgetUsable(this->ui->blackListWidget, false);
+			this->setWidgetUsable(this->ui->blackTreeWidget, false);
 			break;
 		case AI_PLAYER:
-			this->setWidgetUsable(this->ui->blackListWidget, true);
+			this->setWidgetUsable(this->ui->blackTreeWidget, true);
 			break;
 	}
 }

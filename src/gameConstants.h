@@ -10,7 +10,7 @@
 
 const QString AUTHOR = "Tomasz [Tommalla] Zakrzewski";
 const QString AUTHOR_MAIL = "tz336079@students.mimuw.edu.pl";
-const QString VERSION = "v0.1 alpha";
+const QString VERSION = "v0.1 beta";
 const QString APP_NAME = "Diaballik " + VERSION;
 
 const QString AUTHOR_MESSAGE = "<center>" + APP_NAME + "<br/>" +AUTHOR + "<br/><a href=\"mailto:" + AUTHOR_MAIL + "\">" + AUTHOR_MAIL + 
@@ -41,6 +41,7 @@ const QString RULES_MESSAGE = QString("<h3>Rules</h3>") +
 const QString APP_LOCATION = QDir::homePath() + "/.diaballik/";
 const QString SETTINGS_FILE = APP_LOCATION + "config.ini";
 const QString SAVES_DIR = APP_LOCATION + "saves/";
+const QString BOTS_DIR = APP_LOCATION + "bots/";
 
 const QColor DEFAULT_PRIMARY_SELECTION_COLOR = QColor::fromRgb(12, 232, 12);
 const QColor DEFAULT_SECONDARY_SELECTION_COLOR = QColor::fromRgb(205, 201, 201);
