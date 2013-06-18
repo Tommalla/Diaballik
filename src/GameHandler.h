@@ -61,7 +61,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void changeCurrentPlayer(const bool undo = false);
 		void deletePlayers();
 		Player* createPlayer(const PlayerInfo& info, const int id);
-		void initializePlayers(const PlayerInfo& playerA, const PlayerInfo& playerB);
+		bool initializePlayers(const PlayerInfo& playerA, const PlayerInfo& playerB);
 		
 		GraphicsTile* getTileAt(const Point& pos);
 		GraphicsMovableTile* getBallAt(const Point& pos);
@@ -128,7 +128,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * If set to false, GameHandler will attempt to read the configuration of pawns currently present 
 		 * on GraphicsScene and start new game from this configuration (eg. after editing the board)
 		 **/
-		void newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
+		bool newGame(const PlayerInfo& playerA, const PlayerInfo& playerB, 
 			     const int tileSize, bool defaultConfig = true);
 		/**
 		 * @brief If possible, loads the game from the save (filename).

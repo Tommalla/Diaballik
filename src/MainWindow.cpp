@@ -80,8 +80,14 @@ void MainWindow::newGame() {
 	this->lastPlayerB = playerB;
 	
 	if (!loading) {
-		GameHandler::getInstance().newGame(playerA, playerB, this->getSceneDimension() / 7.0);
-		this->playerChanged();
+		if (GameHandler::getInstance().newGame(playerA, playerB, this->getSceneDimension() / 7.0) == true)
+			this->playerChanged();
+		else {
+			QMessageBox msgBox;
+			msgBox.critical(this, "What a shame...", QString("An error occured when trying to create the new game.") + 
+				((playerA.botPath.size() > 0 || playerB.botPath.size() > 0) ? 
+					" Protip: You might want to change the bot you're using." : ""));
+		}
 	}
 }
 

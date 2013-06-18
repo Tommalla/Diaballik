@@ -117,13 +117,18 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 			break;
 		}
 	}
+	
+	return NULL;
 }
 
-void GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo& playerB) {
+bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo& playerB) {
 	this->deletePlayers();
 	
 	this->players[0] = this->createPlayer(playerA, 0);
 	this->players[1] = this->createPlayer(playerB, 1);
+	
+	if (this->players[0] == NULL || this->players[1] == NULL)
+		return false;
 	
 	this->players[this->currentPlayer]->startTurn();
 	this->players[this->getNextPlayerId()]->finishTurn();
@@ -305,7 +310,7 @@ const GraphicsMovableTile* GameHandler::getLastSelector() const {
 	return this->lastSelector;
 }
 
-void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
+bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 			   const int tileSize, bool defaultConfig) {
 	this->lastSelector = NULL;
 	this->hashes.clear();
@@ -332,13 +337,16 @@ void GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	
 	this->currentPlayer = 0;
 	
-	this->initializePlayers(playerA, playerB);
+	if (this->initializePlayers(playerA, playerB) == false)
+		return false;
 	
 	this->lastMoveId = -1;
 	this->currentTurnId = 0;
 	this->turnsHistory = {vector<Move>()};
 	this->movesLeft = {{2, 1}};
 	this->hashes.insert(QString::fromStdString(this->game.getHash()));
+	
+	return true;
 }
 
 bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, const PlayerInfo& playerB, 
