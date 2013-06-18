@@ -35,8 +35,6 @@ bool SaveHandler::load() {
 	
 	if (diabsave != "DIABSAVE" || in.atEnd())
 		return false;	//incorrect beginning
-		
-	qDebug(diabsave.toStdString().c_str());
 	
 	int bytes = 12;
 	//read 12 first bytes
@@ -86,7 +84,7 @@ bool SaveHandler::load() {
 	//read the rest:
 	
 	coordId = pointId = 0;
-	while (b.hasNext() && this->history.size() <= SANE_HISTORY_SIZE) {
+	while (b.hasNext() && (int)this->history.size() <= SANE_HISTORY_SIZE) {
 		coord[coordId] = b.getNextValue();	//get next coordinate
 		
 		if (coord[coordId] == 7) {	//if it's an end of a turn
@@ -129,9 +127,6 @@ bool SaveHandler::save (const vector< Point >& figures, const int id, const vect
 		return false;
 	
 	QDataStream out(&file);
-	
-	qDebug("Started writing to %s", filename.toStdString().c_str());
-	qDebug("Sizes: %d, %d\n", figures.size(), history.size());
 	
 	//write out DIABSAVE
 	QString diabsave = "DIABSAVE";

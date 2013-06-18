@@ -93,6 +93,8 @@ const PlayerInfo NewGameDialog::getPlayerInfo(const int id) const {
 			return res;
 		}
 			break;
+		default:
+			return make_ai_player("Fail horribly", "Fail horrbily", true);	//BURN!
 	}
 }
 
@@ -108,6 +110,8 @@ void NewGameDialog::changeWhiteGroupBox () {
 		case AI_PLAYER:
 			this->setWidgetUsable(this->ui->whiteTreeWidget, true);
 			break;
+		default:
+			return;
 	}
 }
 
@@ -119,5 +123,7 @@ void NewGameDialog::changeBlackGroupBox () {
 		case AI_PLAYER:
 			this->setWidgetUsable(this->ui->blackTreeWidget, true);
 			break;
+		default:
+			return;
 	}
 }

@@ -10,13 +10,13 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
-	while (this->turnsHistory.size() > this->currentTurnId + 1)
+	while ((int)this->turnsHistory.size() > this->currentTurnId + 1)
 		this->turnsHistory.pop_back();
 	
-	while (this->movesLeft.size() > this->currentTurnId + 1)
+	while ((int)this->movesLeft.size() > this->currentTurnId + 1)
 		this->movesLeft.pop_back();
 
-	while (this->turnsHistory.back().size() > this->lastMoveId + 1)
+	while ((int)this->turnsHistory.back().size() > this->lastMoveId + 1)
 		this->turnsHistory.back().pop_back();
 }
 
@@ -34,9 +34,9 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		for (int i = 0; i < PLAYERS_QTY; ++i)
 			this->players[i]->play(this->turnsHistory[this->currentTurnId]);
 
-		if (this->turnsHistory.size() <= this->currentTurnId + 1)
+		if ((int)this->turnsHistory.size() <= this->currentTurnId + 1)
 			this->turnsHistory.push_back(vector<Move>());
-		if (this->movesLeft.size() <= this->currentTurnId + 1)
+		if ((int)this->movesLeft.size() <= this->currentTurnId + 1)
 			this->movesLeft.push_back(make_pair(2, 1));
 		
 		this->movesLeft[this->currentTurnId] = make_pair(this->game.getMovesLeft(), this->game.getPassessLeft());
@@ -116,6 +116,8 @@ Player* GameHandler::createPlayer (const PlayerInfo& info, const int id) {
 			//TODO create new AIPlayer - need AI implementation first!
 			break;
 		}
+		default:
+			return NULL;
 	}
 	
 	return NULL;
@@ -133,6 +135,7 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 	this->players[this->currentPlayer]->startTurn();
 	this->players[this->getNextPlayerId()]->finishTurn();
 	this->playersTimer.start();
+	return true;
 }
 
 
@@ -456,12 +459,10 @@ bool GameHandler::saveGame (const QString filename) const {
 		figures.push_back(ball->getPos());
 	
 	vector< vector<Move> > history = this->turnsHistory;
-	while (history.size() > this->currentTurnId + 1)
+	while ((int)history.size() > this->currentTurnId + 1)
 		history.pop_back();
-	while (history.back().size() > this->lastMoveId + 1)
+	while ((int)history.back().size() > this->lastMoveId + 1)
 		history.back().pop_back();
-	
-	qDebug("Saving history of size: %d, move: %d", history.size(), history.back().size());
 	
 	if (!save.save(figures, this->currentPlayer, this->turnsHistory))
 		return false;
@@ -470,7 +471,7 @@ bool GameHandler::saveGame (const QString filename) const {
 }
 
 
-const QString& GameHandler::getPlayerName (const bool current) const {
+const QString GameHandler::getPlayerName (const bool current) const {
 	if (this->players[0] == NULL || this->players[1] == NULL)
 		return "";
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().name;
@@ -514,12 +515,12 @@ void GameHandler::checkForNewMoves() {
 			//if the move was the next from the history, increase the index
 			//if not, erase the end of the vector and start appending new moves
 			//forgetting the move if it's not from history:
-			if (this->lastMoveId + 1 < this->turnsHistory[this->currentTurnId].size() &&
+			if (this->lastMoveId + 1 < (int)this->turnsHistory[this->currentTurnId].size() &&
 				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move)	//a different move
 				this->dropHistoryTail();
 			
 			this->lastMoveId++;
-			if (this->turnsHistory[this->currentTurnId].size() == this->lastMoveId)
+			if ((int)this->turnsHistory[this->currentTurnId].size() == this->lastMoveId)
 				this->turnsHistory[this->currentTurnId].push_back(move);
 			
 			this->game.makeMove(move);
@@ -573,11 +574,11 @@ void GameHandler::undoMove() {
 void GameHandler::redoMove() {
 	qDebug("redoMove() %d %d", this->lastMoveId, this->currentTurnId);
 	//move to the current turn
-	if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
-		this->currentTurnId + 1 < this->turnsHistory.size())
+	if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 < (int)this->turnsHistory.size())
 		this->changeCurrentPlayer();
-	else if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
-		this->currentTurnId + 1 >= this->turnsHistory.size())
+	else if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 >= (int)this->turnsHistory.size())
 		return;
 	
 	qDebug("redo possible!");
@@ -612,15 +613,15 @@ void GameHandler::redoTurn() {
 	qDebug("redoTurn()");
 	
 	//check if there is a move available in this turn or the next
-	if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
-		this->currentTurnId + 1 < this->turnsHistory.size()) 
+	if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 < (int)this->turnsHistory.size()) 
 			this->changeCurrentPlayer();
-	else if (this->lastMoveId + 1 >= this->turnsHistory[this->currentTurnId].size() && 
-		this->currentTurnId + 1 >= this->turnsHistory.size())
+	else if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
+		this->currentTurnId + 1 >= (int)this->turnsHistory.size())
 			return;
 	
 	//perform all the moves from the turn
-	for (int i = this->lastMoveId + 1; i < this->turnsHistory[this->currentTurnId].size(); ++i) {	//redo the moves in the right order
+	for (int i = this->lastMoveId + 1; i < (int)this->turnsHistory[this->currentTurnId].size(); ++i) {	//redo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
 		assert(this->game.isMoveValid(move));
 		
@@ -630,7 +631,7 @@ void GameHandler::redoTurn() {
 
 	this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 	
-	if (this->currentTurnId + 1 < this->turnsHistory.size())
+	if (this->currentTurnId + 1 < (int)this->turnsHistory.size())
 		this->changeCurrentPlayer();
 	
 	emit moveFinished();
