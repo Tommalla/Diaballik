@@ -157,11 +157,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		const QString getPlayerName(const bool current = true) const;
 		const QString getWinnerName() const;
 		const ApplicationPlayerType getPlayerType(const bool current = true) const;
+		const PlayerInfo& getPlayerInfo(const bool current = true) const;
 		
-		const bool canUndoMove() const;
-		const bool canRedoMove() const;
-		const bool canUndoTurn() const;
-		const bool canRedoTurn() const;
+		const bool canUndo() const;
+		const bool canRedo() const;
 		
 		/**
 		 * @brief Returns how many moves are left for the current player

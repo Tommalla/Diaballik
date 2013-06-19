@@ -493,6 +493,19 @@ const ApplicationPlayerType GameHandler::getPlayerType (const bool current) cons
 	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo().type;
 }
 
+const PlayerInfo& GameHandler::getPlayerInfo (const bool current) const {
+	return this->players[((current) ? this->currentPlayer : this->getNextPlayerId())]->getPlayerInfo();
+}
+
+const bool GameHandler::canUndo() const {
+	return this->lastMoveId > -1 || this->currentTurnId > 0;
+}
+
+const bool GameHandler::canRedo() const {
+	return this->lastMoveId + 1 < (int)this->turnsHistory[this->currentTurnId].size() ||
+		this->currentTurnId + 1 < (int)this->turnsHistory.size();
+}
+
 
 const int GameHandler::getMovesLeft() const {
 	return this->game.getMovesLeft();
