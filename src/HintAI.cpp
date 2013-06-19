@@ -7,7 +7,7 @@ All rights reserved */
 const bool HintAI::matches (const vector< Move >& a, const vector< Move >& b) const {
 	if (a.size() >= b.size())
 		return false;
-	for (int i = 0; i < a.size(); ++i)
+	for (int i = 0; i < (int)a.size(); ++i)
 		if (a[i] != b[i])
 			return false;
 	return true;
