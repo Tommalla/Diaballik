@@ -482,7 +482,7 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	this->game = tmpGame;
 	qDebug("%d %d\n", tmpGame.getMovesLeft(), tmpGame.getPassessLeft());
 	
-	this->resumeGame();
+	StateHandler::getInstance().setGamePaused(false);
 	this->players[this->currentPlayer]->startTurn();
 	this->players[this->getNextPlayerId()]->finishTurn();
 	this->playersTimer.start();
