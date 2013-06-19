@@ -79,6 +79,8 @@ void StateHandler::setGamePaused (const bool val) {
 	
 	this->gamePaused = val;
 	
+	this->window->playerChanged();
+	
 }
 
 void StateHandler::gameFinished() {

@@ -517,8 +517,6 @@ const bool GameHandler::canRedo() const {
 void GameHandler::resumeGame() {
  	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER && this->lastMoveId > -1)
 		this->undoTurn();
-	
-	emit playerChanged();
 }
 
 const int GameHandler::getMovesLeft() const {
