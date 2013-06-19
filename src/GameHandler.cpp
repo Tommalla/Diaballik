@@ -74,7 +74,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->movesLeft[this->currentTurnId].first, this->movesLeft[this->currentTurnId].second);
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 	
-	this->hintAI->gameChanged(this->game);
+	if (this->hintAI != NULL)
+		this->hintAI->gameChanged(this->game);
 	
 	//hashes
 	if (!undo) {
