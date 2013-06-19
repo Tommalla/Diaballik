@@ -99,12 +99,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		bool isMoveValid(const Point& src, const Point& dst);
 		/**
 		 * @brief Attempts to move a tile.
+		 * 
+		 * @param animate Decides if the tile should be animated or just moved to its' destination
 		 **/
-		void moveTile(const Move& move);
-		/**
-		 * @brief Moves the tile (without animation)
-		 **/
-		void changeTilePosition(const Move& move);
+		void moveTile(const Move& move, const bool animate = true);
 		/**
 		 * @brief Gets possible destinations for the tile to move/pass ball and
 		 * selects them on the board (calling GraphicsTile::select on tiles)

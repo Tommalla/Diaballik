@@ -45,10 +45,7 @@ void Player::endGame (bool win) {
 	this->moveReady = false;
 }
 
-void Player::newGame (const vector< Point > black, const vector< Point > white, const vector< Point > balls, const GamePlayer& player) {
-
-}
-
+void Player::newGame (const vector< Point > black, const vector< Point > white, const vector< Point > balls, const GamePlayer& player) {}
 
 void Player::finishTurn() {
 	this->turnFinished = true;

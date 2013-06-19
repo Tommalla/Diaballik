@@ -168,14 +168,14 @@ GraphicsMovableTile* GameHandler::getBallAt (const Point& pos) {
 
 GraphicsMovableTile* GameHandler::getSource (const Move& move) {
 	FieldState field = this->game.getFieldAt(move.from);
-	GraphicsMovableTile* src;
+	GraphicsMovableTile* src = NULL;
 	
 	if (field == BALL_A || field == BALL_B)
 		src = this->getBallAt(move.from);
 	else
 		src = this->getPawnAt(move.from);
 	
-	assert(src != NULL);
+	//assert(src != NULL);
 	return src;
 }
 
@@ -251,17 +251,20 @@ bool GameHandler::isMoveValid (const Point& src, const Point& dst) {
 }
 
 
-void GameHandler::moveTile (const Move& move) {
+void GameHandler::moveTile (const Move& move, const bool animate) {
 	GraphicsMovableTile* src = this->getSource(move);
 	this->deselectTiles();
-	src->move(move.to);
+	if (animate == true)
+		src->move(move.to);
+	else
+		src->changePosition(move.to.x, move.to.y);
 }
 
-void GameHandler::changeTilePosition (const Move& move) {
-	GraphicsMovableTile* src = this->getSource(move);
-	this->deselectTiles();
-	src->changePosition(move.to.x, move.to.y);
-}
+// void GameHandler::changeTilePosition (const Move& move) {
+// 	GraphicsMovableTile* src = this->getSource(move);
+// 	this->deselectTiles();
+// 	src->changePosition(move.to.x, move.to.y);
+// }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	this->deselectTiles();
@@ -285,6 +288,11 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	} else {
 		if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
 			return;
+		if ((field == PLAYER_A || field == PLAYER_B) && this->game.getMovesLeft() <= 0)
+			return;
+		if ((field == BALL_A || field == PLAYER_B) && this->game.getPassessLeft() <= 0)
+			return;
+		
 		if (this->players[currentPlayer]->getPlayerInfo().type == AI_PLAYER)
 			return;
 	
@@ -296,9 +304,6 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	
 		for (Point dst: destinations)
 			if (field == PLAYER_A || field == PLAYER_B) {
-				if (this->game.getMovesLeft() <= 0)
-					return;
-				qDebug("background being selected!");
 				for (GraphicsTile* dstTile: this->backgroundTiles)
 					if (dst == dstTile->getPos()) {
 						dstTile->select();
@@ -306,9 +311,6 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 						break;
 					}
 			} else {
-				if (this->game.getPassessLeft() <= 0)
-					return;
-				qDebug("pawns being selected!");
 				for (GraphicsTile* dstTile: this->pawns)
 					if (dst == dstTile->getPos()) {
 						dstTile->select();
@@ -589,6 +591,18 @@ const int GameHandler::getPassesLeft() const {
 }
 
 void GameHandler::checkForNewMoves() {
+	if (StateHandler::getInstance().isEditorMode()) {
+		for (Player* player: this->players)
+			if (player->isMoveReady()) {
+				Move move = player->getMove();
+				if (this->getSource(move) != NULL) {
+					this->moveTile(move, false);
+					this->game.makeUnsafeMove(move);
+				}
+			}
+		return;
+	}
+	
 	if (this->players[this->currentPlayer]->isTurnFinished())
 		this->changeCurrentPlayer();
 	
@@ -699,7 +713,7 @@ void GameHandler::undoTurn() {
 		move.revert();
 		assert(this->game.isMovePossible(move));
 		
-		this->changeTilePosition(move);
+		this->moveTile(move, false);
 		this->game.makeMove(move, true);
 	}
 	
@@ -724,7 +738,7 @@ void GameHandler::redoTurn() {
 		Move move = this->turnsHistory[this->currentTurnId][i];
 		assert(this->game.isMoveValid(move));
 		
-		this->changeTilePosition(move);
+		this->moveTile(move, false);
 		this->game.makeMove(move);
 	}
 
@@ -751,7 +765,13 @@ void GameHandler::botCrashed() {
 void GameHandler::startEditor() {
 	this->playersTimer.stop();
 	this->deletePlayers();
+	if (!this->initializePlayers(make_human_player("dummy"), make_human_player("dummy")))
+		qDebug("Fail");
+	
+	for (Player* player: this->players)
+		player->startTurn();
 	
 	StateHandler::getInstance().startEditorMode();
+	this->playersTimer.start();
 }
 
