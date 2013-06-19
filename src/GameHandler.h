@@ -186,10 +186,12 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void redoMove();
 		void undoTurn();
 		void redoTurn();
+		void botCrashed();
 	signals:
 		void playerChanged();
 		void gameFinished();
 		void moveFinished();
+		void error(const QString msg);
 };
 
 #endif // GAMEHANDLER_H

@@ -1,5 +1,4 @@
 set (HEADERS
-	AIPlayer.h
 	gameConstants.h
 	gameEnums.h
 	GraphicsScene.h
@@ -9,7 +8,6 @@ set (HEADERS
 )
 
 set (SOURCES
-	AIPlayer.cpp
 	main.cpp
 	GraphicsScene.cpp
 	PlayerInfo.cpp
@@ -18,6 +16,7 @@ set (SOURCES
 )
 
 set (MOC_HEADERS
+	AIPlayer.h
 	GameHandler.h
 	GraphicsMovableTile.h
 	GraphicsTile.h
@@ -27,6 +26,7 @@ set (MOC_HEADERS
 )
 
 set (MOC_SOURCES
+	AIPlayer.cpp
 	GameHandler.cpp
 	GraphicsMovableTile.cpp
 	GraphicsTile.cpp

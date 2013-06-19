@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadGame()));
 	QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveGame()));
 	QObject::connect(ui->pausePushButton, SIGNAL(clicked()), this, SLOT(pauseGame()));
+	QObject::connect(&(GameHandler::getInstance()), SIGNAL(error(QString)), this, SLOT(displayError(QString)));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -172,5 +173,7 @@ void MainWindow::showHelp() {
 	msgBox.information(this, "Game help", HELP_MESSAGE);
 }
 
-
-
+void MainWindow::displayError (const QString msg) {
+	QMessageBox msgBox;
+	msgBox.critical(this, "Error!", msg);
+}

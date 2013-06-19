@@ -7,6 +7,7 @@ All rights reserved */
 #include "SettingsHandler.h"
 #include "gameConstants.h"
 #include "SaveHandler.h"
+#include "StateHandler.h"
 #include "../DiaballikEngine/src/functions.h"
 
 void GameHandler::dropHistoryTail() {
@@ -117,6 +118,7 @@ Player* GameHandler::createPlayer (PlayerInfo info, const int id) {
 		case AI_PLAYER:
 		{
 			AIPlayer* res = new AIPlayer(info);
+			QObject::connect(res, SIGNAL(crashed()), this, SLOT(botCrashed()));
 			return res;
 			break;
 		}
@@ -432,9 +434,6 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		hashesHistory.push_back(h);
 	}
 	
-	qDebug("Player %d finally starting", p);
-	
-	//FIXME possibly buggy
 	if (!this->turnsHistory.empty()) {
 		this->currentTurnId = max(0, (int)this->turnsHistory.size() - 1);
 		this->lastMoveId = this->turnsHistory.back().size() - 1;
@@ -608,6 +607,12 @@ void GameHandler::redoMove() {
 
 void GameHandler::undoTurn() {
 	qDebug("undoTurn()");
+	
+	StateHandler::getInstance().setGamePaused(true);
+	
+	if (this->currentTurnId > 0 && this->lastMoveId == -1)
+		this->changeCurrentPlayer(true);
+	
 	for (int i = this->lastMoveId; i >= 0; --i) {	//undo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
 		move.revert();
@@ -618,12 +623,6 @@ void GameHandler::undoTurn() {
 	}
 	
 	this->lastMoveId = -1;
-	
-// 	for (Player* player: this->players)
-// 		player->undoTurn(this->turnsHistory[this->currentTurnId]);
-	
-	if (this->currentTurnId > 0)
-		this->changeCurrentPlayer(true);
 	
 	emit moveFinished();
 }
@@ -650,8 +649,14 @@ void GameHandler::redoTurn() {
 
 	this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 	
-	if (this->currentTurnId + 1 < (int)this->turnsHistory.size())
+	if (this->currentTurnId + 1 < (int)this->turnsHistory.size() || 
+		this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER)
 		this->changeCurrentPlayer();
 	
 	emit moveFinished();
+}
+
+void GameHandler::botCrashed() {
+	emit error("The AI has crashed! :(");
+	emit gameFinished();
 }

@@ -41,6 +41,7 @@ class MainWindow : public QMainWindow {
 		void showRules();
 		void showAuthor();
 		void showHelp();
+		void displayError(const QString msg);
 };
 
 #endif // MAINWINDOW_H

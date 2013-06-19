@@ -81,6 +81,7 @@ void StateHandler::playerChanged() {
 	
 	if (player == AI_PLAYER)
 		this->window->ui->pausePushButton->setEnabled(GameHandler::getInstance().getPlayerInfo().GTPE);
+		
 	else if (player == HUMAN_PLAYER && 
 		GameHandler::getInstance().getPlayerType(false) == AI_PLAYER) {
 		this->window->ui->turnsGroupBox->setEnabled(GameHandler::getInstance().getPlayerInfo(false).GTPE);

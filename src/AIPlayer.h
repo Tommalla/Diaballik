@@ -10,6 +10,7 @@ All rights reserved */
 #include "Player.h"
 
 class AIPlayer : public Player {
+	Q_OBJECT;
 	private:
 		QProcess bot;
 		QTime moveTimer;
