@@ -89,7 +89,7 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	this->emptyQueue();
 	
 	Player::play (player, moves);
-	assert(this->processing == false);
+// 	assert(this->processing == false);
 	QString cmd = QString("play ") + engine::getIdFor(player).c_str() + " ";
 	
 	for (Move move: moves) {
