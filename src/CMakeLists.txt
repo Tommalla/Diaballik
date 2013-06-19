@@ -2,6 +2,7 @@ set (HEADERS
 	gameConstants.h
 	gameEnums.h
 	GraphicsScene.h
+	HintAI.h
 	PlayerInfo.h
 	SaveHandler.h
 	SettingsHandler.h
@@ -10,6 +11,7 @@ set (HEADERS
 set (SOURCES
 	main.cpp
 	GraphicsScene.cpp
+	HintAI.cpp
 	PlayerInfo.cpp
 	SaveHandler.cpp
 	SettingsHandler.cpp

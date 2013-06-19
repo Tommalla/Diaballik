@@ -74,6 +74,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->movesLeft[this->currentTurnId].first, this->movesLeft[this->currentTurnId].second);
 	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
 	
+	this->hintAI->gameChanged(this->game);
+	
 	//hashes
 	if (!undo) {
 		//new configuration
@@ -224,6 +226,7 @@ GameHandler::GameHandler() : QObject() {
 	this->initialized = false;
 	this->lastSelector = NULL;
 	this->players[0] = this->players[1] = NULL;
+	this->hintAI = NULL;
 	
 	this->playersTimer.setInterval(
 		SettingsHandler::getInstance().value("application/playersTimerInterval", DEFAULT_PLAYERS_TIMER_INTERVAL).toInt() );
@@ -231,6 +234,12 @@ GameHandler::GameHandler() : QObject() {
 	
 	QObject::connect(&(this->playersTimer), SIGNAL(timeout()), this, SLOT(checkForNewMoves()));
 }
+
+GameHandler::~GameHandler() {
+	this->deletePlayers();
+	
+}
+
 
 void GameHandler::deselectTiles() {
 	for (GraphicsTile* tile: this->selectedTiles)
@@ -259,12 +268,6 @@ void GameHandler::moveTile (const Move& move, const bool animate) {
 	else
 		src->changePosition(move.to.x, move.to.y);
 }
-
-// void GameHandler::changeTilePosition (const Move& move) {
-// 	GraphicsMovableTile* src = this->getSource(move);
-// 	this->deselectTiles();
-// 	src->changePosition(move.to.x, move.to.y);
-// }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	this->deselectTiles();
@@ -332,6 +335,59 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 				break;
 			}
 }
+
+void GameHandler::displayHint() {
+	vector<Move> hint;
+	for (int i = 0; i <= this->lastMoveId; ++i)
+		hint.push_back(this->turnsHistory[this->currentTurnId][i]);
+	
+	hint = this->hintAI->generateHint(hint);
+	
+	if (hint.empty())
+		return;
+	
+	this->deselectTiles();
+	
+	int i;
+	for (i = 0; i <= this->lastMoveId; ++i)
+		if (this->turnsHistory[this->currentTurnId][i] != hint[i])
+			break;
+		
+	qDebug("Received hint: %d %d -> %d %d", hint[i].from.x, hint[i].from.y, hint[i].to.x, hint[i].to.y);
+		
+	GraphicsMovableTile* tile = this->getSource(hint[i]);
+	assert(tile != NULL);
+	FieldState field = this->game.getFieldAt(tile->getPos());
+	
+	if (field == PLAYER_A || field == PLAYER_B) {
+		for (GraphicsTile* dstTile: this->backgroundTiles)
+			if (hint[i].to == dstTile->getPos()) {
+				dstTile->select();
+				this->selectedTiles.push_back(dstTile);
+				break;
+			}
+	} else {
+		for (GraphicsTile* dstTile: this->pawns)
+			if (hint[i].to == dstTile->getPos()) {
+				dstTile->select();
+				this->selectedTiles.push_back(dstTile);
+				break;
+			}
+	}
+	
+	this->lastSelector = tile;
+	tile->select(false);
+	
+	if (field == BALL_A || field == BALL_B)	//a hack to get the ball to cancel the selection
+		for(GraphicsTile* ball: this->balls)
+			if (ball->getPos() == tile->getPos()) {
+				ball->select(false);
+				this->selectedTiles.push_back(ball);
+				qDebug("selected the ball");
+				break;
+			}
+}
+
 
 void GameHandler::repaintTiles (const int tileSize) {
 	for (GraphicsTile* tile: this->backgroundTiles)
@@ -402,6 +458,11 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	this->turnsHistory = {vector<Move>()};
 	this->movesLeft = {{2, 1}};
 	this->hashes.insert(QString::fromStdString(this->game.getHash()));
+	
+	if (playerA.type == HUMAN_PLAYER || playerB.type == HUMAN_PLAYER) {
+		delete this->hintAI;
+		this->hintAI = new HintAI(pawns[0], pawns[1], balls, this->game.getCurrentPlayer());
+	}
 	
 	this->playersTimer.start();
 	return true;
@@ -713,7 +774,7 @@ void GameHandler::redoMove() {
 }
 
 void GameHandler::undoTurn() {
-	qDebug("undoTurn() %d");
+	qDebug("undoTurn()");
 	
 	StateHandler::getInstance().setGamePaused(true);
 	

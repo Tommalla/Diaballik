@@ -18,6 +18,7 @@ All rights reserved */
 #include "HumanPlayer.h"
 #include "AIPlayer.h"
 #include "gameEnums.h"
+#include "HintAI.h"
 
 using namespace std;
 
@@ -54,6 +55,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsMovableTile* lastSelector;	//the last tile that was clicked and became
 		//the source of the last selection. If none, this shall be set to NULL.
 		
+		HintAI* hintAI;
+		
 		QTimer playersTimer;
 		Player* players[2];
 		int currentPlayer;
@@ -80,6 +83,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void createSceneBoard(const int tileSize, const vector<Point> pawns[2], const vector<Point> balls);
 		
 		GameHandler();
+		virtual ~GameHandler();
 	public:
 		/**
 		 * @brief Deselects currently selected tiles.
@@ -190,6 +194,10 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void botCrashed();
 		void finishGame();
 		void startEditor();
+		/**
+		 * @brief Displays current hint
+		 **/
+		void displayHint();
 	signals:
 		void playerChanged();
 		void gameFinished();

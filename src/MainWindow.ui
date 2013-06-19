@@ -134,6 +134,13 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QPushButton" name="showHintPushButton">
+                <property name="text">
+                 <string>Show hint</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->pausePushButton, SIGNAL(clicked()), this, SLOT(pauseGame()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(error(QString)), this, SLOT(displayError(QString)));
 	QObject::connect(ui->startPushButton, SIGNAL(clicked()), &(this->newGameDialog), SLOT(exec()));
+	QObject::connect(ui->showHintPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(displayHint()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
