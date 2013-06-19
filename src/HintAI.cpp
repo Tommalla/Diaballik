@@ -49,8 +49,10 @@ HintAI::HintAI (const vector< Point >& black, const vector< Point >& white, cons
 
 void HintAI::gameChanged (const Game& newGame) {
 	this->currentGame = newGame;
+	this->currentGame.setCurrentPlayer(newGame.getCurrentPlayer(), 2, 1);
+	
 	this->allMovesAvailable.clear();
-	this->calculateAvailableMovesFor(newGame);
+	this->calculateAvailableMovesFor(this->currentGame);
 }
 
 const vector< Move > HintAI::generateHint (const vector< Move >& pattern) {
