@@ -21,8 +21,8 @@ bool AIPlayer::isMoveReady() {
 	if (Player::isMoveReady() && this->moveTimer.elapsed() >= 
 		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt()) {
 		return true;
-	} else qDebug("Not ready! %d, %d", this->moveTimer.elapsed(),
-		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt());
+	} /*else qDebug("Not ready! %d, %d", this->moveTimer.elapsed(),
+		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt());*/
 	
 	if (this->processing) {
 		if (this->bot.canReadLine()) {
@@ -56,7 +56,7 @@ bool AIPlayer::isMoveReady() {
 				this->setMove(this->movesQueue.front());
 				this->moveReady = true;
 			}
-		} else this->genMove();
+		} else this->genMove();	//TODO if not paused
 	}
 	
 	return false;
@@ -88,21 +88,16 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	qDebug("Sending: %s", qPrintable(cmd));
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
-	
-	if (bot.canReadLine()) {
-		cmd = bot.readLine();
-		qDebug("%s", qPrintable(cmd));
-		if (cmd[0] == '=')
-			bot.readLine();
-	}
 }
 
 void AIPlayer::genMove() {
 	this->processing = true;
 	qDebug("Asking %s for move (%s)", qPrintable(this->info.name), engine::getIdFor(this->info.player).c_str());
 	QString cmd = QString("gen_move ") + engine::getIdFor(this->info.player).c_str() + "\n";
+	
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
+	
 	qDebug("%s", qPrintable(cmd));
 	this->moveTimer.restart();
 }
