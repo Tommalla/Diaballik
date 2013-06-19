@@ -158,7 +158,7 @@ void MainWindow::gameFinished() {
 
 
 void MainWindow::startGameEditor() {
-	//TODO start it!
+	GameHandler::getInstance().startEditor();
 }
 
 void MainWindow::showRules() {

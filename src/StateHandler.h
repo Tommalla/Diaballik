@@ -25,6 +25,7 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 		
 		//TODO some boolean container/variables to represent what can be done. States need to change it
 		bool gamePaused;
+		bool editorMode;
 		
 		StateHandler();
 	public:
@@ -33,10 +34,14 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 		const bool isGamePaused() const;
 		void setGamePaused(const bool val);
 		
+		const bool isEditorMode() const;
+		
 	public slots:
 		void playerChanged();
 		void gameFinished();
 		void moveFinished();
+		void startEditorMode();
+		//void finishEditorMode();
 	
 };
 

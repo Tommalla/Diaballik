@@ -21,6 +21,8 @@ void StateHandler::assignProperties (const ApplicationState& state) {
 	this->window->ui->nextTurnPushButton->setEnabled(GameHandler::getInstance().canRedo());
 	this->window->ui->undoPushButton->setEnabled(GameHandler::getInstance().canUndo());
 	this->window->ui->redoPushButton->setEnabled(GameHandler::getInstance().canRedo());
+	
+	this->editorMode = (state == BOARD_EDITOR);
 }
 
 
@@ -82,6 +84,10 @@ void StateHandler::setGamePaused (const bool val) {
 	
 }
 
+const bool StateHandler::isEditorMode() const {
+	return editorMode;
+}
+
 void StateHandler::gameFinished() {
 	this->assignProperties(GAME_FINISHED);
 }
@@ -108,6 +114,11 @@ void StateHandler::moveFinished() {
 	this->window->ui->undoPushButton->setEnabled(GameHandler::getInstance().canUndo());
 	this->window->ui->redoPushButton->setEnabled(GameHandler::getInstance().canRedo());
 }
+
+void StateHandler::startEditorMode() {
+	this->assignProperties(BOARD_EDITOR);
+}
+
 
 
 

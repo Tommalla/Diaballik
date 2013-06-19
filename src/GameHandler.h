@@ -191,6 +191,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void redoTurn();
 		void botCrashed();
 		void finishGame();
+		void startEditor();
 	signals:
 		void playerChanged();
 		void gameFinished();

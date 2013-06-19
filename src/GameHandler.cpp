@@ -264,41 +264,59 @@ void GameHandler::changeTilePosition (const Move& move) {
 }
 
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
-	if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
-		return;
-	if (this->players[currentPlayer]->getPlayerInfo().type == AI_PLAYER)
-		return;
-	
-	FieldState field = this->game.getFieldAt(tile->getPos());
-	if (engine::getPlayerFor(field) != this->game.getCurrentPlayer())
-		return;	//wrong player, we won't be selecting anything
-	
 	this->deselectTiles();
+	FieldState field = this->game.getFieldAt(tile->getPos());
 	
-	vector<Point> destinations = this->game.getDestinationsFor(tile->getPos());
-	
-	for (Point dst: destinations)
+	if (StateHandler::getInstance().isEditorMode() == true) {	//we're in editor mode 
 		if (field == PLAYER_A || field == PLAYER_B) {
-			if (this->game.getMovesLeft() <= 0)
-				return;
-			qDebug("background being selected!");
 			for (GraphicsTile* dstTile: this->backgroundTiles)
-				if (dst == dstTile->getPos()) {
+				if ( this->game.getFieldAt(dstTile->getPos()) == EMPTY) {
 					dstTile->select();
 					this->selectedTiles.push_back(dstTile);
-					break;
 				}
 		} else {
-			if (this->game.getPassessLeft() <= 0)
-				return;
-			qDebug("pawns being selected!");
 			for (GraphicsTile* dstTile: this->pawns)
-				if (dst == dstTile->getPos()) {
+				if (this->game.getFieldAt(dstTile->getPos()) == 
+					((field == BALL_A) ? PLAYER_A : PLAYER_B)) {
 					dstTile->select();
 					this->selectedTiles.push_back(dstTile);
-					break;
 				}
 		}
+	} else {
+		if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
+			return;
+		if (this->players[currentPlayer]->getPlayerInfo().type == AI_PLAYER)
+			return;
+	
+		if (engine::getPlayerFor(field) != this->game.getCurrentPlayer())
+			return;	//wrong player, we won't be selecting anything
+	
+	
+		vector<Point> destinations = this->game.getDestinationsFor(tile->getPos());
+	
+		for (Point dst: destinations)
+			if (field == PLAYER_A || field == PLAYER_B) {
+				if (this->game.getMovesLeft() <= 0)
+					return;
+				qDebug("background being selected!");
+				for (GraphicsTile* dstTile: this->backgroundTiles)
+					if (dst == dstTile->getPos()) {
+						dstTile->select();
+						this->selectedTiles.push_back(dstTile);
+						break;
+					}
+			} else {
+				if (this->game.getPassessLeft() <= 0)
+					return;
+				qDebug("pawns being selected!");
+				for (GraphicsTile* dstTile: this->pawns)
+					if (dst == dstTile->getPos()) {
+						dstTile->select();
+						this->selectedTiles.push_back(dstTile);
+						break;
+					}
+			}
+	}
 		
 	this->lastSelector = tile;
 	tile->select(false);
@@ -557,7 +575,7 @@ void GameHandler::resumeGame() {
  	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER) {
 		if (this->lastMoveId > -1)
 			this->undoTurn();
-		else if (this->currentTurnId < this->turnsHistory.size() &&  this->turnsHistory[this->currentTurnId].empty() == false)
+		else if (this->currentTurnId < (int)this->turnsHistory.size() &&  this->turnsHistory[this->currentTurnId].empty() == false)
 			this->sendUndoTurn(this->game.getCurrentPlayer(), this->currentTurnId);
 	}
 }
@@ -729,3 +747,11 @@ void GameHandler::botCrashed() {
 	emit error("The AI has crashed! :(");
 	emit gameFinished();
 }
+
+void GameHandler::startEditor() {
+	this->playersTimer.stop();
+	this->deletePlayers();
+	
+	StateHandler::getInstance().startEditorMode();
+}
+
