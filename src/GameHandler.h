@@ -63,6 +63,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void deletePlayers();
 		Player* createPlayer(PlayerInfo info, const int id);
 		bool initializePlayers(const PlayerInfo& playerA, const PlayerInfo& playerB);
+		void sendUndoTurn(const GamePlayer& player, const int turnId);
 		
 		GraphicsTile* getTileAt(const Point& pos);
 		GraphicsMovableTile* getBallAt(const Point& pos);

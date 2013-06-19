@@ -42,19 +42,18 @@ void StateHandler::start(MainWindow* window) {
 		window->ui->nextTurnPushButton,
 		window->ui->statusLayout, 
 		window->ui->startPushButton, 
-		window->ui->stopButton,
 		window->ui->botOptionsGroupBox
 	};
 	
-	QVariant values[4][12] = {
-		{false, false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, true, false, false},
-		{true, true, true, true, true, true, false, true, true, false, false, false},
-		{false, false, true, true, true, false, true, false, true, false, true, true}
+	QVariant values[4][11] = {
+		{false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, true, false},
+		{true, true, true, true, true, true, false, true, true, false, false},
+		{false, false, true, true, true, false, true, false, true, false, true}
 	};
 	
 	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 12; ++j)
+		for (int j = 0; j < 11; ++j)
 			this->newProperties[i].push_back(make_tuple(hideableUI[j], "enabled", values[i][j].toBool()));
 		
 	this->gameFinished();
@@ -90,8 +89,6 @@ void StateHandler::gameFinished() {
 void StateHandler::playerChanged() {
 	ApplicationPlayerType player = GameHandler::getInstance().getPlayerType();
 	this->assignProperties((ApplicationState)player);
-	
-	//TODO add canUndoTurn
 	
 	if (player == AI_PLAYER) {
 		this->window->ui->pausePushButton->setEnabled(GameHandler::getInstance().getPlayerInfo().GTPE);

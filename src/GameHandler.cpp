@@ -145,6 +145,12 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 	return true;
 }
 
+void GameHandler::sendUndoTurn (const GamePlayer& player, const int turnId) {
+	for (Player* p: this->players)
+		if (p != NULL)
+			p->undoTurn(player, this->turnsHistory[turnId]);
+}
+
 
 GraphicsMovableTile* GameHandler::getPawnAt (const Point& pos) {
 	for (GraphicsMovableTile* tile: this->pawns)
@@ -482,7 +488,7 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	this->game = tmpGame;
 	qDebug("%d %d\n", tmpGame.getMovesLeft(), tmpGame.getPassessLeft());
 	
-	StateHandler::getInstance().setGamePaused(false);
+	StateHandler::getInstance().setGamePaused(true);
 	this->players[this->currentPlayer]->startTurn();
 	this->players[this->getNextPlayerId()]->finishTurn();
 	this->playersTimer.start();
@@ -547,8 +553,13 @@ const bool GameHandler::canRedo() const {
 }
 
 void GameHandler::resumeGame() {
- 	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER && this->lastMoveId > -1)
-		this->undoTurn();
+	//we have to undo the current turn so that the AI would start with no moves
+ 	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER) {
+		if (this->lastMoveId > -1)
+			this->undoTurn();
+		else if (this->currentTurnId < this->turnsHistory.size() &&  this->turnsHistory[this->currentTurnId].empty() == false)
+			this->sendUndoTurn(this->game.getCurrentPlayer(), this->currentTurnId);
+	}
 }
 
 const int GameHandler::getMovesLeft() const {

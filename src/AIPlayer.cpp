@@ -26,7 +26,7 @@ AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 }
 
 bool AIPlayer::isMoveReady() {
-	if (this->bot.isOpen() == false) {
+	if (this->bot.state() == QProcess::NotRunning) {
 		emit crashed();
 		return false;
 	}
