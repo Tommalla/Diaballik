@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(error(QString)), this, SLOT(displayError(QString)));
 	QObject::connect(ui->startPushButton, SIGNAL(clicked()), &(this->newGameDialog), SLOT(exec()));
 	QObject::connect(ui->showHintPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(displayHint()));
+	QObject::connect(ui->actionSettings, SIGNAL(triggered()), this, SLOT(showSettings()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -179,6 +180,11 @@ void MainWindow::showAuthor() {
 void MainWindow::showHelp() {
 	QMessageBox msgBox;
 	msgBox.information(this, "Game help", HELP_MESSAGE);
+}
+
+void MainWindow::showSettings() {
+	this->displayError(QString("I didn't manage to implement the proper settings (I ran out of time). Everything you might want to edit thought is ") +
+		"at $HOME$/.diaballik/config.ini . Happy hacking!");
 }
 
 void MainWindow::displayError (const QString msg) {

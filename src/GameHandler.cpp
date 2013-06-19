@@ -293,7 +293,7 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 			return;
 		if ((field == PLAYER_A || field == PLAYER_B) && this->game.getMovesLeft() <= 0)
 			return;
-		if ((field == BALL_A || field == PLAYER_B) && this->game.getPassessLeft() <= 0)
+		if ((field == BALL_A || field == BALL_B) && this->game.getPassessLeft() <= 0)
 			return;
 		
 		if (this->players[currentPlayer]->getPlayerInfo().type == AI_PLAYER)
