@@ -39,7 +39,11 @@ const PlayerInfo& Player::getPlayerInfo() const {
 //implement anything specific for those methods, they wouldn't have to
 void Player::play (const GamePlayer& player, const vector< Move >& moves) {}
 void Player::undoTurn (const GamePlayer& player, const vector< Move >& moves) {}
-void Player::endGame (bool win) {}
+
+void Player::endGame (bool win) {
+	this->ready = false;
+	this->moveReady = false;
+}
 
 
 void Player::finishTurn() {

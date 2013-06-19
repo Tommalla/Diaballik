@@ -32,7 +32,10 @@ void StateHandler::start(MainWindow* window) {
 	this->window = window;
 	
 	vector<QObject*> hideableUI = {
-		window->ui->currentTurnGroupBox, 
+		window->ui->currentTurnGroupBox,
+		window->ui->turnDonePushButton,
+		window->ui->undoPushButton,
+		window->ui->redoPushButton,
 		window->ui->turnsGroupBox,
 		window->ui->previousTurnPushButton,
 		window->ui->pausePushButton,
@@ -43,15 +46,15 @@ void StateHandler::start(MainWindow* window) {
 		window->ui->botOptionsGroupBox
 	};
 	
-	QVariant values[4][9] = {
-		{false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, true, false, false},
-		{true, true, true, false, true, true, false, false, false},
-		{false, true, false, true, false, true, false, true, true}
+	QVariant values[4][12] = {
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, true, false, false},
+		{true, true, true, true, true, true, false, true, true, false, false, false},
+		{false, false, true, true, true, false, true, false, true, false, true, true}
 	};
 	
 	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 9; ++j)
+		for (int j = 0; j < 12; ++j)
 			this->newProperties[i].push_back(make_tuple(hideableUI[j], "enabled", values[i][j].toBool()));
 		
 	this->gameFinished();
@@ -62,11 +65,20 @@ const bool StateHandler::isGamePaused() const {
 }
 
 void StateHandler::setGamePaused (const bool val) {
-	this->gamePaused = val;
+	if (val == false)
+		GameHandler::getInstance().resumeGame();
 	
 	this->window->ui->pausePushButton->setText(val ? "Resume" : "Pause");
 	this->window->ui->previousTurnPushButton->setEnabled(GameHandler::getInstance().canUndo());
 	this->window->ui->nextTurnPushButton->setEnabled(GameHandler::getInstance().canRedo());
+	
+	ApplicationPlayerType player = GameHandler::getInstance().getPlayerType();
+	if (player == AI_PLAYER)
+		this->window->ui->currentTurnGroupBox->setEnabled(val && 
+		GameHandler::getInstance().getPlayerInfo().GTPE);
+	
+	this->gamePaused = val;
+	
 }
 
 void StateHandler::gameFinished() {
@@ -79,8 +91,11 @@ void StateHandler::playerChanged() {
 	
 	//TODO add canUndoTurn
 	
-	if (player == AI_PLAYER)
+	if (player == AI_PLAYER) {
 		this->window->ui->pausePushButton->setEnabled(GameHandler::getInstance().getPlayerInfo().GTPE);
+		this->window->ui->currentTurnGroupBox->setEnabled(this->gamePaused &&
+			GameHandler::getInstance().getPlayerInfo().GTPE);
+	}
 		
 	else if (player == HUMAN_PLAYER && 
 		GameHandler::getInstance().getPlayerType(false) == AI_PLAYER) {

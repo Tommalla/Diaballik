@@ -162,6 +162,8 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		const bool canUndo() const;
 		const bool canRedo() const;
 		
+		void resumeGame();
+		
 		/**
 		 * @brief Returns how many moves are left for the current player
 		 **/
@@ -187,6 +189,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		void undoTurn();
 		void redoTurn();
 		void botCrashed();
+		void finishGame();
 	signals:
 		void playerChanged();
 		void gameFinished();

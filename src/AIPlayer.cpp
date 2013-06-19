@@ -17,7 +17,7 @@ AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 	this->processing = true;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
-	this->bot.setStandardErrorFile("botError.out");
+	this->bot.setStandardErrorFile(info.name + ".out");
 	this->bot.start(info.botPath);
 	this->bot.waitForStarted();
 	
@@ -38,14 +38,16 @@ bool AIPlayer::isMoveReady() {
 	} /*else qDebug("Not ready! %d, %d", this->moveTimer.elapsed(),
 		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt());*/
 	
-	if (StateHandler::getInstance().isGamePaused())
-		return false;
+// 	if (StateHandler::getInstance().isGamePaused())
+// 		return false;
 	
 	if (this->processing) {
 		if (this->bot.canReadLine()) {
 			QString data = this->bot.readLine();
 			qDebug("Read the line! %s", qPrintable(data));
 			
+			if (StateHandler::getInstance().isGamePaused())	//ignore if it's pause
+				return false;
 			
 			vector<string> response = engine::splitString(data.toStdString());
 			
@@ -62,6 +64,9 @@ bool AIPlayer::isMoveReady() {
 			this->processing = false;
 		}
 	} else {
+		if (StateHandler::getInstance().isGamePaused())
+				return false;
+		
 		if (!this->movesQueue.empty()) {
 			if (this->moveReady == false) {
 				this->setMove(this->movesQueue.front());
@@ -87,6 +92,8 @@ const Move AIPlayer::getMove() {
 
 void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	this->emptyQueue();
+	
+	assert(moves.empty() == false);
 	
 	Player::play (player, moves);
 // 	assert(this->processing == false);
@@ -122,7 +129,7 @@ void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) 
 	this->emptyQueue();
 	
 	Player::undoTurn (player, moves);
-	QString cmd = QString("undo_turn ") + engine::getIdFor(this->info.player).c_str() + " ";
+	QString cmd = QString("undo_turn ") + engine::getIdFor(player).c_str() + " ";
 	
 	for (Move move: moves) {
 		pair<string, string> tmp = engine::convertFromMove(move);

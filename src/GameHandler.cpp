@@ -45,17 +45,22 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->currentTurnId++;
 		this->lastMoveId = -1;
 	} else {
+		bool tmp = true;
+		
 		if (this->currentTurnId > 0) {
-			if (this->turnsHistory[this->currentTurnId].empty())
-				this->turnsHistory.pop_back();
+ 			if (this->turnsHistory[this->currentTurnId].empty()) {
+ 				this->turnsHistory.pop_back();
+				tmp = false;
+			}
 			
 			this->movesLeft.pop_back();
 			
 			this->currentTurnId--;
 			
-			for (Player* player: this->players)
-				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-						 this->turnsHistory[this->currentTurnId]);
+			if (tmp)
+				for (Player* player: this->players)
+					player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+							 this->turnsHistory[this->currentTurnId + 1]);
 			
 			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 		} else {
@@ -507,6 +512,10 @@ const bool GameHandler::canRedo() const {
 		this->currentTurnId + 1 < (int)this->turnsHistory.size();
 }
 
+void GameHandler::resumeGame() {
+ 	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER && this->lastMoveId > -1)
+		this->undoTurn();
+}
 
 const int GameHandler::getMovesLeft() const {
 	return this->game.getMovesLeft();
@@ -569,13 +578,18 @@ void GameHandler::currentTurnDone() {
 
 void GameHandler::undoMove() {
 	qDebug("undoMove() %d %d", this->lastMoveId, this->currentTurnId);
+	StateHandler::getInstance().setGamePaused(true);
 
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
 		//we cannot move back, have to switch player
-		qDebug("Dupa");
 		this->changeCurrentPlayer(true);
-	} else if (this->lastMoveId < 0 && this->currentTurnId == 0)
-		return;
+	} else if (this->lastMoveId == 0 && this->currentTurnId == 0) {
+		if (this->turnsHistory[this->currentTurnId].empty() == false)
+			for (Player* player: this->players)
+				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+						 this->turnsHistory[this->currentTurnId]);
+// 		return;
+	}
 	
 	Move move = this->turnsHistory[this->currentTurnId][this->lastMoveId];
 	move.revert();
@@ -612,6 +626,10 @@ void GameHandler::undoTurn() {
 	
 	if (this->currentTurnId > 0 && this->lastMoveId == -1)
 		this->changeCurrentPlayer(true);
+	else if (this->lastMoveId  > -1)
+		for (Player* player: this->players)
+			player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+					 this->turnsHistory[this->currentTurnId]);
 	
 	for (int i = this->lastMoveId; i >= 0; --i) {	//undo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
@@ -654,6 +672,12 @@ void GameHandler::redoTurn() {
 		this->changeCurrentPlayer();
 	
 	emit moveFinished();
+}
+
+void GameHandler::finishGame() {
+	for (Player* player: this->players)
+		if (player != NULL)
+			player->endGame(false);
 }
 
 void GameHandler::botCrashed() {
