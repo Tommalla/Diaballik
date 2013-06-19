@@ -759,6 +759,7 @@ void GameHandler::finishGame() {
 
 void GameHandler::botCrashed() {
 	emit error("The AI has crashed! :(");
+	this->playersTimer.stop();
 	emit gameFinished();
 }
 
