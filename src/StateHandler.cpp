@@ -44,18 +44,19 @@ void StateHandler::start(MainWindow* window) {
 		window->ui->nextTurnPushButton,
 		window->ui->statusLayout, 
 		window->ui->startPushButton, 
-		window->ui->botOptionsGroupBox
+		window->ui->botOptionsGroupBox,
+		window->ui->showHintPushButton
 	};
 	
-	QVariant values[4][11] = {
-		{false, false, false, false, false, false, false, false, false, false, false},
-		{false, false, false, false, false, false, false, false, false, true, false},
-		{true, true, true, true, true, true, false, true, true, false, false},
-		{false, false, true, true, true, false, true, false, true, false, true}
+	QVariant values[4][12] = {
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, true, false, false},
+		{true, true, true, true, true, true, false, true, true, false, false, true},
+		{false, false, true, true, true, false, true, false, true, false, true, false}
 	};
 	
 	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 11; ++j)
+		for (int j = 0; j < 12; ++j)
 			this->newProperties[i].push_back(make_tuple(hideableUI[j], "enabled", values[i][j].toBool()));
 		
 	this->gameFinished();
