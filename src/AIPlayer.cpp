@@ -5,6 +5,13 @@ All rights reserved */
 #include "SettingsHandler.h"
 #include "../DiaballikEngine/src/functions.h"
 #include "gameConstants.h"
+#include "StateHandler.h"
+
+void AIPlayer::emptyQueue() {
+	while (this->movesQueue.empty() == false)
+		this->movesQueue.pop();
+}
+
 
 AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 	this->processing = true;
@@ -18,11 +25,15 @@ AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 }
 
 bool AIPlayer::isMoveReady() {
-	if (Player::isMoveReady() && this->moveTimer.elapsed() >= 
-		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt()) {
+	if (Player::isMoveReady() && (this->moveTimer.elapsed() >= 
+		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt() ||
+		StateHandler::getInstance().isGamePaused())) {
 		return true;
 	} /*else qDebug("Not ready! %d, %d", this->moveTimer.elapsed(),
 		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt());*/
+	
+	if (StateHandler::getInstance().isGamePaused())
+		return false;
 	
 	if (this->processing) {
 		if (this->bot.canReadLine()) {
@@ -39,10 +50,8 @@ bool AIPlayer::isMoveReady() {
 				return false;
 			
 			vector<Move> moves = engine::convertToMoves(response[1]);
-			for (Move move: moves) {
-				qDebug("Adding %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
+			for (Move move: moves)
 				this->movesQueue.push(move);
-			}
 			
 			if (bot.canReadLine()) {
 				data = this->bot.readLine();
@@ -56,7 +65,8 @@ bool AIPlayer::isMoveReady() {
 				this->setMove(this->movesQueue.front());
 				this->moveReady = true;
 			}
-		} else this->genMove();	//TODO if not paused
+		} else if (!StateHandler::getInstance().isGamePaused())
+			this->genMove();
 	}
 	
 	return false;
@@ -74,6 +84,8 @@ const Move AIPlayer::getMove() {
 
 
 void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
+	this->emptyQueue();
+	
 	Player::play (player, moves);
 	assert(this->processing == false);
 	QString cmd = QString("play ") + engine::getIdFor(player).c_str() + " ";
@@ -91,6 +103,8 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 }
 
 void AIPlayer::genMove() {
+	this->emptyQueue();
+	
 	this->processing = true;
 	qDebug("Asking %s for move (%s)", qPrintable(this->info.name), engine::getIdFor(this->info.player).c_str());
 	QString cmd = QString("gen_move ") + engine::getIdFor(this->info.player).c_str() + "\n";
@@ -103,11 +117,24 @@ void AIPlayer::genMove() {
 }
 
 void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) {
+	this->emptyQueue();
+	
 	Player::undoTurn (player, moves);
-	//TODO send undo turn to player
+	QString cmd = QString("undo_turn ") + engine::getIdFor(this->info.player).c_str();
+	
+	for (Move move: moves) {
+		pair<string, string> tmp = engine::convertFromMove(move);
+		cmd += QString::fromStdString(tmp.first + tmp.second);
+	}
+	
+	cmd += "\n";
+	qDebug("Sending: %s", qPrintable(cmd));
+	this->bot.write(qPrintable(cmd));
+	this->bot.waitForBytesWritten();
 }
 
 void AIPlayer::endGame (bool win) {
+	this->emptyQueue();
 	Player::endGame (win);
 	this->bot.kill();	//DIE!!!! ;D
 }
@@ -118,6 +145,7 @@ void AIPlayer::finishTurn() {
 }
 
 void AIPlayer::startTurn() {
+	this->emptyQueue();
 	Player::startTurn();
 	//TODO/FIXME add SIGCONT option
 }

@@ -22,16 +22,21 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 
 		vector<tuple<QObject*, QString, QVariant> > newProperties[4];
 		void assignProperties(const ApplicationState& state);
+		
 		//TODO some boolean container/variables to represent what can be done. States need to change it
+		bool gamePaused;
 		
 		StateHandler();
 	public:
 		void start(MainWindow* window);
 		//TODO boolean methods like canMovePawn etc.
+		const bool isGamePaused() const;
+		void setGamePaused(const bool val);
 		
 	public slots:
 		void playerChanged();
 		void gameFinished();
+		void moveFinished();
 	
 };
 

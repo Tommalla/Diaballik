@@ -16,38 +16,57 @@ void StateHandler::assignProperties (const ApplicationState& state) {
 		tie(obj, name, value) = t;
 		obj->setProperty(qPrintable(name), value);
 	}
+	
+	this->window->ui->previousTurnPushButton->setEnabled(GameHandler::getInstance().canUndo());
+	this->window->ui->nextTurnPushButton->setEnabled(GameHandler::getInstance().canRedo());
+	this->window->ui->undoPushButton->setEnabled(GameHandler::getInstance().canUndo());
+	this->window->ui->redoPushButton->setEnabled(GameHandler::getInstance().canRedo());
 }
 
 
-StateHandler::StateHandler() : QObject() {}
+StateHandler::StateHandler() : QObject() {
+	this->gamePaused = false;
+}
 
 void StateHandler::start(MainWindow* window) {
 	this->window = window;
 	
 	vector<QObject*> hideableUI = {
 		window->ui->currentTurnGroupBox, 
-		window->ui->turnsGroupBox, 
+		window->ui->turnsGroupBox,
+		window->ui->previousTurnPushButton,
+		window->ui->pausePushButton,
+		window->ui->nextTurnPushButton,
 		window->ui->statusLayout, 
 		window->ui->startPushButton, 
-		window->ui->stopButton
+		window->ui->stopButton,
+		window->ui->botOptionsGroupBox
 	};
 	
-	QVariant values[4][5] = {
-		{false, false, false, false, false},
-		{false, false, false, true, false},
-		{true, true, true, false, false},
-		{false, true, true, false, true}
+	QVariant values[4][9] = {
+		{false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, true, false, false},
+		{true, true, true, false, true, true, false, false, false},
+		{false, true, false, true, false, true, false, true, true}
 	};
 	
 	for (int i = 0; i < 4; ++i)
-		for (int j = 0; j < 5; ++j)
+		for (int j = 0; j < 9; ++j)
 			this->newProperties[i].push_back(make_tuple(hideableUI[j], "enabled", values[i][j].toBool()));
-		// 	this->HumanVsHumanGame->assignProperty(window->ui->stopButton, "visible", false);
-		// 	this->HumanVsHumanGame->assignProperty(window->ui->pausePushButton, "visible", false);
-		// 	this->HumanVsAIGame->assignProperty(window->ui->pausePushButton, "visible", false);
-	//anything else?
 		
 	this->gameFinished();
+}
+
+const bool StateHandler::isGamePaused() const {
+	return gamePaused;
+}
+
+void StateHandler::setGamePaused (const bool val) {
+	this->gamePaused = val;
+	
+	this->window->ui->pausePushButton->setText(val ? "Resume" : "Pause");
+	this->window->ui->previousTurnPushButton->setEnabled(GameHandler::getInstance().canUndo());
+	this->window->ui->nextTurnPushButton->setEnabled(GameHandler::getInstance().canRedo());
 }
 
 void StateHandler::gameFinished() {
@@ -55,7 +74,25 @@ void StateHandler::gameFinished() {
 }
 
 void StateHandler::playerChanged() {
-	this->assignProperties((ApplicationState)GameHandler::getInstance().getPlayerType());
+	ApplicationPlayerType player = GameHandler::getInstance().getPlayerType();
+	this->assignProperties((ApplicationState)player);
+	
+	//TODO add canUndoTurn
+	
+	if (player == AI_PLAYER)
+		this->window->ui->pausePushButton->setEnabled(GameHandler::getInstance().getPlayerInfo().GTPE);
+	else if (player == HUMAN_PLAYER && 
+		GameHandler::getInstance().getPlayerType(false) == AI_PLAYER) {
+		this->window->ui->turnsGroupBox->setEnabled(GameHandler::getInstance().getPlayerInfo(false).GTPE);
+	}
 }
+
+void StateHandler::moveFinished() {
+	this->window->ui->previousTurnPushButton->setEnabled(GameHandler::getInstance().canUndo());
+	this->window->ui->nextTurnPushButton->setEnabled(GameHandler::getInstance().canRedo());
+	this->window->ui->undoPushButton->setEnabled(GameHandler::getInstance().canUndo());
+	this->window->ui->redoPushButton->setEnabled(GameHandler::getInstance().canRedo());
+}
+
 
 

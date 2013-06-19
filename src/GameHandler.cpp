@@ -502,6 +502,8 @@ const bool GameHandler::canUndo() const {
 }
 
 const bool GameHandler::canRedo() const {
+	if (this->turnsHistory.empty())
+		return false;
 	return this->lastMoveId + 1 < (int)this->turnsHistory[this->currentTurnId].size() ||
 		this->currentTurnId + 1 < (int)this->turnsHistory.size();
 }

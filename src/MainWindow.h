@@ -30,6 +30,7 @@ class MainWindow : public QMainWindow {
 		~MainWindow();
     
 	private slots:
+		void pauseGame();
 		void newGame();
 		void loadGame();
 		void saveGame();

@@ -15,6 +15,8 @@ class AIPlayer : public Player {
 		QTime moveTimer;
 		bool processing;
 		queue<Move> movesQueue;
+		
+		void emptyQueue();
 	public:
 		AIPlayer (const PlayerInfo& info);
 		virtual bool isMoveReady();

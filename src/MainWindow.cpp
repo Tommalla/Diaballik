@@ -49,8 +49,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
 	QObject::connect(ui->previousTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(undoTurn()));
 	QObject::connect(ui->nextTurnPushButton, SIGNAL(clicked()), &(GameHandler::getInstance()), SLOT(redoTurn()));
 	QObject::connect(&(GameHandler::getInstance()), SIGNAL(moveFinished()), this, SLOT(moveFinished()));
+	QObject::connect(&(GameHandler::getInstance()), SIGNAL(moveFinished()), &(StateHandler::getInstance()), SLOT(moveFinished()));
 	QObject::connect(ui->actionLoad, SIGNAL(triggered()), this, SLOT(loadGame()));
 	QObject::connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(saveGame()));
+	QObject::connect(ui->pausePushButton, SIGNAL(clicked()), this, SLOT(pauseGame()));
 }
 
 void MainWindow::resizeEvent (QResizeEvent* event) {
@@ -70,6 +72,11 @@ MainWindow::~MainWindow() {
 	SettingsHandler::getInstance().sync();
 	delete ui;
 }
+
+void MainWindow::pauseGame() {
+	StateHandler::getInstance().setGamePaused(!StateHandler::getInstance().isGamePaused());
+}
+
 
 void MainWindow::newGame() {
 	this->ui->graphicsView->setSceneRect(0, 0, this->getSceneDimension(), this->getSceneDimension());
