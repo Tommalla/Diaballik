@@ -48,6 +48,11 @@ class Player : public QObject {
 		 * @param win If the player was the winner
 		 **/
 		virtual void endGame(bool win);
+		/**
+		 * @brief Tells the player to reset the board to the state given
+		 **/
+		virtual void newGame(const vector<Point> black, const vector<Point> white, 
+				     const vector<Point> balls, const GamePlayer& player);
 	public slots:
 		/**
 		 * @brief Tells the player to finish current turn

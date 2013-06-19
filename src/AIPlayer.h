@@ -26,6 +26,8 @@ class AIPlayer : public Player {
 		void genMove();
 		virtual void undoTurn (const GamePlayer& player, const vector<Move>& moves);
 		virtual void endGame (bool win);
+		virtual void newGame (const vector< Point > black, const vector< Point > white, 
+				      const vector< Point > balls, const GamePlayer& player);
 		virtual void finishTurn();
 		virtual void startTurn();
 		virtual void setMove (const Move& move);

@@ -142,10 +142,6 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 	
 	if (this->players[0] == NULL || this->players[1] == NULL)
 		return false;
-	
-	this->players[this->currentPlayer]->startTurn();
-	this->players[this->getNextPlayerId()]->finishTurn();
-	this->playersTimer.start();
 	return true;
 }
 
@@ -356,6 +352,10 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	if (this->initializePlayers(playerA, playerB) == false)
 		return false;
 	
+	this->players[this->currentPlayer]->startTurn();
+	this->players[this->getNextPlayerId()]->finishTurn();
+	this->playersTimer.start();
+	
 	this->lastMoveId = -1;
 	this->currentTurnId = 0;
 	this->turnsHistory = {vector<Move>()};
@@ -412,13 +412,37 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	}
 	
 	//back at the beginning, can start calculating now
+	vector<Point> black = tmpGame.getPawnsOf(GAME_PLAYER_A);
+	vector<Point> white = tmpGame.getPawnsOf(GAME_PLAYER_B);
+	vector<Point> origBalls;
+	for (Point pawn: black)
+		if (tmpGame.getFieldAt(pawn) == BALL_A) {
+			origBalls.push_back(pawn);
+			break;
+		}
+		
+	for (Point pawn: white)
+		if (tmpGame.getFieldAt(pawn) == BALL_B) {
+			origBalls.push_back(pawn);
+			break;
+		}
+			
+	
+	
+	//board validated, history created, time to draw!
+	this->createSceneBoard(tileSize, pawns, balls);
+	this->initializePlayers(playerA, playerB);
+	
+	for (Player* p: this->players)
+		p->newGame(black, white, origBalls, engine::getOppositePlayer(tmpGame.getCurrentPlayer()));
+	
 	this->movesLeft.clear();
 	this->hashes.clear();
 	this->hashesHistory.clear();
 	
 	this->hashes.insert(QString::fromStdString(tmpGame.getHash()));
-	//p = (p + 1) % 2;
-	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
+// 	p = (p + 1) % 2;
+// 	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
 	
 	for (vector<Move> moves: this->turnsHistory) {
 		for (Move move: moves) {
@@ -428,6 +452,9 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 			tmpGame.makeMove(move);
 		}
 	
+		for (Player* p: this->players)
+			p->play(tmpGame.getCurrentPlayer(), moves);
+		
 		movesLeft.push_back(make_pair(tmpGame.getMovesLeft(), tmpGame.getPassessLeft()));
 	
 		p = (p + 1) % 2;
@@ -441,6 +468,9 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		hashesHistory.push_back(h);
 	}
 	
+// 	p = (p + 1) % 2;
+	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B, movesLeft.back().first, movesLeft.back().second);
+	
 	if (!this->turnsHistory.empty()) {
 		this->currentTurnId = max(0, (int)this->turnsHistory.size() - 1);
 		this->lastMoveId = this->turnsHistory.back().size() - 1;
@@ -450,10 +480,12 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	}
 	
 	this->game = tmpGame;
+	qDebug("%d %d\n", tmpGame.getMovesLeft(), tmpGame.getPassessLeft());
 	
-	//board validated, history created, time to draw!
-	this->createSceneBoard(tileSize, pawns, balls);
-	this->initializePlayers(playerA, playerB);
+	this->resumeGame();
+	this->players[this->currentPlayer]->startTurn();
+	this->players[this->getNextPlayerId()]->finishTurn();
+	this->playersTimer.start();
 	
 	return true;
 }

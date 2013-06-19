@@ -30,6 +30,7 @@ bool AIPlayer::isMoveReady() {
 		emit crashed();
 		return false;
 	}
+
 	
 	if (Player::isMoveReady() && (this->moveTimer.elapsed() >= 
 		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt() ||
@@ -147,6 +148,29 @@ void AIPlayer::endGame (bool win) {
 	Player::endGame (win);
 	this->bot.kill();	//DIE!!!! ;D
 }
+
+void AIPlayer::newGame (const vector< Point > black, const vector< Point > white, const vector< Point > balls, const GamePlayer& player) {
+	Player::newGame (black, white, balls, player);
+	
+	this->emptyQueue();
+	this->processing = false;
+	QString cmd = "new_game ";
+	
+	vector<Point> figures[2] = {black, white};
+	
+	for (int i = 0; i < 2; ++i)
+		for (Point pawn: figures[i])
+			cmd += QString::fromStdString(engine::convertFromPoint(pawn));
+	cmd += " ";
+	for (Point ball: balls)
+		cmd += QString::fromStdString(engine::convertFromPoint(ball));
+	cmd += QString(" ") + QString::fromStdString(engine::getIdFor(player)) + "\n";
+	
+	this->bot.write(qPrintable(cmd));
+	qDebug("%s", qPrintable(cmd));
+	this->bot.waitForBytesWritten();
+}
+
 
 void AIPlayer::finishTurn() {
 	Player::finishTurn();
