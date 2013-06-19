@@ -127,7 +127,7 @@ void MainWindow::saveGame() {
 
 void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
-	this->ui->statusLabel->setText("Current player: " + GameHandler::getInstance().getPlayerName());
+	this->ui->statusBar->showMessage("Current player: " + GameHandler::getInstance().getPlayerName());
 	this->moveFinished();
 	StateHandler::getInstance().playerChanged();
 }
@@ -141,7 +141,7 @@ void MainWindow::moveFinished() {
 void MainWindow::gameFinished() {
 	StateHandler::getInstance().gameFinished();
 	QString name = GameHandler::getInstance().getWinnerName();
-	this->ui->statusLabel->setText("Game finished " + 
+	this->ui->statusBar->showMessage("Game finished " + 
 	((name.size() == 0) ? "It's a draw!" : "The " + name + " player won!"));
 }
 

@@ -41,7 +41,7 @@ void StateHandler::start(MainWindow* window) {
 	
 	for (int i = 0; i < 4; ++i)
 		for (int j = 0; j < 5; ++j)
-			this->newProperties[i].push_back(make_tuple(hideableUI[j], "visible", values[i][j].toBool()));
+			this->newProperties[i].push_back(make_tuple(hideableUI[j], "enabled", values[i][j].toBool()));
 		// 	this->HumanVsHumanGame->assignProperty(window->ui->stopButton, "visible", false);
 		// 	this->HumanVsHumanGame->assignProperty(window->ui->pausePushButton, "visible", false);
 		// 	this->HumanVsAIGame->assignProperty(window->ui->pausePushButton, "visible", false);
