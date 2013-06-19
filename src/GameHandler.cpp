@@ -713,16 +713,18 @@ void GameHandler::redoMove() {
 }
 
 void GameHandler::undoTurn() {
-	qDebug("undoTurn()");
+	qDebug("undoTurn() %d");
 	
 	StateHandler::getInstance().setGamePaused(true);
 	
 	if (this->currentTurnId > 0 && this->lastMoveId == -1)
 		this->changeCurrentPlayer(true);
-	else if (this->lastMoveId  > -1)
+	else 
+		return;
+		/*if (this->lastMoveId  > -1)
 		for (Player* player: this->players)
 			player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-					 this->turnsHistory[this->currentTurnId]);
+					 this->turnsHistory[this->currentTurnId]);*/
 	
 	for (int i = this->lastMoveId; i >= 0; --i) {	//undo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
@@ -734,6 +736,9 @@ void GameHandler::undoTurn() {
 	}
 	
 	this->lastMoveId = -1;
+	
+	if (this->currentTurnId == 0 && this->lastMoveId == -1)
+		this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player, this->currentTurnId);
 	
 	emit moveFinished();
 }
