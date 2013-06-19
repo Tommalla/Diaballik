@@ -46,9 +46,6 @@ bool AIPlayer::isMoveReady() {
 			QString data = this->bot.readLine();
 			qDebug("Read the line! %s", qPrintable(data));
 			
-			if (StateHandler::getInstance().isGamePaused())	//ignore if it's pause
-				return false;
-			
 			vector<string> response = engine::splitString(data.toStdString());
 			
 			if (response.size() != 2)
@@ -56,12 +53,15 @@ bool AIPlayer::isMoveReady() {
 			
 			if (response[0] != "=")
 				return false;
+
+			this->processing = false;
+			
+			if (StateHandler::getInstance().isGamePaused())	//ignore if it's pause
+				return false;
 			
 			vector<Move> moves = engine::convertToMoves(response[1]);
 			for (Move move: moves)
 				this->movesQueue.push(move);
-			
-			this->processing = false;
 		}
 	} else {
 		if (StateHandler::getInstance().isGamePaused())

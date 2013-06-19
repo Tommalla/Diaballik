@@ -135,7 +135,10 @@ void MainWindow::saveGame() {
 
 void MainWindow::playerChanged() {
 	qDebug("playerChanged! %s", GameHandler::getInstance().getPlayerName().toStdString().c_str());
-	this->ui->statusBar->showMessage("Current player: " + GameHandler::getInstance().getPlayerName());
+	QString activity = ((GameHandler::getInstance().getPlayerType() == AI_PLAYER &&
+		StateHandler::getInstance().isGamePaused() == false) ? " thinking..." : "");
+	
+	this->ui->statusBar->showMessage("Current player: " + GameHandler::getInstance().getPlayerName() + activity);
 	this->moveFinished();
 	StateHandler::getInstance().playerChanged();
 }

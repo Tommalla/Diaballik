@@ -264,6 +264,8 @@ void GameHandler::changeTilePosition (const Move& move) {
 void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 	if (this->game.getMovesLeft() <= 0 && this->game.getPassessLeft() <= 0)
 		return;
+	if (this->players[currentPlayer]->getPlayerInfo().type == AI_PLAYER)
+		return;
 	
 	FieldState field = this->game.getFieldAt(tile->getPos());
 	if (engine::getPlayerFor(field) != this->game.getCurrentPlayer())
@@ -515,6 +517,8 @@ const bool GameHandler::canRedo() const {
 void GameHandler::resumeGame() {
  	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER && this->lastMoveId > -1)
 		this->undoTurn();
+	
+	emit playerChanged();
 }
 
 const int GameHandler::getMovesLeft() const {
