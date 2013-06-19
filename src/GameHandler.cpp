@@ -353,34 +353,49 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	this->lastSelector = NULL;
 	this->hashes.clear();
 	this->hashesHistory.clear();
+	vector<Point> pawns[2];
+	vector<Point> balls;
+	this->game = Game(GAME_PLAYER_A);
 	
 	if (defaultConfig == true) {
 		qDebug("Creating new game from the scratch");
 		//creating a default board
-		this->game = Game(GAME_PLAYER_A);
-		vector<Point> pawns[2];
-		vector<Point> balls = {Point(3, 0), Point(3, 6)};
+
+		balls = {Point(3, 0), Point(3, 6)};
 		
 		for (int i = 0; i < 2; ++i)
 			for (int x = 0; x < 7; ++x)
 				pawns[i].push_back(Point(x, 6 * i));
-		
-		this->createSceneBoard(tileSize, pawns, balls);
-	
 	} else {
-		//we're using the configuration from the scene
-		//TODO create a new Board object and set everything on it as it's on the Scene
-		//TODO check if the Board is valid and start the game
+		if (this->pawns.empty() || this->balls.empty())
+			return false;
+		
+		int tmp = (int)this->pawns.size() / 2;
+		for (int i = 0; i < 2; ++i)
+			for (int j = i * tmp; j < (i + 1) * tmp; ++j)
+				pawns[i].push_back(this->pawns[j]->getPos());
+			
+		for (GraphicsTile* tile: this->balls)
+			balls.push_back(tile->getPos());
+		
+		this->game.newGame(pawns[0], pawns[1], balls);
+		this->game.setCurrentPlayer(GAME_PLAYER_A);
 	}
+	
+	this->createSceneBoard(tileSize, pawns, balls);
 	
 	this->currentPlayer = 0;
 	
 	if (this->initializePlayers(playerA, playerB) == false)
 		return false;
 	
-	this->players[this->currentPlayer]->startTurn();
+	if (!defaultConfig) {
+		for (Player* player: this->players)
+			player->newGame(pawns[0], pawns[1], balls, this->game.getCurrentPlayer());
+	}
+	
 	this->players[this->getNextPlayerId()]->finishTurn();
-	this->playersTimer.start();
+	this->players[this->currentPlayer]->startTurn();
 	
 	this->lastMoveId = -1;
 	this->currentTurnId = 0;
@@ -388,6 +403,7 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	this->movesLeft = {{2, 1}};
 	this->hashes.insert(QString::fromStdString(this->game.getHash()));
 	
+	this->playersTimer.start();
 	return true;
 }
 
