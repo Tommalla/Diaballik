@@ -16,6 +16,7 @@ class AIPlayer : public Player {
 		QTime moveTimer;
 		bool processing;
 		queue<Move> movesQueue;
+		GamePlayer lastTurnUndone;
 		
 		void emptyQueue();
 	public:

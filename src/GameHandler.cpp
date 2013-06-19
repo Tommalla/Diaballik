@@ -577,8 +577,8 @@ void GameHandler::resumeGame() {
  	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER) {
 		if (this->lastMoveId > -1)
 			this->undoTurn();
-		else if (this->currentTurnId < (int)this->turnsHistory.size() &&  this->turnsHistory[this->currentTurnId].empty() == false)
-			this->sendUndoTurn(this->game.getCurrentPlayer(), this->currentTurnId);
+// 		else if (this->currentTurnId < (int)this->turnsHistory.size() &&  this->turnsHistory[this->currentTurnId].empty() == false)
+// 			this->sendUndoTurn(this->game.getCurrentPlayer(), this->currentTurnId);
 	}
 }
 

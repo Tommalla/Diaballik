@@ -14,6 +14,7 @@ void AIPlayer::emptyQueue() {
 
 
 AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
+	lastTurnUndone = NONE;
 	this->processing = true;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
@@ -127,6 +128,10 @@ void AIPlayer::genMove() {
 }
 
 void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) {
+	if (this->lastTurnUndone == player)
+		return;
+	this->lastTurnUndone = player;
+	
 	this->emptyQueue();
 	
 	Player::undoTurn (player, moves);
