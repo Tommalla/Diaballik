@@ -50,7 +50,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		
 		if (this->currentTurnId > 0) {
  			if (this->turnsHistory[this->currentTurnId].empty()) {
- 				this->turnsHistory.pop_back();
+//  				this->turnsHistory.pop_back();
 				tmp = false;
 			}
 			
@@ -150,7 +150,8 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 
 void GameHandler::sendUndoTurn (const GamePlayer& player, const int turnId) {
 	qDebug("sendUndoTurn...");
-	if (turnId == (int)this->turnsHistory.size() - 1)	//the turn hasn't been sent to the bot yet
+	if (turnId == (int)this->turnsHistory.size() - 1 ||
+		this->turnsHistory[turnId].empty() == true )	//the turn hasn't been sent to the bot yet
 		return;
 	
 	for (Player* p: this->players)
