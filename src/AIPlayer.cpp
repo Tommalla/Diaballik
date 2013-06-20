@@ -8,14 +8,24 @@ All rights reserved */
 #include "StateHandler.h"
 
 void AIPlayer::emptyQueue() {
-	while (this->movesQueue.empty() == false)
+	if (this->emptying) {
+		while (this->emptying) {}
+		return;
+	}
+	
+	this->emptying = true;
+	
+	while (this->movesQueue.size() > 0)
 		this->movesQueue.pop();
+	
+	this->emptying = false;
 }
 
 
 AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 	lastTurnUndone = NONE;
 	this->processing = true;
+	this->emptying = false;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
 	this->bot.setStandardErrorFile(info.name + ".out");

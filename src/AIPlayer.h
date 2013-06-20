@@ -14,7 +14,7 @@ class AIPlayer : public Player {
 	private:
 		QProcess bot;
 		QTime moveTimer;
-		bool processing;
+		bool processing, emptying;
 		queue<Move> movesQueue;
 		GamePlayer lastTurnUndone;
 		
