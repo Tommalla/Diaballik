@@ -31,7 +31,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->players[this->getNextPlayerId()]->startTurn();
 	this->players[this->currentPlayer]->finishTurn();
 	
-	if (this->lastMoveId != (int)this->turnsHistory[currentTurnId].size() - 1)
+	if (!undo && this->lastMoveId != (int)this->turnsHistory[currentTurnId].size() - 1)
 		this->dropHistoryTail();
 	
 	if (!undo) {
