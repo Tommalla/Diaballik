@@ -150,6 +150,9 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 
 void GameHandler::sendUndoTurn (const GamePlayer& player, const int turnId) {
 	qDebug("sendUndoTurn...");
+	if (turnId == (int)this->turnsHistory.size() - 1)	//the turn hasn't been sent to the bot yet
+		return;
+	
 	for (Player* p: this->players)
 		if (p != NULL)
 			p->undoTurn(player, this->turnsHistory[turnId]);
@@ -415,16 +418,13 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 	vector<Point> balls;
 	this->game = Game(GAME_PLAYER_A);
 	
-	if (defaultConfig == true) {
-		qDebug("Creating new game from the scratch");
-		//creating a default board
-
+	if (defaultConfig == true) {	//default board
 		balls = {Point(3, 0), Point(3, 6)};
 		
 		for (int i = 0; i < 2; ++i)
 			for (int x = 0; x < 7; ++x)
 				pawns[i].push_back(Point(x, 6 * i));
-	} else {
+	} else {	//read the board from ui
 		if (this->pawns.empty() || this->balls.empty())
 			return false;
 		
@@ -472,7 +472,6 @@ bool GameHandler::newGame (const PlayerInfo& playerA, const PlayerInfo& playerB,
 
 bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, const PlayerInfo& playerB, 
 			    const int tileSize) {
-	//TODO will need some player info
 	qDebug("Loading game...");
 	SaveHandler save(filename);
 	if (!save.load())
@@ -533,7 +532,6 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		}
 			
 	
-	
 	//board validated, history created, time to draw!
 	this->createSceneBoard(tileSize, pawns, balls);
 	this->initializePlayers(playerA, playerB);
@@ -546,8 +544,6 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	this->hashesHistory.clear();
 	
 	this->hashes.insert(QString::fromStdString(tmpGame.getHash()));
-// 	p = (p + 1) % 2;
-// 	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B);
 	
 	for (vector<Move> moves: this->turnsHistory) {
 		for (Move move: moves) {
@@ -573,7 +569,6 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 		hashesHistory.push_back(h);
 	}
 	
-// 	p = (p + 1) % 2;
 	tmpGame.setCurrentPlayer((p == 0) ? GAME_PLAYER_A : GAME_PLAYER_B, movesLeft.back().first, movesLeft.back().second);
 	
 	if (!this->turnsHistory.empty()) {
@@ -585,7 +580,6 @@ bool GameHandler::loadGame (const QString filename, const PlayerInfo& playerA, c
 	}
 	
 	this->game = tmpGame;
-	qDebug("%d %d\n", tmpGame.getMovesLeft(), tmpGame.getPassessLeft());
 	
 	StateHandler::getInstance().setGamePaused(true);
 	this->players[this->currentPlayer]->startTurn();
@@ -740,9 +734,10 @@ void GameHandler::undoMove() {
 		this->changeCurrentPlayer(true);	//we cannot move back, have to switch player
 	} else if (this->lastMoveId == 0 /*&& this->currentTurnId == 0*/) {	//it's the last move we can undo from this turn
 		if (this->turnsHistory[this->currentTurnId].empty() == false)
-			for (Player* player: this->players)
-				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-						 this->turnsHistory[this->currentTurnId]);
+			this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player, this->currentTurnId);
+// 			for (Player* player: this->players)
+// 				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+// 						 this->turnsHistory[this->currentTurnId]);
 // 		return;
 	}
 	
