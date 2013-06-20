@@ -643,7 +643,7 @@ const bool GameHandler::canRedo() const {
 	if (this->turnsHistory.empty())
 		return false;
 	return this->lastMoveId + 1 < (int)this->turnsHistory[this->currentTurnId].size() ||
-		this->currentTurnId + 1 < (int)this->turnsHistory.size();
+		(this->currentTurnId + 1 < (int)this->turnsHistory.size() && !this->turnsHistory[this->currentTurnId + 1].empty());
 }
 
 void GameHandler::resumeGame() {
