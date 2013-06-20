@@ -45,6 +45,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->currentTurnId++;
 		this->lastMoveId = -1;
 	} else {
+		qDebug("player change for undo");
 		bool tmp = true;
 		
 		if (this->currentTurnId > 0) {
@@ -58,9 +59,8 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 			this->currentTurnId--;
 			
 			if (tmp)
-				for (Player* player: this->players)
-					player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-							 this->turnsHistory[this->currentTurnId + 1]);
+				this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+					this->currentTurnId + 1);
 			
 			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 		} else {
@@ -149,6 +149,7 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 }
 
 void GameHandler::sendUndoTurn (const GamePlayer& player, const int turnId) {
+	qDebug("sendUndoTurn...");
 	for (Player* p: this->players)
 		if (p != NULL)
 			p->undoTurn(player, this->turnsHistory[turnId]);
@@ -736,9 +737,8 @@ void GameHandler::undoMove() {
 	StateHandler::getInstance().setGamePaused(true);
 
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
-		//we cannot move back, have to switch player
-		this->changeCurrentPlayer(true);
-	} else if (this->lastMoveId == 0 && this->currentTurnId == 0) {
+		this->changeCurrentPlayer(true);	//we cannot move back, have to switch player
+	} else if (this->lastMoveId == 0 /*&& this->currentTurnId == 0*/) {	//it's the last move we can undo from this turn
 		if (this->turnsHistory[this->currentTurnId].empty() == false)
 			for (Player* player: this->players)
 				player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
@@ -779,14 +779,12 @@ void GameHandler::undoTurn() {
 	
 	StateHandler::getInstance().setGamePaused(true);
 	
+	//if we need to change the player
 	if (this->currentTurnId > 0 && this->lastMoveId == -1)
 		this->changeCurrentPlayer(true);
-	else 
-		return;
-		/*if (this->lastMoveId  > -1)
-		for (Player* player: this->players)
-			player->undoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-					 this->turnsHistory[this->currentTurnId]);*/
+	else 	//or it's mid-turn and we have to go back to the beginning
+		if (this->lastMoveId  > -1)
+			this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player, this->currentTurnId);
 	
 	for (int i = this->lastMoveId; i >= 0; --i) {	//undo the moves in the right order
 		Move move = this->turnsHistory[this->currentTurnId][i];
@@ -799,6 +797,7 @@ void GameHandler::undoTurn() {
 	
 	this->lastMoveId = -1;
 	
+	//if it was the first turn, we need to let the players know it was undone
 	if (this->currentTurnId == 0 && this->lastMoveId == -1)
 		this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player, this->currentTurnId);
 	
