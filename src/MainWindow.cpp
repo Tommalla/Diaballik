@@ -163,7 +163,15 @@ void MainWindow::gameFinished() {
 
 
 void MainWindow::startGameEditor() {
-	GameHandler::getInstance().startEditor();
+	QMessageBox msgBox;
+	msgBox.setText("The history will be dropped!");
+	msgBox.setInformativeText("Do you want to continue?");
+	
+	msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+	
+	msgBox.setDefaultButton(QMessageBox::Ok);
+	if(msgBox.exec() == QMessageBox::Ok)
+		GameHandler::getInstance().startEditor();
 }
 
 void MainWindow::showRules() {
