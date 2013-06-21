@@ -1,11 +1,11 @@
 /* Tomasz [Tommalla] Zakrzewski, 2013
 All rights reserved */
 
+#include <QGraphicsSceneEvent>
 #include "GraphicsMovableTile.h"
 #include "GameHandler.h"
 #include "SettingsHandler.h"
 #include "gameConstants.h"
-#include <qgraphicssceneevent.h>
 
 void GraphicsMovableTile::mousePressEvent (QGraphicsSceneMouseEvent* event) {
 	GraphicsTile::mousePressEvent (event);

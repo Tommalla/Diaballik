@@ -93,7 +93,7 @@ const Move AIPlayer::getMove() {
 
 
 void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
-	this->emptyQueue();
+	this->movesQueue.clear();
 	
 	assert(moves.empty() == false);
 	
@@ -119,7 +119,7 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 }
 
 void AIPlayer::genMove() {
-	this->emptyQueue();
+	this->movesQueue.clear();
 	
 	this->processing = true;
 	QString cmd = QString("gen_move ") + engine::getIdFor(this->info.player).c_str() + "\n";
@@ -133,14 +133,11 @@ void AIPlayer::genMove() {
 
 void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) {
 	qDebug("Called undo turn on %s", qPrintable(this->info.name));
-// 	if (this->lastTurnUndone == player)
-// 		return;
-// 	this->lastTurnUndone = player;
 	
 	if (this->playedMoves.empty() || this->playedMoves.back() != moves)
 		return;
 	
-	this->emptyQueue();
+	this->movesQueue.clear();
 	
 	Player::undoTurn (player, moves);
 	QString cmd = QString("undo_turn ") + engine::getIdFor(player).c_str() + " ";
@@ -167,7 +164,7 @@ void AIPlayer::endGame (bool win) {
 void AIPlayer::newGame (const vector< Point > black, const vector< Point > white, const vector< Point > balls, const GamePlayer& player) {
 	Player::newGame (black, white, balls, player);
 	
-	this->emptyQueue();
+	this->movesQueue.clear();
 	this->processing = false;
 	QString cmd = "new_game ";
 	
@@ -189,7 +186,7 @@ void AIPlayer::newGame (const vector< Point > black, const vector< Point > white
 
 void AIPlayer::finishTurn() {
 	Player::finishTurn();
-	//TODO/FIXME add SIGSTOP option
+	//TODO/FIXME add SIGSTOP option (configurable via settings)
 }
 
 void AIPlayer::startTurn() {

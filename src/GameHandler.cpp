@@ -687,7 +687,6 @@ void GameHandler::checkForNewMoves() {
 		Move move = this->players[this->currentPlayer]->getMove();
 		
 		if (this->game.isMoveValid(move) ) {
-			StateHandler::getInstance().disableUI();
 			qDebug("Valid move!");
 
 			this->moveTile(move);
