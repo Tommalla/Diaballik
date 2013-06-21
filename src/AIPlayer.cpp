@@ -8,24 +8,14 @@ All rights reserved */
 #include "StateHandler.h"
 
 void AIPlayer::emptyQueue() {
-	if (this->emptying) {
-		while (this->emptying) {}
-		return;
-	}
-	
-	this->emptying = true;
-	
-	while (this->movesQueue.size() > 0)
-		this->movesQueue.pop();
-	
-	this->emptying = false;
+	qDebug("%d", this->movesQueue.size());
+	this->movesQueue.clear();
 }
 
 
 AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 	lastTurnUndone = NONE;
 	this->processing = true;
-	this->emptying = false;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
 	this->bot.setStandardErrorFile(info.name + ".out");
@@ -73,13 +63,13 @@ bool AIPlayer::isMoveReady() {
 			
 			vector<Move> moves = engine::convertToMoves(response[1]);
 			for (Move move: moves)
-				this->movesQueue.push(move);
+				this->movesQueue.enqueue(move);
 		}
 	} else {
 		if (StateHandler::getInstance().isGamePaused())
 				return false;
 		
-		if (!this->movesQueue.empty()) {
+		if ((int)this->movesQueue.size() > 0) {
 			if (this->moveReady == false) {
 				this->setMove(this->movesQueue.front());
 				this->moveReady = true;
@@ -93,9 +83,12 @@ bool AIPlayer::isMoveReady() {
 
 const Move AIPlayer::getMove() {
 	Move res = Player::getMove();
-	this->movesQueue.pop();
-	if (this->movesQueue.empty())	//no more moves in the turn
-		this->finishTurn();
+	
+	if (!this->movesQueue.empty()) {
+		this->movesQueue.dequeue();
+		if (this->movesQueue.empty())	//no more moves in the turn
+			this->finishTurn();
+	}
 	
 	this->moveTimer.restart();
 	return res;
@@ -103,6 +96,7 @@ const Move AIPlayer::getMove() {
 
 
 void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
+	qDebug("AIPlayer -> play");
 	this->emptyQueue();
 	
 	assert(moves.empty() == false);
@@ -121,6 +115,8 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	qDebug("Sending: %s", qPrintable(cmd));
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
+	
+	this->playedMoves.push_back(moves);
 }
 
 void AIPlayer::genMove() {
@@ -142,6 +138,9 @@ void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) 
 		return;
 	this->lastTurnUndone = player;
 	
+	if (this->playedMoves.empty() || this->playedMoves.back() != moves)
+		return;
+	
 	this->emptyQueue();
 	
 	Player::undoTurn (player, moves);
@@ -156,6 +155,8 @@ void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) 
 	qDebug("Sending: %s", qPrintable(cmd));
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
+	
+	this->playedMoves.pop_back();
 }
 
 void AIPlayer::endGame (bool win) {

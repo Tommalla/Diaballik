@@ -6,7 +6,7 @@ All rights reserved */
 
 #include <QProcess>
 #include <QTime>
-#include <queue>
+#include <QQueue>
 #include "Player.h"
 
 class AIPlayer : public Player {
@@ -14,8 +14,9 @@ class AIPlayer : public Player {
 	private:
 		QProcess bot;
 		QTime moveTimer;
-		bool processing, emptying;
-		queue<Move> movesQueue;
+		bool processing;
+		QQueue<Move> movesQueue;
+		vector<vector<Move> > playedMoves;
 		GamePlayer lastTurnUndone;
 		
 		void emptyQueue();
