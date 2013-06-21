@@ -29,8 +29,15 @@ const int HintAI::score (const vector< Move >& turn) {
 			res += 10 * d;
 		}
 		
-	if (engine::canWinInOneTurn(tmpGame, engine::getOppositePlayer(tmpGame.getCurrentPlayer())))
-		res -= 1000;
+	if (tmpGame.isFinished())	//we won
+		res += 900;
+	else {
+		if (engine::canWinInOneTurn(tmpGame, engine::getOppositePlayer(tmpGame.getCurrentPlayer())))
+			res -= 1000;	//the opponent can win in one turn - we don't want that
+		
+		if (engine::canWinInOneTurn(tmpGame, tmpGame.getCurrentPlayer()))	//theoretically speaking we can win in one turn
+			res += 450;	//but the opponent's turn still remains to be done (which can change things)
+	}
 		
 	return res;
 }
