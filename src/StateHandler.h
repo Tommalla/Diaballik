@@ -20,6 +20,7 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 	private:
 		MainWindow* window;
 
+		vector<QObject*> hideableUI;
 		vector<tuple<QObject*, QString, QVariant> > newProperties[4];
 		void assignProperties(const ApplicationState& state);
 		
@@ -35,6 +36,7 @@ class StateHandler : public QObject, public Singleton<StateHandler> {
 		void setGamePaused(const bool val);
 		
 		const bool isEditorMode() const;
+		void disableUI();
 		
 	public slots:
 		void playerChanged();

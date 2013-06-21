@@ -33,7 +33,7 @@ StateHandler::StateHandler() : QObject() {
 void StateHandler::start(MainWindow* window) {
 	this->window = window;
 	
-	vector<QObject*> hideableUI = {
+	this->hideableUI = {
 		window->ui->currentTurnGroupBox,
 		window->ui->turnDonePushButton,
 		window->ui->undoPushButton,
@@ -88,6 +88,12 @@ void StateHandler::setGamePaused (const bool val) {
 const bool StateHandler::isEditorMode() const {
 	return editorMode;
 }
+
+void StateHandler::disableUI() {
+	for (QObject* obj: this->hideableUI)
+		obj->setProperty("enabled", false);
+}
+
 
 void StateHandler::gameFinished() {
 	this->assignProperties(GAME_FINISHED);
