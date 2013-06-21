@@ -395,6 +395,18 @@ void GameHandler::displayHint() {
 			}
 }
 
+void GameHandler::handleKey (const int key) {
+	if (key == Qt::Key_Space) {
+		if (StateHandler::getInstance().isGamePaused()) {
+			this->resumeGame();
+			StateHandler::getInstance().setGamePaused(false);
+		} else
+			if (this->currentPlayer >= 0 && this->currentPlayer < PLAYERS_QTY && this->players[this->currentPlayer] != NULL &&
+				this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER)
+				StateHandler::getInstance().setGamePaused(true);
+	}
+}
+
 
 void GameHandler::repaintTiles (const int tileSize) {
 	for (GraphicsTile* tile: this->backgroundTiles)

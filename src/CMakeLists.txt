@@ -1,7 +1,6 @@
 set (HEADERS
 	gameConstants.h
 	gameEnums.h
-	GraphicsScene.h
 	HintAI.h
 	PlayerInfo.h
 	SaveHandler.h
@@ -10,7 +9,6 @@ set (HEADERS
 
 set (SOURCES
 	main.cpp
-	GraphicsScene.cpp
 	HintAI.cpp
 	PlayerInfo.cpp
 	SaveHandler.cpp
@@ -21,6 +19,7 @@ set (MOC_HEADERS
 	AIPlayer.h
 	GameHandler.h
 	GraphicsMovableTile.h
+	GraphicsScene.h
 	GraphicsTile.h
 	HumanPlayer.h
 	Player.h
@@ -31,6 +30,7 @@ set (MOC_SOURCES
 	AIPlayer.cpp
 	GameHandler.cpp
 	GraphicsMovableTile.cpp
+	GraphicsScene.cpp
 	GraphicsTile.cpp
 	HumanPlayer.cpp
 	Player.cpp

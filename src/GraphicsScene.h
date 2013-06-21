@@ -9,9 +9,14 @@ All rights reserved */
 /**
  * @brief Own implementation of GraphicsScene
  * It adds mouse/keyboard handling and drag'n'drop support for the editor.
+ * (Or was supposed to...)
  **/
 class GraphicsScene : public QGraphicsScene {
-	//TODO actually implement the whole thing
+	Q_OBJECT;
+	protected:
+		virtual void keyPressEvent (QKeyEvent* event);
+	signals:
+		void keyPressed(const int key);
 };
 
 #endif // GRAPHICSSCENE_H

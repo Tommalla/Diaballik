@@ -198,6 +198,7 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		 * @brief Displays current hint
 		 **/
 		void displayHint();
+		void handleKey(const int key);
 	signals:
 		void playerChanged();
 		void gameFinished();

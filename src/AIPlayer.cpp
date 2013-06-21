@@ -93,6 +93,7 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	
 	if (this->playedMoves.empty() == false && this->playedMoves.back() == moves)
 		return;
+	this->playedMoves.push_back(moves);
 	
 	Player::play (player, moves);
 // 	assert(this->processing == false);
@@ -109,7 +110,6 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
 	
-	this->playedMoves.push_back(moves);
 }
 
 void AIPlayer::genMove() {
