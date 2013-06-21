@@ -22,6 +22,7 @@ install (FILES ${PROJECT_BINARY_DIR}/Diaballik ${PROJECT_SOURCE_DIR}/config.ini 
 install (DIRECTORY ${PROJECT_SOURCE_DIR}/graphics DESTINATION .diaballik )
 install (DIRECTORY ${PROJECT_SOURCE_DIR}/bots DESTINATION .diaballik)
 install (PROGRAMS ${PROJECT_BINARY_DIR}/DiaballikBot/DiaballikBot DESTINATION .diaballik/bots/MCTSAI/ RENAME engine)
+install (CODE "FILE(MAKE_DIRECTORY \${CMAKE_INSTALL_PREFIX}/.diaballik/bots/logs)")
 
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
