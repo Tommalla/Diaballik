@@ -648,6 +648,9 @@ const bool GameHandler::canRedo() const {
 }
 
 void GameHandler::resumeGame() {
+	if (StateHandler::getInstance().isGamePaused() == false)
+		return;
+	
 	//we have to undo the current turn so that the AI would start with no moves
  	if (this->players[this->currentPlayer]->getPlayerInfo().type == AI_PLAYER) {
 		if (this->lastMoveId > -1)
@@ -695,8 +698,10 @@ void GameHandler::checkForNewMoves() {
 			//if not, erase the end of the vector and start appending new moves
 			//forgetting the move if it's not from history:
 			if (this->lastMoveId + 1 < (int)this->turnsHistory[this->currentTurnId].size() &&
-				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move)	//a different move
+				this->turnsHistory[this->currentTurnId][this->lastMoveId + 1] != move) {	//a different move
+				this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player, this->currentTurnId);
 				this->dropHistoryTail();
+			}
 			
 			this->lastMoveId++;
 			if ((int)this->turnsHistory[this->currentTurnId].size() == this->lastMoveId)
@@ -724,8 +729,10 @@ void GameHandler::currentTurnDone() {
 	if (this->lastMoveId < 0)
 		return;	//disallow for empty turns
 
-	this->players[this->getNextPlayerId()]->startTurn();
+ 	this->players[this->getNextPlayerId()]->startTurn();
 	this->players[this->currentPlayer]->finishTurn();
+// 	this->changeCurrentPlayer();
+// 	this->resumeGame();
 }
 
 void GameHandler::undoMove() {

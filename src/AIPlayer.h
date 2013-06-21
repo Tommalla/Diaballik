@@ -17,9 +17,6 @@ class AIPlayer : public Player {
 		bool processing;
 		QQueue<Move> movesQueue;
 		vector<vector<Move> > playedMoves;
-		GamePlayer lastTurnUndone;
-		
-		void emptyQueue();
 	public:
 		AIPlayer (const PlayerInfo& info);
 		virtual bool isMoveReady();

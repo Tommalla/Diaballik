@@ -8,13 +8,7 @@ All rights reserved */
 #include "StateHandler.h"
 #include <QDateTime>
 
-void AIPlayer::emptyQueue() {
-	this->movesQueue.clear();
-}
-
-
 AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
-	lastTurnUndone = NONE;
 	this->processing = true;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
@@ -156,7 +150,7 @@ void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) 
 }
 
 void AIPlayer::endGame (bool win) {
-	this->emptyQueue();
+	this->movesQueue.clear();
 	Player::endGame (win);
 	this->bot.kill();	//DIE!!!! ;D
 }
@@ -190,7 +184,7 @@ void AIPlayer::finishTurn() {
 }
 
 void AIPlayer::startTurn() {
-	this->emptyQueue();
+	this->movesQueue.clear();
 	Player::startTurn();
 	//TODO/FIXME add SIGCONT option
 }
