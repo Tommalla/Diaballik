@@ -48,7 +48,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->currentTurnId++;
 		this->lastMoveId = -1;
 	} else {
-		qDebug("player change for undo");
+// 		qDebug("player change for undo");
 		bool tmp = true;
 		
 		if (this->currentTurnId > 0) {
@@ -75,7 +75,7 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 	this->currentPlayer = this->getNextPlayerId();
 	this->game.setCurrentPlayer(engine::getOppositePlayer(this->game.getCurrentPlayer()), 
 		this->movesLeft[this->currentTurnId].first, this->movesLeft[this->currentTurnId].second);
-	qDebug("Next player! %s", (this->game.getCurrentPlayer() == GAME_PLAYER_A) ? "A": "B");
+	qDebug("Next player! %s", qPrintable(this->players[this->currentPlayer]->getPlayerInfo().name));
 	
 	if (this->hintAI != NULL)
 		this->hintAI->gameChanged(this->game);
@@ -152,7 +152,6 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 }
 
 void GameHandler::sendUndoTurn (const GamePlayer& player, const int turnId) {
-	qDebug("sendUndoTurn...");
 	if (turnId == (int)this->turnsHistory.size() - 1 ||
 		this->turnsHistory[turnId].empty() == true )	//the turn hasn't been sent to the bot yet
 		return;
@@ -340,7 +339,6 @@ void GameHandler::showDestinationsFor (GraphicsMovableTile* tile) {
 			if (ball->getPos() == tile->getPos()) {
 				ball->select(false);
 				this->selectedTiles.push_back(ball);
-				qDebug("selected the ball");
 				break;
 			}
 }
@@ -689,6 +687,7 @@ void GameHandler::checkForNewMoves() {
 		Move move = this->players[this->currentPlayer]->getMove();
 		
 		if (this->game.isMoveValid(move) ) {
+			StateHandler::getInstance().disableUI();
 			qDebug("Valid move!");
 
 			this->moveTile(move);
@@ -731,7 +730,7 @@ void GameHandler::currentTurnDone() {
 }
 
 void GameHandler::undoMove() {
-	qDebug("undoMove() %d %d", this->lastMoveId, this->currentTurnId);
+	qDebug("\nundoMove() %d %d", this->currentTurnId, this->lastMoveId);
 	StateHandler::getInstance().setGamePaused(true);
 
 	if (this->lastMoveId < 0 && this->currentTurnId > 0) {
@@ -754,11 +753,11 @@ void GameHandler::undoMove() {
 		this->lastMoveId--;
 		this->game.makeMove(move, true);
 		emit moveFinished();
-	} else qDebug("Undo impossible: %d %d -> %d %d", move.from.x, move.from.y, move.to.x, move.to.y);
+	}
 }
 
 void GameHandler::redoMove() {
-	qDebug("redoMove() %d %d", this->lastMoveId, this->currentTurnId);
+	qDebug("\nredoMove() %d %d", this->currentTurnId, this->lastMoveId);
 	//move to the current turn
 	if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
 		this->currentTurnId + 1 < (int)this->turnsHistory.size())
@@ -767,14 +766,12 @@ void GameHandler::redoMove() {
 		this->currentTurnId + 1 >= (int)this->turnsHistory.size())
 		return;
 	
-	qDebug("redo possible!");
-	
 	//send the move to the current player
 	this->players[this->currentPlayer]->setMove(this->turnsHistory[this->currentTurnId][this->lastMoveId + 1]);
 }
 
 void GameHandler::undoTurn() {
-	qDebug("undoTurn()");
+	qDebug("\nundoTurn()");
 	
 	StateHandler::getInstance().setGamePaused(true);
 	
@@ -804,7 +801,8 @@ void GameHandler::undoTurn() {
 }
 
 void GameHandler::redoTurn() {
-	qDebug("redoTurn()");
+	qDebug("\nredoTurn()");
+	StateHandler::getInstance().setGamePaused(true);
 	
 	//check if there is a move available in this turn or the next
 	if (this->lastMoveId + 1 >= (int)this->turnsHistory[this->currentTurnId].size() && 
@@ -847,8 +845,7 @@ void GameHandler::botCrashed() {
 void GameHandler::startEditor() {
 	this->playersTimer.stop();
 	this->deletePlayers();
-	if (!this->initializePlayers(make_human_player("dummy"), make_human_player("dummy")))
-		qDebug("Fail");
+	this->initializePlayers(make_human_player("dummy"), make_human_player("dummy"));
 	
 	for (Player* player: this->players)
 		player->startTurn();

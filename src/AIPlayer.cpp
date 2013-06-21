@@ -6,9 +6,9 @@ All rights reserved */
 #include "../DiaballikEngine/src/functions.h"
 #include "gameConstants.h"
 #include "StateHandler.h"
+#include <QDateTime>
 
 void AIPlayer::emptyQueue() {
-	qDebug("%d", this->movesQueue.size());
 	this->movesQueue.clear();
 }
 
@@ -18,7 +18,8 @@ AIPlayer::AIPlayer (const PlayerInfo& info) : Player (info) {
 	this->processing = true;
 	
 	qDebug("Starting bot %s", qPrintable(info.botPath));
-	this->bot.setStandardErrorFile(info.name + ".out");
+	this->bot.setStandardErrorFile(BOTS_DIR + "logs/"+ 
+		QDateTime::currentDateTime().toString("d-M-yyyy:hh:mm") + this->info.name + ".out");
 	this->bot.start(info.botPath);
 	this->bot.waitForStarted();
 	
@@ -37,11 +38,7 @@ bool AIPlayer::isMoveReady() {
 		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt() ||
 		StateHandler::getInstance().isGamePaused())) {
 		return true;
-	} /*else qDebug("Not ready! %d, %d", this->moveTimer.elapsed(),
-		SettingsHandler::getInstance().value("bots/movesDelay", DEFAULT_MOVES_DELAY).toInt());*/
-	
-// 	if (StateHandler::getInstance().isGamePaused())
-// 		return false;
+	}
 	
 	if (this->processing) {
 		if (this->bot.canReadLine()) {
@@ -96,10 +93,12 @@ const Move AIPlayer::getMove() {
 
 
 void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
-	qDebug("AIPlayer -> play");
 	this->emptyQueue();
 	
 	assert(moves.empty() == false);
+	
+	if (this->playedMoves.empty() == false && this->playedMoves.back() == moves)
+		return;
 	
 	Player::play (player, moves);
 // 	assert(this->processing == false);
@@ -112,7 +111,7 @@ void AIPlayer::play (const GamePlayer& player, const vector< Move >& moves) {
 	
 	cmd += "\n";
 	
-	qDebug("Sending: %s", qPrintable(cmd));
+	qDebug("Sending to %s: %s", qPrintable(this->info.name), qPrintable(cmd));
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
 	
@@ -123,20 +122,20 @@ void AIPlayer::genMove() {
 	this->emptyQueue();
 	
 	this->processing = true;
-	qDebug("Asking %s for move (%s)", qPrintable(this->info.name), engine::getIdFor(this->info.player).c_str());
 	QString cmd = QString("gen_move ") + engine::getIdFor(this->info.player).c_str() + "\n";
 	
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
 	
-	qDebug("%s", qPrintable(cmd));
+	qDebug("Sending to %s: %s", qPrintable(this->info.name), qPrintable(cmd));
 	this->moveTimer.restart();
 }
 
 void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) {
-	if (this->lastTurnUndone == player)
-		return;
-	this->lastTurnUndone = player;
+	qDebug("Called undo turn on %s", qPrintable(this->info.name));
+// 	if (this->lastTurnUndone == player)
+// 		return;
+// 	this->lastTurnUndone = player;
 	
 	if (this->playedMoves.empty() || this->playedMoves.back() != moves)
 		return;
@@ -152,7 +151,7 @@ void AIPlayer::undoTurn (const GamePlayer& player, const vector< Move >& moves) 
 	}
 	
 	cmd += "\n";
-	qDebug("Sending: %s", qPrintable(cmd));
+	qDebug("Sending to %s: %s", qPrintable(this->info.name), qPrintable(cmd));
 	this->bot.write(qPrintable(cmd));
 	this->bot.waitForBytesWritten();
 	
@@ -183,7 +182,7 @@ void AIPlayer::newGame (const vector< Point > black, const vector< Point > white
 	cmd += QString(" ") + QString::fromStdString(engine::getIdFor(player)) + "\n";
 	
 	this->bot.write(qPrintable(cmd));
-	qDebug("%s", qPrintable(cmd));
+	qDebug("Sending to %s: %s", qPrintable(this->info.name), qPrintable(cmd));
 	this->bot.waitForBytesWritten();
 }
 
