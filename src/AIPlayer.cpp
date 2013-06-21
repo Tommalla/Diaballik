@@ -57,8 +57,11 @@ bool AIPlayer::isMoveReady() {
 				this->movesQueue.enqueue(move);
 		}
 	} else {
-		if (StateHandler::getInstance().isGamePaused())
+		if (StateHandler::getInstance().isGamePaused()) {
+				this->movesQueue.clear();
+				this->moveReady = false;
 				return false;
+		}
 		
 		if ((int)this->movesQueue.size() > 0) {
 			if (this->moveReady == false) {

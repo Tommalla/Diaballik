@@ -16,7 +16,9 @@ const QString APP_NAME = "Diaballik " + VERSION;
 const QString AUTHOR_MESSAGE = "<center>" + APP_NAME + "<br/>" +AUTHOR + "<br/><a href=\"mailto:" + AUTHOR_MAIL + "\">" + AUTHOR_MAIL + 
 "</a><br/>IPP 2012/2013 <a href=\"http://www.mimuw.edu.pl\">MIMUW</a></center>";
 
-const QString HELP_MESSAGE = "Keyboard shortcuts to appear in the future";
+const QString HELP_MESSAGE = QString("<h3>Shortcuts</h3>") + 
+	"<p><b>Space</b> - Pause/Unpause AI</p>" +
+	"<p>More are planned...</p>";
 
 const QString RULES_MESSAGE = QString("<h3>Rules</h3>") +
 	"<p>Diaballik's rules are simple. Each opponent has a team composed of seven players, one of which has a ball. There is no " + 

@@ -741,10 +741,11 @@ void GameHandler::currentTurnDone() {
 	if (this->lastMoveId < 0)
 		return;	//disallow for empty turns
 
- 	this->players[this->getNextPlayerId()]->startTurn();
-	this->players[this->currentPlayer]->finishTurn();
-// 	this->changeCurrentPlayer();
-// 	this->resumeGame();
+//  	this->players[this->getNextPlayerId()]->startTurn();
+// 	this->players[this->currentPlayer]->finishTurn();
+	this->changeCurrentPlayer();
+	this->resumeGame();
+	StateHandler::getInstance().setGamePaused(false);
 }
 
 void GameHandler::undoMove() {
