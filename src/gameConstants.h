@@ -10,7 +10,7 @@
 
 const QString AUTHOR = "Tomasz [Tommalla] Zakrzewski";
 const QString AUTHOR_MAIL = "tz336079@students.mimuw.edu.pl";
-const QString VERSION = "v0.1 beta";
+const QString VERSION = "v0.1.1 beta";
 const QString APP_NAME = "Diaballik " + VERSION;
 
 const QString AUTHOR_MESSAGE = "<center>" + APP_NAME + "<br/>" +AUTHOR + "<br/><a href=\"mailto:" + AUTHOR_MAIL + "\">" + AUTHOR_MAIL + 

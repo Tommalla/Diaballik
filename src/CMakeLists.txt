@@ -21,6 +21,7 @@ set (MOC_HEADERS
 	GraphicsMovableTile.h
 	GraphicsScene.h
 	GraphicsTile.h
+	HistoryHandler.h
 	HumanPlayer.h
 	Player.h
 	StateHandler.h
@@ -32,6 +33,7 @@ set (MOC_SOURCES
 	GraphicsMovableTile.cpp
 	GraphicsScene.cpp
 	GraphicsTile.cpp
+	HistoryHandler.cpp
 	HumanPlayer.cpp
 	Player.cpp
 	StateHandler.cpp

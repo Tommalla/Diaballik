@@ -143,16 +143,17 @@ bool SaveHandler::save (const vector< Point >& figures, const int id, const vect
 	b.setBitsPerValue(1);
 	b.append(id);
 	b.setBitsPerValue(3);
-	for (auto iter = history.begin(); iter != history.end(); ++iter) {
-		if (iter != history.begin())
-			b.append(7);	//end of turn
-		for (Move move: *iter) {
-			b.append(move.from.x);
-			b.append(move.from.y);
-			b.append(move.to.x);
-			b.append(move.to.y);
+	for (auto iter = history.begin(); iter != history.end(); ++iter) 
+		if (iter->empty() == false) {
+			if (iter != history.begin())
+				b.append(7);	//end of turn
+			for (Move move: *iter) {
+				b.append(move.from.x);
+				b.append(move.from.y);
+				b.append(move.to.x);
+				b.append(move.to.y);
+			}
 		}
-	}
 	
 	b.append(7);
 	
