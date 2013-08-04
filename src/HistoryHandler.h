@@ -15,6 +15,9 @@ class HistoryHandler : public QObject {
 	private:
 		vector<vector<Move> > turns;
 		int turnId, lastMoveId;
+		
+		inline vector<Move> getMovesBetween(int begin, int end) const;
+		inline void dropTailAfter(const int turn, const int move);
 	public:
 		HistoryHandler();
 		HistoryHandler(const vector< vector< Move > >& turns, const int turnId, const int lastMoveId);
@@ -41,6 +44,7 @@ class HistoryHandler : public QObject {
 	signals:
 		void moveDone(const Move& move);
 		void moveUndone(const Move& move);
+		void finishTurn();
 };
 
 #endif // HISTORYHANDLER_H
