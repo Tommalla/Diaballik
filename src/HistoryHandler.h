@@ -6,6 +6,7 @@
 
 #include <QObject>
 #include "../../DiaballikEngine/src/Move.h"
+#include "../../DiaballikEngine/src/enums.h"
 #include <vector>
 
 using namespace std;
@@ -13,14 +14,15 @@ using namespace std;
 class HistoryHandler : public QObject {
 	Q_OBJECT;
 	private:
+		GamePlayer currentPlayer;
 		vector<vector<Move> > turns;
 		int turnId, lastMoveId;
 		
 		inline vector<Move> getMovesBetween(int begin, int end) const;
 		inline void dropTailAfter(const int turn, const int move);
 	public:
-		HistoryHandler();
-		HistoryHandler(const vector< vector< Move > >& turns, const int turnId, const int lastMoveId);
+		HistoryHandler(const GamePlayer& startingPlayer);
+		HistoryHandler(const vector< vector< Move > >& turns, const int turnId, const int lastMoveId, const GamePlayer& startingPlayer);
 		
 		inline const bool canUndoMove() const;
 		inline const bool canRedoMove() const;
@@ -41,10 +43,11 @@ class HistoryHandler : public QObject {
 		
 		void registerMoveDone(const Move& move);
 		void registerMoveUndone();
-	signals:
-		void moveDone(const Move& move);
-		void moveUndone(const Move& move);
+		
 		void finishTurn();
+	signals:
+		void turnDone(const GamePlayer& player, const vector<Move>& moves);
+		void turnUndone(const GamePlayer& player, const vector<Move>& moves);
 };
 
 #endif // HISTORYHANDLER_H

@@ -19,6 +19,7 @@ All rights reserved */
 #include "AIPlayer.h"
 #include "gameEnums.h"
 #include "HintAI.h"
+#include "HistoryHandler.h"
 
 using namespace std;
 
@@ -38,6 +39,9 @@ class GameHandler : public QObject, public Singleton<GameHandler> {
 		GraphicsScene* scene;
 		Game game;
 		QSet<QString> hashes;
+		
+		//new history:
+		HistoryHandler historyHandler;
 		
 		vector< vector<Move> > turnsHistory;
 		vector< pair<uint8_t, uint8_t> > movesLeft;

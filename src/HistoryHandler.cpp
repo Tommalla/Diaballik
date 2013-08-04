@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include "HistoryHandler.h"
+#include "../../DiaballikEngine/src/functions.h"
 
 vector< Move > HistoryHandler::getMovesBetween (int begin, int end) const {
 	assert(end < (int)turns[turnId].size());
@@ -21,17 +22,19 @@ void HistoryHandler::dropTailAfter (const int turn, const int move) {
 		turns[turn].pop_back();
 }
 
-HistoryHandler::HistoryHandler() : QObject() {
+HistoryHandler::HistoryHandler(const GamePlayer& startingPlayer) : QObject() {
 	this->turnId = 0;
 	this->lastMoveId = -1;
 	this->turns.resize(1);
+	this->currentPlayer = startingPlayer;
 }
 
 
-HistoryHandler::HistoryHandler (const vector< vector< Move > >& turns, const int turnId, const int lastMoveId) : QObject() {
+HistoryHandler::HistoryHandler (const vector< vector< Move > >& turns, const int turnId, const int lastMoveId, const GamePlayer& startingPlayer) : QObject() {
 	this->turns = turns;
 	this->turnId = turnId;
 	this->lastMoveId = lastMoveId;
+	this->currentPlayer = startingPlayer;
 }
 
 const bool HistoryHandler::canUndoMove() const {
@@ -82,8 +85,10 @@ void HistoryHandler::registerMoveDone (const Move& move) {
 	if (lastMoveId + 1 < (int)turns[turnId].size())
 		++lastMoveId;
 	else if (turnId + 1 < (int)turns.size() && turns[turnId + 1].empty() == false) {
+		emit turnDone(currentPlayer, turns[turnId]);
+		currentPlayer = engine::getOppositePlayer(currentPlayer);
 		++turnId;
-		lastMoveId = 0;
+		lastMoveId = -1;
 	} else {
 		turns[turnId].push_back(Move(-1, -1, -1, -1));
 		++lastMoveId;
@@ -92,16 +97,29 @@ void HistoryHandler::registerMoveDone (const Move& move) {
 	if (turns[turnId][lastMoveId] != move)	//truncate the history
 		dropTailAfter(turnId, lastMoveId);
 	
-	turns[turnId][lastMoveId] = move;
-	
-	emit moveDone(move);
+	turns[turnId][++lastMoveId] = move;
 }
 
 void HistoryHandler::registerMoveUndone() {
 	assert(canUndoMove());
 	
-	if (lastMoveId == -1)
-		lastMoveId = turns[--turnId].size() - 1;
-	
-	emit moveUndone(turns[turnId][lastMoveId--]);
+	if (lastMoveId == -1) {
+		emit turnUndone(currentPlayer, turns[turnId--]);
+		currentPlayer = engine::getOppositePlayer(currentPlayer);
+		lastMoveId = turns[turnId].size() - 2;
+	}
 }
+
+void HistoryHandler::finishTurn() {
+	if (lastMoveId == -1)
+		return;
+	
+	dropTailAfter(turnId, lastMoveId);
+	emit turnDone(currentPlayer, turns[turnId]);
+	
+	turnId++;
+	lastMoveId = -1;
+	turns.push_back(vector<Move>());
+	currentPlayer = engine::getOppositePlayer(currentPlayer);
+}
+

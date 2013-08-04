@@ -35,9 +35,10 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 		this->dropHistoryTail();
 	
 	if (!undo) {
-		for (int i = 0; i < PLAYERS_QTY; ++i)
-			this->players[i]->play(this->players[this->currentPlayer]->getPlayerInfo().player,
-				this->turnsHistory[this->currentTurnId]);
+		this->historyHandler.finishTurn();
+		//for (int i = 0; i < PLAYERS_QTY; ++i)
+			//this->players[i]->play(this->players[this->currentPlayer]->getPlayerInfo().player,
+				//this->turnsHistory[this->currentTurnId]);
 
 		if ((int)this->turnsHistory.size() <= this->currentTurnId + 1)
 			this->turnsHistory.push_back(vector<Move>());
@@ -61,9 +62,10 @@ void GameHandler::changeCurrentPlayer(const bool undo) {
 			
 			this->currentTurnId--;
 			
-			if (tmp)
-				this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
-					this->currentTurnId + 1);
+			//TODO stopped here
+			//if (tmp)
+				//this->sendUndoTurn(this->players[this->currentPlayer]->getPlayerInfo().player,
+					//this->currentTurnId + 1);
 			
 			this->lastMoveId = this->turnsHistory[this->currentTurnId].size() - 1;
 		} else {
@@ -122,7 +124,7 @@ Player* GameHandler::createPlayer (PlayerInfo info, const int id) {
 			for (GraphicsMovableTile* tile: this->pawns)
 				if (engine::getPlayerFor(this->game.getFieldAt(tile->getPos())) == fieldPlayer)
 					QObject::connect(tile, SIGNAL(makeMove(const Move&)), res, SLOT(setMove(const Move&)));
-			
+				
 			return res;
 			break;
 		}
@@ -148,6 +150,14 @@ bool GameHandler::initializePlayers (const PlayerInfo& playerA, const PlayerInfo
 	
 	if (this->players[0] == NULL || this->players[1] == NULL)
 		return false;
+	
+	for (int i = 0; i < 2; ++i) {
+		QObject::connect(&historyHandler, SIGNAL(turnDone(GamePlayer,vector<Move>)), 
+				 players[i], SLOT(play(GamePlayer,vector<Move>)));
+		QObject::connect(&historyHandler, SIGNAL(turnUndone(GamePlayer,vector<Move>)), 
+				 players[i], SLOT(undoTurn(GamePlayer,vector<Move>)));
+	}
+	
 	return true;
 }
 
@@ -230,7 +240,7 @@ void GameHandler::createSceneBoard (const int tileSize, const vector< Point > pa
 	}
 }
 
-GameHandler::GameHandler() : QObject() {
+GameHandler::GameHandler() : QObject(), historyHandler(GAME_PLAYER_A) {
 	this->initialized = false;
 	this->lastSelector = NULL;
 	this->players[0] = this->players[1] = NULL;
@@ -247,7 +257,6 @@ GameHandler::~GameHandler() {
 	this->deletePlayers();
 	
 }
-
 
 void GameHandler::deselectTiles() {
 	for (GraphicsTile* tile: this->selectedTiles)

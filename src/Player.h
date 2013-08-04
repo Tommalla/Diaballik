@@ -31,17 +31,7 @@ class Player : public QObject {
 		
 		const PlayerInfo& getPlayerInfo() const;
 		
-		/**
-		 * @brief A method that is called to pass the opponent's (and own) moves to the player
-		 *
-		 * @param moves The moves that the game accepted and performed.
-		 **/
-		virtual void play(const GamePlayer& player, const vector<Move>& moves);
-		/**
-		 * @brief Tells the player to undo a turn
-		 *
-		 **/
-		virtual void undoTurn (const GamePlayer& player, const vector<Move>& moves);
+
 		/**
 		 * @brief Tells the player that the game has finished
 		 *
@@ -54,6 +44,17 @@ class Player : public QObject {
 		virtual void newGame(const vector<Point> black, const vector<Point> white, 
 				     const vector<Point> balls, const GamePlayer& player);
 	public slots:
+		/**
+		 * @brief A method that is called to pass the opponent's (and own) moves to the player
+		 *
+		 * @param moves The moves that the game accepted and performed.
+		 **/
+		virtual void play(const GamePlayer& player, const vector<Move>& moves);
+		/**
+		 * @brief Tells the player to undo a turn
+		 *
+		 **/
+		virtual void undoTurn (const GamePlayer& player, const vector<Move>& moves);
 		/**
 		 * @brief Tells the player to finish current turn
 		 **/
